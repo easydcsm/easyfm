@@ -4,10 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EA$Y FM</title>
+    <!-- Google Fonts üzerinden Hip-Hop/Sokak tarzına uygun kalın font (Anton) eklendi -->
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Permanent+Marker&display=swap" rel="stylesheet">
+    
     <style>
         body {
             margin: 0;
-            background-color: #0f0f0f;
+            background-color: #0b0b0b;
             color: #fff;
             font-family: Arial, sans-serif;
             display: flex;
@@ -15,21 +18,49 @@
             align-items: center;
             justify-content: center;
             min-height: 100vh;
+            overflow-x: hidden;
         }
-        h1 { margin-bottom: 10px; font-size: 28px; letter-spacing: 1px; }
+
+        /* Hip-Hop Tarzı Cool Logo / Başlık */
+        .logo-container {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        h1 {
+            margin: 0;
+            font-family: 'Anton', sans-serif;
+            font-size: 52px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            background: linear-gradient(180deg, #ffffff 30%, #ffcc00 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 3px 3px 0px #ff2a2a, 6px 6px 20px rgba(255, 42, 42, 0.4);
+            transform: skew(-5deg);
+        }
+
+        .subtitle {
+            font-family: 'Permanent Marker', cursive;
+            font-size: 14px;
+            color: #888;
+            letter-spacing: 4px;
+            margin-top: 5px;
+            transform: skew(-5deg);
+        }
 
         /* Anlık İzleyici/Dinleyici Rozeti */
         .listener-badge {
-            background-color: #1a1a1a;
-            border: 1px solid #333;
-            padding: 8px 18px;
-            border-radius: 20px;
+            background-color: #161616;
+            border: 1px solid #282828;
+            padding: 8px 20px;
+            border-radius: 30px;
             font-size: 14px;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             display: flex;
             align-items: center;
             gap: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
         }
         .live-dot {
             width: 10px;
@@ -37,7 +68,7 @@
             background-color: #ff2a2a;
             border-radius: 50%;
             display: inline-block;
-            box-shadow: 0 0 8px #ff2a2a;
+            box-shadow: 0 0 10px #ff2a2a;
             animation: pulse 1.5s infinite;
         }
         @keyframes pulse {
@@ -48,10 +79,14 @@
 
         .video-container {
             position: relative;
-            width: 80%;
+            width: 85%;
             max-width: 800px;
-            padding-bottom: 45%; /* 16:9 oranı */
+            padding-bottom: 47.8%; /* 16:9 oranı */
             height: 0;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.7);
+            border: 2px solid #222;
         }
         .video-container iframe {
             position: absolute;
@@ -59,9 +94,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            border-radius: 12px;
             border: none;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
         }
     </style>
 
@@ -71,7 +104,11 @@
 </head>
 <body>
 
-    <h1>🎙️ EA$Y FM</h1>
+    <!-- Şaşalı Hip-Hop Logo Alanı -->
+    <div class="logo-container">
+        <h1>EA$Y FM</h1>
+        <div class="subtitle">24/7 UNDERGROUND VIBES</div>
+    </div>
 
     <!-- İzleyici Sayacı Rozeti -->
     <div class="listener-badge">
@@ -86,7 +123,6 @@
     <script>
         // -------------------------------------------------------------
         // 1. FIREBASE KURULUMU VE ANLIK İZLEYİCİ TAKİP SİSTEMİ
-        // Firebase Console'dan aldığınız bilgileri buraya ekleyin:
         // -------------------------------------------------------------
         const firebaseConfig = {
             apiKey: "AIzaSyBaTlb6V6e4FMLTYNXAPBgdzsgiclL8Qw8",
@@ -109,16 +145,12 @@
 
         connectedRef.on('value', (snap) => {
             if (snap.val() === true) {
-                // Kullanıcı bağlandığında yeni bir kayıt aç
                 const con = myConnectionsRef.push();
-                
-                // Sayfa kapandığında veya internet koptuğunda kaydı otomatik sil
                 con.onDisconnect().remove();
                 con.set(true);
             }
         });
 
-        // Veritabanındaki aktif dinamik kullanıcı sayısını oku ve ekrana yaz
         myConnectionsRef.on('value', (snap) => {
             const count = snap.numChildren();
             document.getElementById('listener-count').innerText = count;
@@ -136,7 +168,6 @@
         let currentSongIndex = 0;
         let player;
 
-        // YouTube IFrame API'sini yükle
         const tag = document.createElement('script');
         tag.src = "https://www.youtube.com/iframe_api";
         const firstScriptTag = document.getElementsByTagName('script')[0];
@@ -161,7 +192,6 @@
             event.target.playVideo();
         }
 
-        // Video bittiğinde bir sonrakine geç / Liste bitince başa dön
         function onPlayerStateChange(event) {
             if (event.data === YT.PlayerState.ENDED) {
                 currentSongIndex = (currentSongIndex + 1) % songList.length;

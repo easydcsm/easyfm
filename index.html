@@ -122,6 +122,15 @@
             border: none;
         }
         
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+        }
+
         /* BAŞLATMA OVERLAY EKRANI */
         #start-overlay {
             position: absolute;
@@ -160,7 +169,7 @@
             box-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
         }
 
-        /* YENİ SES KONTROL PANELİ STİLLERİ */
+        /* SES KONTROL PANELİ STİLLERİ */
         .controls {
             margin-top: 25px;
             margin-bottom: 40px;
@@ -213,7 +222,6 @@
             transition: background 0.3s;
         }
 
-        /* Webkit (Chrome, Safari, Edge) Slider Thumb */
         .volume-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
@@ -230,7 +238,6 @@
             transform: scale(1.2);
         }
 
-        /* Firefox Slider Thumb */
         .volume-slider::-moz-range-thumb {
             width: 15px;
             height: 15px;
@@ -288,7 +295,6 @@
     <div class="controls">
         <div class="volume-control-panel">
             <button id="mute-btn" class="mute-btn" onclick="toggleMute()" title="Sesi Aç / Kapat">
-                <!-- Ses Açık İkonu (SVG) -->
                 <svg id="volume-icon" viewBox="0 0 24 24">
                     <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
                 </svg>
@@ -352,8 +358,8 @@
         let isChangingSong = false;
         let isStarted = false;
         let lastVolumeLevel = 100;
+        let playerReady = false;
 
-        // Determinastik Rastgele Sayı Üreteci (Tüm kullanıcılarda aynı sırayı üretir)
         function pseudoRandom(seed) {
             let value = seed;
             return function() {
@@ -362,23 +368,19 @@
             };
         }
 
-        // Şarkıları karıştıran ve iki döngü arasında aynı şarkının üst üste gelmesini önleyen fonksiyon
         function getShuffledPlaylist(cycleIndex) {
             let list = [...songList];
-            let rng = pseudoRandom(cycleIndex * 99991); // Her döngü için sabit seed
+            let rng = pseudoRandom(cycleIndex * 99991);
 
-            // Fisher-Yates Karıştırma Algoritması
             for (let i = list.length - 1; i > 0; i--) {
                 const j = Math.floor(rng() * (i + 1));
                 [list[i], list[j]] = [list[j], list[i]];
             }
 
-            // Bir önceki turun son şarkısı ile yeni turun ilk şarkısının aynı olup olmadığını kontrol et
             if (cycleIndex > 0) {
                 const prevCycleList = getShuffledPlaylist(cycleIndex - 1);
                 const lastSongOfPrevCycle = prevCycleList[prevCycleList.length - 1];
 
-                // Çakışma varsa yeni turun ilk şarkısını listenin en sonuna kaydır
                 if (list[0].id === lastSongOfPrevCycle.id && list.length > 1) {
                     const firstSong = list.shift();
                     list.push(firstSong);
@@ -392,12 +394,9 @@
             const nowInSeconds = Math.floor(Date.now() / 1000);
             const totalElapsed = nowInSeconds - STREAM_START_TIME;
 
-            // Kaçıncı döngüde olduğumuz
             const cycleIndex = Math.floor(totalElapsed / totalPlaylistDuration);
-            // Şu anki döngüde geçen süre
             const elapsedTimeInCycle = totalElapsed % totalPlaylistDuration;
 
-            // Bu döngünün karıştırılmış playlist'i
             const currentPlaylist = getShuffledPlaylist(cycleIndex);
 
             let accumulatedTime = 0;
@@ -432,27 +431,39 @@
                     'modestbranding': 1,
                     'rel': 0,
                     'loop': 0,
-                    'playsinline': 1
+                    'playsinline': 1,
+                    'enablejsapi': 1
                 },
                 events: {
+                    'onReady': () => { playerReady = true; },
                     'onStateChange': onPlayerStateChange
                 }
             });
         }
 
         function startRadio() {
-            if (!player) return;
+            if (!player || !playerReady) {
+                // Oyuncu henüz hazır değilse 200ms sonra tekrar dene
+                setTimeout(startRadio, 200);
+                return;
+            }
+            
             const state = getCurrentStreamState();
             
-            player.seekTo(state.seekTo, true);
-            player.playVideo();
-            player.unMute();
-            player.setVolume(100);
-            
-            const overlay = document.getElementById('start-overlay');
-            overlay.style.opacity = '0';
-            setTimeout(() => { overlay.style.display = 'none'; }, 500);
-            isStarted = true;
+            try {
+                // Tarayıcı autoplay kısıtlamasını aşmak için önce playVideo çağrılır
+                player.seekTo(state.seekTo, true);
+                player.playVideo();
+                player.unMute();
+                player.setVolume(100);
+
+                const overlay = document.getElementById('start-overlay');
+                overlay.style.opacity = '0';
+                setTimeout(() => { overlay.style.display = 'none'; }, 500);
+                isStarted = true;
+            } catch (e) {
+                console.error("Oynatma hatası:", e);
+            }
         }
 
         // -------------------------------------------------------------
@@ -463,7 +474,7 @@
         const volumeIconMute = '<path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>';
 
         function changeVolume(val) {
-            if (!player) return;
+            if (!player || !playerReady) return;
             const volumeText = document.getElementById('volume-text');
             const icon = document.getElementById('volume-icon');
 
@@ -481,7 +492,7 @@
         }
 
         function toggleMute() {
-            if (!player) return;
+            if (!player || !playerReady) return;
             const slider = document.getElementById('volume-slider');
             const icon = document.getElementById('volume-icon');
 
@@ -502,7 +513,7 @@
         }
 
         function syncToCurrentStream() {
-            if (!player || isChangingSong || !isStarted) return;
+            if (!player || !playerReady || isChangingSong || !isStarted) return;
 
             const state = getCurrentStreamState();
             const targetSong = state.song;

@@ -176,11 +176,9 @@
             measurementId: "G-7WEFWTKBC7"
         };
 
-        // Firebase'i başlat
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // Anlık bağlantı referansları
         const myConnectionsRef = db.ref('online_listeners');
         const connectedRef = db.ref('.info/connected');
 
@@ -198,10 +196,9 @@
         });
         
         // -------------------------------------------------------------
-        // 2. CANLI SENKRONİZASYONLU VE KONTROL KISITLAMALI OYNATICI
+        // 2. CANLI SENKRONİZASYON VE KİLİTLENME ÖNLEYİCİ SİSTEM
         // -------------------------------------------------------------
         
-        // Şarkı listeniz (Şarkı süreleri saniye bazlı tahmin edilip milisaniyelik eşitlikle senkronize edilir)
         const songList = [
             { id: 'qAlF70MdfwU', duration: 210 }, 
             { id: 'L_BpiSsIBFM', duration: 180 }, 
@@ -209,11 +206,12 @@
             { id: 'ftaXMKV3ffE', duration: 190 }
         ];
 
-        // Sabit Yayın Başlangıç Zamanı (Epoch Timestamp)
         const STREAM_START_TIME = 1700000000; 
         const totalPlaylistDuration = songList.reduce((acc, song) => acc + song.duration, 0);
 
         let player;
+        let currentLoadedVideoId = null;
+        let isChangingSong = false;
 
         function getCurrentStreamState() {
             const nowInSeconds = Math.floor(Date.now() / 1000);
@@ -239,15 +237,17 @@
 
         function onYouTubeIframeAPIReady() {
             const state = getCurrentStreamState();
+            currentLoadedVideoId = songList[state.songIndex].id;
 
             player = new YT.Player('player', {
-                videoId: songList[state.songIndex].id,
+                videoId: currentLoadedVideoId,
                 playerVars: {
                     'autoplay': 1,
-                    'controls': 0,        // Kontrol çubuğunu gizle
-                    'disablekb': 1,        // Klavye tuşlarını kapat (Space vb.)
+                    'controls': 0,
+                    'disablekb': 1,
                     'modestbranding': 1,
-                    'rel': 0
+                    'rel': 0,
+                    'loop': 0
                 },
                 events: {
                     'onReady': (event) => {
@@ -259,29 +259,43 @@
             });
         }
 
-        function onPlayerStateChange(event) {
-            // Şarkı bittiğinde canlı yayının o anki senkron konumuna geç
-            if (event.data === YT.PlayerState.ENDED) {
-                const state = getCurrentStreamState();
+        function syncToCurrentStream() {
+            if (!player || isChangingSong) return;
+
+            const state = getCurrentStreamState();
+            const targetSong = songList[state.songIndex];
+
+            // Eğer oynatıcıdaki şarkı ile olması gereken canlı şarkı farklıysa değiştir
+            if (currentLoadedVideoId !== targetSong.id) {
+                isChangingSong = true;
+                currentLoadedVideoId = targetSong.id;
+                
                 player.loadVideoById({
-                    videoId: songList[state.songIndex].id,
+                    videoId: targetSong.id,
                     startSeconds: state.seekTo
                 });
-            }
-        }
-
-        // İnternet veya tarayıcı yavaşlığından doğacak kaymaları her 8 saniyede bir canlandıran koruma
-        setInterval(() => {
-            if (player && player.getCurrentTime) {
-                const state = getCurrentStreamState();
-                const currentTime = player.getCurrentTime();
                 
-                // 3 saniyeden fazla kopukluk varsa canlı akışa tekrar senkronize et
+                setTimeout(() => { isChangingSong = false; }, 1500);
+            } else {
+                // Aynı şarkıdaysak ve 3 saniyeden fazla kayma varsa süre hizala
+                const currentTime = player.getCurrentTime ? player.getCurrentTime() : 0;
                 if (Math.abs(currentTime - state.seekTo) > 3) {
                     player.seekTo(state.seekTo, true);
                 }
             }
-        }, 8000);
+        }
+
+        function onPlayerStateChange(event) {
+            // Şarkı bittiğinde veya takıldığında canlı akışa hemen zorla geç
+            if (event.data === YT.PlayerState.ENDED) {
+                syncToCurrentStream();
+            }
+        }
+
+        // Buga girmesini önleyen canlı takip mekanizması (Her 5 saniyede kontrol)
+        setInterval(() => {
+            syncToCurrentStream();
+        }, 5000);
     </script>
 </body>
 </html>

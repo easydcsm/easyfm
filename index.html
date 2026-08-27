@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canlı Radyo Yayınım</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: #0f0f0f;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        h1 { margin-bottom: 20px; font-size: 24px; }
+        .video-container {
+            position: relative;
+            width: 80%;
+            max-width: 800px;
+            padding-bottom: 45%; /* 16:9 oranı */
+            height: 0;
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 12px;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🎙️ Canlı Müzik Radyosu</h1>
+    <div class="video-container">
+        <div id="player"></div>
+    </div>
+
+    <script>
+        // İSTEDİĞİNİZ YOUTUBE VİDEO ID'LERİNİ BURAYA EKLEYİN
+        const songList = [
+            'dQw4w9WgXcQ', // 1. Şarkı ID
+            '3JZ_D3ELwOQ', // 2. Şarkı ID
+            'L_jWHffIx5E'  // 3. Şarkı ID
+        ];
+
+        let currentSongIndex = 0;
+        let player;
+
+        // YouTube IFrame API'sini yükle
+        const tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        const firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('player', {
+                videoId: songList[currentSongIndex],
+                playerVars: {
+                    'autoplay': 1,
+                    'controls': 1,
+                    'rel': 0
+                },
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+        }
+
+        function onPlayerReady(event) {
+            event.target.playVideo();
+        }
+
+        // Video bittiğinde bir sonrakine geç / Liste bitince başa dön
+        function onPlayerStateChange(event) {
+            if (event.data === YT.PlayerState.ENDED) {
+                currentSongIndex = (currentSongIndex + 1) % songList.length;
+                player.loadVideoById(songList[currentSongIndex]);
+            }
+        }
+    </script>
+</body>
+</html>

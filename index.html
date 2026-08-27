@@ -34,7 +34,6 @@
             letter-spacing: 4px;
             text-transform: uppercase;
             
-            /* Pırlanta Parlaklığı Efekti (Metalik Gümüş-Beyaz Geçiş) */
             background: linear-gradient(
                 135deg, 
                 #ffffff 0%, 
@@ -47,7 +46,6 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             
-            /* Elmas Işıltısı ve Gölge (Glow/Shine Effect) */
             text-shadow: 
                 0 0 10px rgba(255, 255, 255, 0.8),
                 0 0 20px rgba(255, 255, 255, 0.4),
@@ -57,7 +55,6 @@
             animation: diamondShine 4s linear infinite;
         }
 
-        /* Pırlanta üzerindeki ışık süzülmesi animasyonu */
         @keyframes diamondShine {
             0% { background-position: 0% center; }
             100% { background-position: 200% center; }
@@ -75,7 +72,7 @@
             opacity: 0.9;
         }
 
-        /* Anlık İzleyici/Dinleyici Rozeti (Siyah-Beyaz Temalı) */
+        /* Anlık İzleyici/Dinleyici Rozeti */
         .listener-badge {
             background-color: #111111;
             border: 1px solid #333333;
@@ -135,6 +132,65 @@
             background: rgba(0, 0, 0, 0);
             cursor: default;
         }
+
+        /* BAŞLATMA OVERLAY EKRANI */
+        #start-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(5, 5, 5, 0.95);
+            z-index: 30;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: opacity 0.5s ease;
+        }
+
+        .start-btn {
+            background: #ffffff;
+            color: #000;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 900;
+            font-size: 16px;
+            padding: 14px 32px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            letter-spacing: 2px;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .start-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
+        }
+
+        /* SES KONTROL BUTONU */
+        .controls {
+            margin-top: 20px;
+            z-index: 20;
+        }
+        .mute-btn {
+            background: #111;
+            color: #fff;
+            border: 1px solid #333;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            letter-spacing: 1px;
+            transition: background 0.3s;
+        }
+        .mute-btn:hover {
+            background: #222;
+        }
     </style>
 
     <!-- Firebase SDK (Anlık Sayaç İçin) -->
@@ -156,9 +212,19 @@
     </div>
 
     <div class="video-container">
+        <!-- Başlatma Kaplaması -->
+        <div id="start-overlay" onclick="startRadio()">
+            <button class="start-btn">CANLI YAYINA KATIL</button>
+        </div>
+
         <!-- Tıklama ve durdurmayı engelleyen şeffaf katman -->
         <div class="video-overlay"></div>
         <div id="player"></div>
+    </div>
+
+    <!-- Ses Butonu -->
+    <div class="controls">
+        <button id="mute-toggle" class="mute-btn" onclick="toggleMute()">SESİ KAPAT</button>
     </div>
 
     <script>
@@ -212,6 +278,7 @@
         let player;
         let currentLoadedVideoId = null;
         let isChangingSong = false;
+        let isStarted = false;
 
         function getCurrentStreamState() {
             const nowInSeconds = Math.floor(Date.now() / 1000);
@@ -252,20 +319,43 @@
                 events: {
                     'onReady': (event) => {
                         event.target.seekTo(state.seekTo, true);
-                        event.target.playVideo();
                     },
                     'onStateChange': onPlayerStateChange
                 }
             });
         }
 
+        function startRadio() {
+            if (!player) return;
+            const state = getCurrentStreamState();
+            player.seekTo(state.seekTo, true);
+            player.playVideo();
+            player.unMute();
+            
+            const overlay = document.getElementById('start-overlay');
+            overlay.style.opacity = '0';
+            setTimeout(() => { overlay.style.display = 'none'; }, 500);
+            isStarted = true;
+        }
+
+        function toggleMute() {
+            if (!player) return;
+            const btn = document.getElementById('mute-toggle');
+            if (player.isMuted()) {
+                player.unMute();
+                btn.innerText = "SESİ KAPAT";
+            } else {
+                player.mute();
+                btn.innerText = "SESİ AÇ";
+            }
+        }
+
         function syncToCurrentStream() {
-            if (!player || isChangingSong) return;
+            if (!player || isChangingSong || !isStarted) return;
 
             const state = getCurrentStreamState();
             const targetSong = songList[state.songIndex];
 
-            // Eğer oynatıcıdaki şarkı ile olması gereken canlı şarkı farklıysa değiştir
             if (currentLoadedVideoId !== targetSong.id) {
                 isChangingSong = true;
                 currentLoadedVideoId = targetSong.id;
@@ -277,7 +367,6 @@
                 
                 setTimeout(() => { isChangingSong = false; }, 1500);
             } else {
-                // Aynı şarkıdaysak ve 3 saniyeden fazla kayma varsa süre hizala
                 const currentTime = player.getCurrentTime ? player.getCurrentTime() : 0;
                 if (Math.abs(currentTime - state.seekTo) > 3) {
                     player.seekTo(state.seekTo, true);
@@ -286,13 +375,11 @@
         }
 
         function onPlayerStateChange(event) {
-            // Şarkı bittiğinde veya takıldığında canlı akışa hemen zorla geç
             if (event.data === YT.PlayerState.ENDED) {
                 syncToCurrentStream();
             }
         }
 
-        // Buga girmesini önleyen canlı takip mekanizması (Her 5 saniyede kontrol)
         setInterval(() => {
             syncToCurrentStream();
         }, 5000);

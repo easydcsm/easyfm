@@ -129,7 +129,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(5, 5, 5, 0.95);
+            background: rgba(5, 5, 5, 0.98);
             z-index: 30;
             display: flex;
             flex-direction: column;
@@ -152,6 +152,7 @@
             letter-spacing: 2px;
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
             transition: transform 0.2s, box-shadow 0.2s;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .start-btn:hover {
@@ -162,7 +163,7 @@
         /* SES KONTROL BUTONU ALANI */
         .controls {
             margin-top: 25px;
-            margin-bottom: 40px; /* Tabandan ayrılması için alt boşluk eklendi */
+            margin-bottom: 40px;
             z-index: 20;
         }
         .mute-btn {
@@ -177,6 +178,7 @@
             cursor: pointer;
             letter-spacing: 1px;
             transition: background 0.3s, border-color 0.3s;
+            -webkit-tap-highlight-color: transparent;
         }
         .mute-btn:hover {
             background: #222;
@@ -300,17 +302,15 @@
             player = new YT.Player('player', {
                 videoId: currentLoadedVideoId,
                 playerVars: {
-                    'autoplay': 1,
+                    'autoplay': 0, // Mobilde izinsiz otomatik başlamayı önlemek için 0 yapıldı
                     'controls': 0,
                     'disablekb': 1,
                     'modestbranding': 1,
                     'rel': 0,
-                    'loop': 0
+                    'loop': 0,
+                    'playsinline': 1 // iOS tam ekran açılmasını engeller
                 },
                 events: {
-                    'onReady': (event) => {
-                        event.target.seekTo(state.seekTo, true);
-                    },
                     'onStateChange': onPlayerStateChange
                 }
             });
@@ -319,6 +319,8 @@
         function startRadio() {
             if (!player) return;
             const state = getCurrentStreamState();
+            
+            // Kullanıcı dokunuşuyla birlikte canlı zamana senkronlayıp başlatıyoruz
             player.seekTo(state.seekTo, true);
             player.playVideo();
             player.unMute();

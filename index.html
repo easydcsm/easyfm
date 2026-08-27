@@ -123,6 +123,18 @@
             height: 100%;
             border: none;
         }
+
+        /* MÜDAHALEYİ ENGELLEYEN ŞEFFAF KATMAN */
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            background: rgba(0, 0, 0, 0);
+            cursor: default;
+        }
     </style>
 
     <!-- Firebase SDK (Anlık Sayaç İçin) -->
@@ -144,6 +156,8 @@
     </div>
 
     <div class="video-container">
+        <!-- Tıklama ve durdurmayı engelleyen şeffaf katman -->
+        <div class="video-overlay"></div>
         <div id="player"></div>
     </div>
 
@@ -184,17 +198,39 @@
         });
         
         // -------------------------------------------------------------
-        // 2. YOUTUBE OYNATICI VE ŞARKI LİSTESİ KODLARI
+        // 2. CANLI SENKRONİZASYONLU VE KONTROL KISITLAMALI OYNATICI
         // -------------------------------------------------------------
+        
+        // Şarkı listeniz (Şarkı süreleri saniye bazlı tahmin edilip milisaniyelik eşitlikle senkronize edilir)
         const songList = [
-            'qAlF70MdfwU', // 1. Şarkı ID
-            'L_BpiSsIBFM', // 2. Şarkı ID
-            'cTGQrA5HHIU', // 3. Şarkı ID
-            'ftaXMKV3ffE', // 4. Şarkı ID
+            { id: 'qAlF70MdfwU', duration: 210 }, 
+            { id: 'L_BpiSsIBFM', duration: 180 }, 
+            { id: 'cTGQrA5HHIU', duration: 200 }, 
+            { id: 'ftaXMKV3ffE', duration: 190 }
         ];
 
-        let currentSongIndex = 0;
+        // Sabit Yayın Başlangıç Zamanı (Epoch Timestamp)
+        const STREAM_START_TIME = 1700000000; 
+        const totalPlaylistDuration = songList.reduce((acc, song) => acc + song.duration, 0);
+
         let player;
+
+        function getCurrentStreamState() {
+            const nowInSeconds = Math.floor(Date.now() / 1000);
+            const elapsedTime = (nowInSeconds - STREAM_START_TIME) % totalPlaylistDuration;
+
+            let accumulatedTime = 0;
+            for (let i = 0; i < songList.length; i++) {
+                if (elapsedTime < accumulatedTime + songList[i].duration) {
+                    return {
+                        songIndex: i,
+                        seekTo: elapsedTime - accumulatedTime
+                    };
+                }
+                accumulatedTime += songList[i].duration;
+            }
+            return { songIndex: 0, seekTo: 0 };
+        }
 
         const tag = document.createElement('script');
         tag.src = "https://www.youtube.com/iframe_api";
@@ -202,30 +238,50 @@
         firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
         function onYouTubeIframeAPIReady() {
+            const state = getCurrentStreamState();
+
             player = new YT.Player('player', {
-                videoId: songList[currentSongIndex],
+                videoId: songList[state.songIndex].id,
                 playerVars: {
                     'autoplay': 1,
-                    'controls': 1,
+                    'controls': 0,        // Kontrol çubuğunu gizle
+                    'disablekb': 1,        // Klavye tuşlarını kapat (Space vb.)
+                    'modestbranding': 1,
                     'rel': 0
                 },
                 events: {
-                    'onReady': onPlayerReady,
+                    'onReady': (event) => {
+                        event.target.seekTo(state.seekTo, true);
+                        event.target.playVideo();
+                    },
                     'onStateChange': onPlayerStateChange
                 }
             });
         }
 
-        function onPlayerReady(event) {
-            event.target.playVideo();
-        }
-
         function onPlayerStateChange(event) {
+            // Şarkı bittiğinde canlı yayının o anki senkron konumuna geç
             if (event.data === YT.PlayerState.ENDED) {
-                currentSongIndex = (currentSongIndex + 1) % songList.length;
-                player.loadVideoById(songList[currentSongIndex]);
+                const state = getCurrentStreamState();
+                player.loadVideoById({
+                    videoId: songList[state.songIndex].id,
+                    startSeconds: state.seekTo
+                });
             }
         }
+
+        // İnternet veya tarayıcı yavaşlığından doğacak kaymaları her 8 saniyede bir canlandıran koruma
+        setInterval(() => {
+            if (player && player.getCurrentTime) {
+                const state = getCurrentStreamState();
+                const currentTime = player.getCurrentTime();
+                
+                // 3 saniyeden fazla kopukluk varsa canlı akışa tekrar senkronize et
+                if (Math.abs(currentTime - state.seekTo) > 3) {
+                    player.seekTo(state.seekTo, true);
+                }
+            }
+        }, 8000);
     </script>
 </body>
 </html>

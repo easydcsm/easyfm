@@ -3,26 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EA$Y FM - 24/7 TRAP & HIP-HOP</title>
+    <title>EA$Y FM - 24/7 TRAP RADIO</title>
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:wght@800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
     
     <style>
         * {
             box-sizing: border-box;
-        }
-
-        :root {
-            --glow-color: rgba(255, 255, 255, 0.8);
-            --accent-color: #ffffff;
-            --particle-color: #ffffff;
-        }
-
-        /* SLIME GREEN NEON MODE */
-        body.slime-mode-active {
-            --glow-color: rgba(57, 255, 20, 0.8);
-            --accent-color: #39ff14;
-            --particle-color: #39ff14;
         }
 
         body {
@@ -30,17 +17,11 @@
             background-color: #050505;
             color: #fff;
             font-family: 'Montserrat', sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
             min-height: 100vh;
             overflow-x: hidden;
             position: relative;
-            transition: background-color 0.5s;
         }
 
-        /* ARKA PLAN CANVAS */
         #bg-canvas {
             position: fixed;
             top: 0;
@@ -61,37 +42,48 @@
             background: radial-gradient(circle, rgba(255, 255, 255, 0.04) 0%, rgba(0, 0, 0, 0) 70%);
             z-index: 2;
             pointer-events: none;
-            transition: background 0.5s ease;
+            transition: opacity 0.5s ease;
         }
 
-        /* ÜST SAĞ MOD TOGGLE PANELİ */
-        .glow-toggle-container {
+        /* TOP BAR KONTROLLERİ */
+        .top-controls {
             position: fixed;
             top: 20px;
             right: 20px;
             z-index: 100;
             display: flex;
             align-items: center;
-            gap: 15px;
-            background: rgba(17, 17, 17, 0.7);
+            gap: 12px;
+        }
+
+        .glow-toggle-container, .airhorn-btn {
+            background: rgba(17, 17, 17, 0.75);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             padding: 8px 16px;
             border-radius: 30px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-        }
-
-        .toggle-group {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            cursor: pointer;
+            color: #fff;
+            font-weight: 900;
+            font-size: 11px;
+            letter-spacing: 1px;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .airhorn-btn:hover {
+            transform: scale(1.05);
+            border-color: #fff;
         }
 
         .glow-toggle-label {
-            font-size: 9px;
+            font-size: 10px;
             font-weight: 900;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
             color: #fff;
             text-transform: uppercase;
         }
@@ -99,8 +91,8 @@
         .switch {
             position: relative;
             display: inline-block;
-            width: 32px;
-            height: 18px;
+            width: 36px;
+            height: 20px;
         }
 
         .switch input { opacity: 0; width: 0; height: 0; }
@@ -118,8 +110,8 @@
         .slider-toggle:before {
             position: absolute;
             content: "";
-            height: 10px;
-            width: 10px;
+            height: 12px;
+            width: 12px;
             left: 3px;
             bottom: 3px;
             background-color: white;
@@ -128,73 +120,56 @@
             box-shadow: 0 0 5px #fff;
         }
 
-        input:checked + .slider-toggle { background-color: var(--accent-color); }
-        input:checked + .slider-toggle:before {
-            transform: translateX(12px);
-            background-color: #000;
-        }
+        input:checked + .slider-toggle { background-color: #ffffff; }
+        input:checked + .slider-toggle:before { transform: translateX(15px); background-color: #000; }
 
-        /* DIAMOND & SLIME MODE EFFECTS */
         body.diamond-mode-active .ambient-glow {
             background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.02) 50%, rgba(0, 0, 0, 0) 75%);
         }
-
-        body.slime-mode-active .ambient-glow {
-            background: radial-gradient(circle, rgba(57, 255, 20, 0.15) 0%, rgba(57, 255, 20, 0.02) 50%, rgba(0, 0, 0, 0) 75%);
+        body.diamond-mode-active h1 {
+            text-shadow: 0 0 15px rgba(255, 255, 255, 1), 0 0 30px rgba(255, 255, 255, 0.8);
         }
 
-        .main-wrapper {
+        /* ANA LAYOUT: RADYO + CHAT GRID */
+        .app-container {
             position: relative;
             z-index: 10;
-            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 360px;
+            max-width: 1300px;
+            margin: 0 auto;
+            min-height: 100vh;
+            padding: 40px 20px;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .radio-section {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 20px 10px;
+            width: 100%;
         }
 
         .logo-container {
             text-align: center;
             margin-bottom: 15px;
-            margin-top: 10px;
-            transition: transform 0.1s ease;
-        }
-
-        /* BEAT BOUNCE EFEKTİ */
-        .beat-bounce {
-            transform: scale(1.02);
         }
 
         h1 {
             margin: 0;
             font-family: 'Anton', sans-serif;
-            font-size: 64px;
-            letter-spacing: 4px;
+            font-size: 72px;
+            letter-spacing: 5px;
             text-transform: uppercase;
-            
-            background: linear-gradient(
-                135deg, 
-                #ffffff 0%, 
-                #a6a6a6 25%, 
-                #ffffff 50%, 
-                #737373 75%, 
-                #ffffff 100%
-            );
+            background: linear-gradient(135deg, #ffffff 0%, #a6a6a6 25%, #ffffff 50%, #737373 75%, #ffffff 100%);
             background-size: 200% auto;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            
-            text-shadow: 0 0 15px var(--glow-color);
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 255, 255, 0.4);
             transform: skew(-4deg);
             animation: diamondShine 4s linear infinite;
-            transition: text-shadow 0.3s;
-        }
-
-        body.slime-mode-active h1 {
-            background: linear-gradient(135deg, #39ff14 0%, #1c800a 50%, #39ff14 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
         }
 
         @keyframes diamondShine {
@@ -207,40 +182,32 @@
             font-weight: 900;
             font-size: 12px;
             color: #ffffff;
-            letter-spacing: 5px;
-            margin-top: 6px;
+            letter-spacing: 6px;
+            margin-top: 5px;
             text-transform: uppercase;
-            opacity: 0.9;
-        }
-
-        /* İZLEYİCİ VE CANLI YAYIN BİLGİ ROZETLERİ */
-        .badge-container {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
+            opacity: 0.85;
         }
 
         .listener-badge {
             background: rgba(17, 17, 17, 0.7);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.15);
-            padding: 6px 18px;
+            padding: 6px 20px;
             border-radius: 30px;
             font-size: 12px;
             letter-spacing: 1px;
+            margin-bottom: 20px;
             display: flex;
             align-items: center;
             gap: 10px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
         }
 
         .live-dot {
             width: 8px;
             height: 8px;
-            background-color: var(--accent-color);
+            background-color: #ffffff;
             border-radius: 50%;
-            display: inline-block;
-            box-shadow: 0 0 10px var(--accent-color);
+            box-shadow: 0 0 10px #ffffff;
             animation: pulse 1.5s infinite;
         }
 
@@ -250,81 +217,40 @@
             100% { opacity: 1; transform: scale(1); }
         }
 
-        /* YENİ: DINAMIK PARÇA TICKER */
-        .track-ticker-container {
-            width: 80%;
-            max-width: 650px;
-            background: rgba(10, 10, 10, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            padding: 6px 15px;
-            margin-bottom: 12px;
-            overflow: hidden;
-            white-space: nowrap;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
-        }
-
-        .track-ticker {
-            display: inline-block;
-            font-size: 11px;
-            font-weight: 800;
-            letter-spacing: 1.5px;
-            color: #aaa;
-            text-transform: uppercase;
-            animation: marquee 15s linear infinite;
-        }
-
-        .track-ticker span {
-            color: var(--accent-color);
-        }
-
-        @keyframes marquee {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
-        }
-
-        /* VİDEO KONTEYNERİ */
         .video-container {
             position: relative;
-            width: 80%;
+            width: 100%;
             max-width: 650px;
-            padding-bottom: 36.56%;
+            padding-bottom: 48%;
             height: 0;
             border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            transition: box-shadow 0.3s, border-color 0.3s, transform 0.1s;
-        }
-
-        .video-container.beat-glow {
-            box-shadow: 0 0 30px var(--glow-color);
-            border-color: var(--accent-color);
+            box-shadow: 0 10px 40px rgba(255, 255, 255, 0.08);
+            border: 1px solid #222222;
         }
 
         .video-container iframe {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             border: none;
         }
 
         .click-toggle-overlay {
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             z-index: 15;
             cursor: pointer;
         }
 
         #start-overlay {
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             background: rgba(5, 5, 5, 0.98);
             z-index: 30;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
             cursor: pointer;
@@ -332,23 +258,21 @@
         }
 
         .start-btn {
-            background: var(--accent-color);
+            background: #ffffff;
             color: #000;
-            font-family: 'Montserrat', sans-serif;
             font-weight: 900;
             font-size: 15px;
-            padding: 14px 32px;
+            padding: 14px 36px;
             border: none;
             border-radius: 50px;
             cursor: pointer;
             letter-spacing: 2px;
-            box-shadow: 0 0 20px var(--glow-color);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
             transition: transform 0.2s;
         }
 
         .start-btn:hover { transform: scale(1.05); }
 
-        /* VISUALIZER SPEKTRUMU */
         .visualizer-container {
             display: flex;
             align-items: flex-end;
@@ -359,23 +283,16 @@
             opacity: 0;
             transition: opacity 0.5s;
         }
-
         .visualizer-container.active { opacity: 1; }
-
         .v-bar {
             width: 4px;
-            background: linear-gradient(to top, #444, var(--accent-color));
+            background: linear-gradient(to top, #666, #fff);
             border-radius: 3px;
             height: 10%;
             transition: height 0.1s ease;
         }
 
-        /* SES KONTROL PANELİ */
-        .controls {
-            margin-top: 15px;
-            margin-bottom: 40px;
-            z-index: 20;
-        }
+        .controls { margin-top: 15px; }
 
         .volume-control-panel {
             display: flex;
@@ -384,9 +301,8 @@
             background: rgba(17, 17, 17, 0.7);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.15);
-            padding: 10px 20px;
+            padding: 8px 18px;
             border-radius: 30px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
         }
 
         .mute-btn {
@@ -396,163 +312,268 @@
             cursor: pointer;
             display: flex;
             align-items: center;
-            padding: 4px;
         }
-
         .mute-btn svg { width: 18px; height: 18px; fill: #ffffff; }
 
         .volume-slider {
             -webkit-appearance: none;
             appearance: none;
-            width: 110px;
+            width: 100px;
             height: 4px;
             border-radius: 5px;
-            background: #333;
+            background: #333333;
             outline: none;
             cursor: pointer;
         }
-
         .volume-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 14px;
-            height: 14px;
+            width: 14px; height: 14px;
             border-radius: 50%;
-            background: var(--accent-color);
-            cursor: pointer;
-            box-shadow: 0 0 8px var(--glow-color);
+            background: #ffffff;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
         }
 
-        .volume-percentage {
-            font-size: 11px;
-            font-weight: 800;
-            color: #888;
-            min-width: 32px;
-            text-align: right;
+        .volume-percentage { font-size: 11px; font-weight: 800; color: #888; min-width: 30px; text-align: right; }
+
+        /* CANLI CHAT PANELİ STİLLERİ */
+        .chat-section {
+            background: rgba(12, 12, 12, 0.85);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 20px;
+            height: 540px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
         }
 
-        /* KISAYOL İPUCU FOOTER */
-        .hotkey-hint {
-            position: fixed;
-            bottom: 12px;
-            font-size: 9px;
-            color: #555;
-            letter-spacing: 1px;
+        .chat-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            font-weight: 900;
+            font-size: 13px;
+            letter-spacing: 2px;
             text-transform: uppercase;
-            z-index: 20;
-            pointer-events: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,255,255,0.02);
         }
 
-        @media (max-width: 768px) {
-            .glow-toggle-container { top: 10px; right: 10px; padding: 6px 12px; }
-            h1 { font-size: 38px; }
-            .video-container { width: 92%; padding-bottom: 51.75%; }
-            .track-ticker-container { width: 92%; }
-            .hotkey-hint { display: none; }
+        .chat-header span { color: #888; font-size: 10px; }
+
+        .chat-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            scroll-behavior: smooth;
+        }
+
+        .chat-messages::-webkit-scrollbar { width: 4px; }
+        .chat-messages::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+
+        .msg-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 10px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            line-height: 1.4;
+            word-break: break-word;
+        }
+
+        .msg-author {
+            font-weight: 900;
+            color: #fff;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .msg-badge {
+            font-size: 9px;
+            background: #fff;
+            color: #000;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 900;
+        }
+
+        .msg-text { color: #ccc; }
+
+        .chat-input-area {
+            padding: 12px 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            background: rgba(0,0,0,0.4);
+        }
+
+        .chat-user-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .chat-input, .nickname-input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: #fff;
+            font-family: inherit;
+            font-size: 12px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .nickname-input { width: 110px; font-weight: 800; }
+        .chat-input { flex: 1; }
+
+        .chat-input:focus, .nickname-input:focus {
+            border-color: #fff;
+        }
+
+        .send-btn {
+            background: #fff;
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            padding: 0 16px;
+            font-weight: 900;
+            font-size: 11px;
+            cursor: pointer;
+            letter-spacing: 1px;
+            transition: transform 0.15s;
+        }
+
+        .send-btn:hover { transform: scale(1.05); }
+
+        /* RESPONSIVE DESIGN */
+        @media (max-width: 950px) {
+            .app-container {
+                grid-template-columns: 1fr;
+                padding-top: 80px;
+            }
+            .chat-section {
+                height: 400px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 46px; }
+            .top-controls { top: 12px; right: 12px; }
         }
     </style>
 
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body>
 
-    <!-- MOD SEÇENEKLERİ -->
-    <div class="glow-toggle-container">
-        <div class="toggle-group">
-            <span class="glow-toggle-label">DIAMOND</span>
+    <!-- TOP CONTROL BAR -->
+    <div class="top-controls">
+        <button class="airhorn-btn" onclick="playAirhorn()" title="Korna Efekti!">
+            🔊 AIRHORN
+        </button>
+        <div class="glow-toggle-container">
+            <span class="glow-toggle-label">DIAMOND GLOW</span>
             <label class="switch">
                 <input type="checkbox" id="glow-toggle" onchange="toggleDiamondGlow(this)">
                 <span class="slider-toggle"></span>
             </label>
         </div>
-        <div class="toggle-group">
-            <span class="glow-toggle-label" style="color: #39ff14;">SLIME</span>
-            <label class="switch">
-                <input type="checkbox" id="slime-toggle" onchange="toggleSlimeMode(this)">
-                <span class="slider-toggle"></span>
-            </label>
-        </div>
     </div>
 
+    <!-- Background Layers -->
     <canvas id="bg-canvas"></canvas>
     <div class="ambient-glow"></div>
 
-    <div class="main-wrapper">
-        <div class="logo-container" id="logo-box">
-            <h1>EA$Y FM</h1>
-            <div class="subtitle">7/24 YÜZDE YÜZ MÜZİK</div>
-        </div>
+    <div class="app-container">
+        
+        <!-- RADYO PLAYER ALANI -->
+        <div class="radio-section">
+            <div class="logo-container">
+                <h1>EA$Y FM</h1>
+                <div class="subtitle">7/24 YÜZDE YÜZ TRAP & HIP-HOP</div>
+            </div>
 
-        <div class="badge-container">
             <div class="listener-badge">
                 <span class="live-dot"></span>
-                <span>Anlık Dinleyici: <strong id="listener-count" style="color: #fff;">0</strong></span>
+                <span>Anlık Dinleyici: <strong id="listener-count" style="color: #ffffff;">0</strong></span>
+            </div>
+
+            <div class="video-container">
+                <div id="start-overlay" onclick="startRadio()">
+                    <button class="start-btn">CANLI YAYINA KATIL</button>
+                </div>
+                <div class="click-toggle-overlay" onclick="togglePlayPause()"></div>
+                <div id="player"></div>
+            </div>
+
+            <!-- Visualizer -->
+            <div class="visualizer-container" id="visualizer">
+                <div class="v-bar"></div><div class="v-bar"></div><div class="v-bar"></div><div class="v-bar"></div>
+                <div class="v-bar"></div><div class="v-bar"></div><div class="v-bar"></div><div class="v-bar"></div>
+                <div class="v-bar"></div><div class="v-bar"></div><div class="v-bar"></div><div class="v-bar"></div>
+                <div class="v-bar"></div><div class="v-bar"></div><div class="v-bar"></div><div class="v-bar"></div>
+            </div>
+
+            <!-- Controls -->
+            <div class="controls">
+                <div class="volume-control-panel">
+                    <button id="mute-btn" class="mute-btn" onclick="toggleMute()" title="Sesi Aç / Kapat">
+                        <svg id="volume-icon" viewBox="0 0 24 24">
+                            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+                        </svg>
+                    </button>
+                    <input type="range" id="volume-slider" class="volume-slider" min="0" max="100" value="100" oninput="changeVolume(this.value)">
+                    <span id="volume-text" class="volume-percentage">100%</span>
+                </div>
             </div>
         </div>
 
-        <!-- DİNAMİK CANLI YAYIN PARÇA TICKER -->
-        <div class="track-ticker-container">
-            <div class="track-ticker" id="track-ticker">
-                ŞU AN YAYINDA: <span id="current-track-name">YÜKLENİYOR...</span> — EA$Y FM TRAP RADIO
+        <!-- CANLI CHAT ALANI -->
+        <div class="chat-section">
+            <div class="chat-header">
+                LIVE CHAT <span>LIVE FEED</span>
+            </div>
+            <div class="chat-messages" id="chat-messages">
+                <!-- Mesajlar Firebase üzerinden buraya dolacak -->
+            </div>
+            <div class="chat-input-area">
+                <div class="chat-user-row">
+                    <input type="text" id="nickname-input" class="nickname-input" placeholder="Rumuz..." maxlength="12">
+                    <input type="text" id="chat-input" class="chat-input" placeholder="Mesaj yazın..." onkeypress="handleKeyPress(event)">
+                    <button class="send-btn" onclick="sendChatMessage()">GÖNDER</button>
+                </div>
             </div>
         </div>
 
-        <div class="video-container" id="video-box">
-            <div id="start-overlay" onclick="startRadio()">
-                <button class="start-btn">CANLI YAYINA KATIL</button>
-            </div>
-            <div class="click-toggle-overlay" onclick="togglePlayPause()"></div>
-            <div id="player"></div>
-        </div>
-
-        <div class="visualizer-container" id="visualizer">
-            <div class="v-bar"></div><div class="v-bar"></div><div class="v-bar"></div><div class="v-bar"></div>
-            <div class="v-bar"></div><div class="v-bar"></div><div class="v-bar"></div><div class="v-bar"></div>
-            <div class="v-bar"></div><div class="v-bar"></div><div class="v-bar"></div><div class="v-bar"></div>
-            <div class="v-bar"></div><div class="v-bar"></div><div class="v-bar"></div><div class="v-bar"></div>
-        </div>
-
-        <div class="controls">
-            <div class="volume-control-panel">
-                <button id="mute-btn" class="mute-btn" onclick="toggleMute()">
-                    <svg id="volume-icon" viewBox="0 0 24 24">
-                        <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
-                    </svg>
-                </button>
-                <input type="range" id="volume-slider" class="volume-slider" min="0" max="100" value="100" oninput="changeVolume(this.value)">
-                <span id="volume-text" class="volume-percentage">100%</span>
-            </div>
-        </div>
     </div>
 
-    <div class="hotkey-hint">[SPACE] OYNAT/DURDUR &nbsp;|&nbsp; [M] MUTE &nbsp;|&nbsp; [▲/▼] SES</div>
-
     <script>
-        // MOD TOGGLE SİSTEMLERİ
-        function toggleDiamondGlow(cb) {
-            if(cb.checked) {
-                document.getElementById('slime-toggle').checked = false;
-                document.body.classList.remove('slime-mode-active');
+        // DIAMOND GLOW SYSTEM
+        function toggleDiamondGlow(checkbox) {
+            if (checkbox.checked) {
                 document.body.classList.add('diamond-mode-active');
             } else {
                 document.body.classList.remove('diamond-mode-active');
             }
         }
 
-        function toggleSlimeMode(cb) {
-            if(cb.checked) {
-                document.getElementById('glow-toggle').checked = false;
-                document.body.classList.remove('diamond-mode-active');
-                document.body.classList.add('slime-mode-active');
-            } else {
-                document.body.classList.remove('slime-mode-active');
-            }
-        }
-
-        // CANVAS PARÇACIK ANİMASYONU
+        // BACKGROUND PARTICLES
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
         let particlesArray = [];
+        const numberOfParticles = 40;
 
         function resizeCanvas() {
             canvas.width = window.innerWidth;
@@ -565,12 +586,12 @@
             constructor() {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 2.5 + 0.5;
+                this.size = Math.random() * 2 + 0.5;
                 this.speedX = (Math.random() - 0.5) * 0.4;
                 this.speedY = (Math.random() - 0.5) * 0.4;
                 this.opacity = Math.random() * 0.7 + 0.2;
+                this.pulseSpeed = Math.random() * 0.02 + 0.005;
             }
-
             update() {
                 this.x += this.speedX;
                 this.y += this.speedY;
@@ -578,13 +599,15 @@
                 if (this.x > canvas.width) this.x = 0;
                 if (this.y < 0) this.y = canvas.height;
                 if (this.y > canvas.height) this.y = 0;
-            }
 
+                this.opacity += Math.sin(Date.now() * this.pulseSpeed) * 0.01;
+                if (this.opacity < 0.1) this.opacity = 0.1;
+                if (this.opacity > 0.9) this.opacity = 0.9;
+            }
             draw() {
-                const color = getComputedStyle(document.body).getPropertyValue('--particle-color').trim() || '#ffffff';
-                ctx.fillStyle = color;
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
                 ctx.shadowBlur = 8;
-                ctx.shadowColor = color;
+                ctx.shadowColor = "#ffffff";
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                 ctx.fill();
@@ -592,46 +615,38 @@
             }
         }
 
-        for (let i = 0; i < 45; i++) particlesArray.push(new Particle());
-
+        function initParticles() {
+            particlesArray = [];
+            for (let i = 0; i < numberOfParticles; i++) {
+                particlesArray.push(new Particle());
+            }
+        }
         function animateParticles() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particlesArray.forEach(p => { p.update(); p.draw(); });
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update();
+                particlesArray[i].draw();
+            }
             requestAnimationFrame(animateParticles);
         }
+        initParticles();
         animateParticles();
 
-        // BEAT PULSE & VISUALIZER
+        // VISUALIZER SPECTRUM
         const vBars = document.querySelectorAll('.v-bar');
-        const videoBox = document.getElementById('video-box');
-        const logoBox = document.getElementById('logo-box');
-
         function animateVisualizer() {
             if (isStarted && player && player.getPlayerState() === YT.PlayerState.PLAYING && !player.isMuted()) {
-                let maxBarHeight = 0;
                 vBars.forEach(bar => {
                     const randomHeight = Math.floor(Math.random() * 85) + 15;
                     bar.style.height = randomHeight + '%';
-                    if (randomHeight > maxBarHeight) maxBarHeight = randomHeight;
                 });
-
-                // Bas Vurma Efekti
-                if (maxBarHeight > 75) {
-                    videoBox.classList.add('beat-glow');
-                    logoBox.classList.add('beat-bounce');
-                } else {
-                    videoBox.classList.remove('beat-glow');
-                    logoBox.classList.remove('beat-bounce');
-                }
             } else {
                 vBars.forEach(bar => { bar.style.height = '10%'; });
-                videoBox.classList.remove('beat-glow');
-                logoBox.classList.remove('beat-bounce');
             }
         }
-        setInterval(animateVisualizer, 110);
+        setInterval(animateVisualizer, 120);
 
-        // FIREBASE İZLEYİCİ TAKİBİ
+        // FIREBASE SETUP & REALTIME CHAT / COUNTER
         const firebaseConfig = {
             apiKey: "AIzaSyBaTlb6V6e4FMLTYNXAPBgdzsgiclL8Qw8",
             authDomain: "easyfm-37b9e.firebaseapp.com",
@@ -639,33 +654,98 @@
             projectId: "easyfm-37b9e",
             storageBucket: "easyfm-37b9e.firebasestorage.app",
             messagingSenderId: "869244564550",
-            appId: "1:869244564550:web:f0824148dbcae6b7024647"
+            appId: "1:869244564550:web:f0824148dbcae6b7024647",
+            measurementId: "G-7WEFWTKBC7"
         };
+
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
-        const myConnectionsRef = db.ref('online_listeners');
 
-        db.ref('.info/connected').on('value', (snap) => {
+        // ONLINE COUNTER
+        const myConnectionsRef = db.ref('online_listeners');
+        const connectedRef = db.ref('.info/connected');
+        connectedRef.on('value', (snap) => {
             if (snap.val() === true) {
                 const con = myConnectionsRef.push();
                 con.onDisconnect().remove();
                 con.set(true);
             }
         });
-
         myConnectionsRef.on('value', (snap) => {
             document.getElementById('listener-count').innerText = snap.numChildren();
         });
 
-        // PLAYLIST VE PARÇA BİLGİLERİ
+        // CHAT SYSTEM
+        const chatRef = db.ref('chat_messages');
+        const chatContainer = document.getElementById('chat-messages');
+
+        chatRef.limitToLast(40).on('child_added', (snapshot) => {
+            const data = snapshot.val();
+            appendMessage(data.name, data.message);
+        });
+
+        function appendMessage(name, text) {
+            const msgCard = document.createElement('div');
+            msgCard.className = 'msg-card';
+            msgCard.innerHTML = `
+                <div class="msg-author"><span class="msg-badge">MEMBER</span> ${escapeHtml(name)}</div>
+                <div class="msg-text">${escapeHtml(text)}</div>
+            `;
+            chatContainer.appendChild(msgCard);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function sendChatMessage() {
+            const nickInput = document.getElementById('nickname-input');
+            const msgInput = document.getElementById('chat-input');
+
+            const name = nickInput.value.trim() || 'Guest';
+            const message = msgInput.value.trim();
+
+            if (!message) return;
+
+            chatRef.push({
+                name: name,
+                message: message,
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            });
+
+            msgInput.value = '';
+        }
+
+        function handleKeyPress(e) {
+            if (e.key === 'Enter') sendChatMessage();
+        }
+
+        function escapeHtml(text) {
+            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+
+        // AIRHORN SOUND EFFECT
+        function playAirhorn() {
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(280, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(380, audioCtx.currentTime + 0.1);
+            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.3);
+        }
+
+        // RADIO STREAM SYNC
         const songList = [
-            { id: '1IEg_3x35go', duration: 120, title: "JackBoys - GANG GANG" },
-            { id: 'qAlF70MdfwU', duration: 207, title: "Travis Scott - HIGHEST IN THE ROOM" }, 
-            { id: 'L_BpiSsIBFM', duration: 236, title: "Young Thug - Solid ft. Drake" }, 
-            { id: 'cTGQrA5HHIU', duration: 204, title: "Kodak Black - Super Gremlin" }, 
-            { id: 'ftaXMKV3ffE', duration: 160, title: "NLE Choppa - Walk Em Down" },
-            { id: 'LPTlvQ1Zet0', duration: 188, title: "Future - Mask Off" },
-            { id: 'EfHNIPXTxy0', duration: 276, title: "Playboi Carti - Sky" }
+            { id: '1IEg_3x35go', duration: 120 },
+            { id: 'qAlF70MdfwU', duration: 207 }, 
+            { id: 'L_BpiSsIBFM', duration: 236 }, 
+            { id: 'cTGQrA5HHIU', duration: 204 }, 
+            { id: 'ftaXMKV3ffE', duration: 160 },
+            { id: 'LPTlvQ1Zet0', duration: 188 },
+            { id: 'EfHNIPXTxy0', duration: 276 }
         ];
 
         const STREAM_START_TIME = 1700000000; 
@@ -680,41 +760,34 @@
         function getCurrentStreamState() {
             const nowInSeconds = Math.floor(Date.now() / 1000);
             const elapsedTime = (nowInSeconds - STREAM_START_TIME) % totalPlaylistDuration;
-
             let accumulatedTime = 0;
+
             for (let i = 0; i < songList.length; i++) {
                 if (elapsedTime < accumulatedTime + songList[i].duration) {
-                    return {
-                        songIndex: i,
-                        seekTo: elapsedTime - accumulatedTime,
-                        title: songList[i].title
-                    };
+                    return { songIndex: i, seekTo: elapsedTime - accumulatedTime };
                 }
                 accumulatedTime += songList[i].duration;
             }
-            return { songIndex: 0, seekTo: 0, title: songList[0].title };
+            return { songIndex: 0, seekTo: 0 };
         }
 
         const tag = document.createElement('script');
         tag.src = "https://www.youtube.com/iframe_api";
-        document.getElementsByTagName('script')[0].parentNode.insertBefore(tag, document.getElementsByTagName('script')[0]);
+        const firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
         function onYouTubeIframeAPIReady() {
             const state = getCurrentStreamState();
             currentLoadedVideoId = songList[state.songIndex].id;
-            updateTickerTitle(state.title);
 
             player = new YT.Player('player', {
                 videoId: currentLoadedVideoId,
                 playerVars: {
-                    'autoplay': 0, 'controls': 0, 'disablekb': 1, 'modestbranding': 1, 'rel': 0, 'playsinline': 1
+                    'autoplay': 0, 'controls': 0, 'disablekb': 1,
+                    'modestbranding': 1, 'rel': 0, 'loop': 0, 'playsinline': 1
                 },
                 events: { 'onStateChange': onPlayerStateChange }
             });
-        }
-
-        function updateTickerTitle(title) {
-            document.getElementById('current-track-name').innerText = title;
         }
 
         function startRadio() {
@@ -729,7 +802,6 @@
             overlay.style.opacity = '0';
             setTimeout(() => { overlay.style.display = 'none'; }, 500);
             isStarted = true;
-
             document.getElementById('visualizer').classList.add('active');
         }
 
@@ -743,28 +815,44 @@
             }
         }
 
+        // VOLUME LOGIC
+        const volumeIconHigh = '<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>';
+        const volumeIconMute = '<path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>';
+
         function changeVolume(val) {
             if (!player) return;
+            const volumeText = document.getElementById('volume-text');
+            const icon = document.getElementById('volume-icon');
             player.setVolume(val);
-            document.getElementById('volume-text').innerText = val + '%';
-            if (val == 0) player.mute();
-            else if (player.isMuted()) player.unMute();
+            volumeText.innerText = val + '%';
+            if (val == 0) {
+                player.mute();
+                icon.innerHTML = volumeIconMute;
+            } else {
+                if (player.isMuted()) player.unMute();
+                icon.innerHTML = volumeIconHigh;
+                lastVolumeLevel = val;
+            }
         }
 
         function toggleMute() {
             if (!player) return;
             const slider = document.getElementById('volume-slider');
+            const icon = document.getElementById('volume-icon');
+
             if (player.isMuted() || slider.value == 0) {
-                const target = lastVolumeLevel > 0 ? lastVolumeLevel : 50;
+                const targetVolume = lastVolumeLevel > 0 ? lastVolumeLevel : 50;
                 player.unMute();
-                player.setVolume(target);
-                slider.value = target;
-                document.getElementById('volume-text').innerText = target + '%';
+                player.setVolume(targetVolume);
+                slider.value = targetVolume;
+                document.getElementById('volume-text').innerText = targetVolume + '%';
+                icon.innerHTML = volumeIconHigh;
             } else {
                 lastVolumeLevel = slider.value;
                 player.mute();
                 slider.value = 0;
                 document.getElementById('volume-text').innerText = '0%';
+                icon.innerHTML = volumeIconMute;
             }
         }
 
@@ -772,8 +860,6 @@
             if (!player || isChangingSong || !isStarted) return;
             const state = getCurrentStreamState();
             const targetSong = songList[state.songIndex];
-
-            updateTickerTitle(state.title);
 
             if (currentLoadedVideoId !== targetSong.id) {
                 isChangingSong = true;
@@ -800,28 +886,6 @@
                 syncToCurrentStream();
             }
         }, 5000);
-
-        // KLAVYE KISAYOLLARI (HOTKEYS)
-        window.addEventListener('keydown', (e) => {
-            if (e.code === 'Space') {
-                e.preventDefault();
-                togglePlayPause();
-            } else if (e.code === 'KeyM') {
-                toggleMute();
-            } else if (e.code === 'ArrowUp') {
-                e.preventDefault();
-                const slider = document.getElementById('volume-slider');
-                const newVal = Math.min(100, parseInt(slider.value) + 5);
-                slider.value = newVal;
-                changeVolume(newVal);
-            } else if (e.code === 'ArrowDown') {
-                e.preventDefault();
-                const slider = document.getElementById('volume-slider');
-                const newVal = Math.max(0, parseInt(slider.value) - 5);
-                slider.value = newVal;
-                changeVolume(newVal);
-            }
-        });
     </script>
 </body>
 </html>

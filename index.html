@@ -258,15 +258,6 @@
             height: 100%;
             border: none;
         }
-        
-        .video-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 5;
-        }
 
         /* BAŞLATMA OVERLAY EKRANI */
         #start-overlay {
@@ -330,7 +321,7 @@
             transition: height 0.1s ease;
         }
 
-        /* YENİ SES KONTROL PANELİ STİLLERİ */
+        /* SES KONTROL PANELİ STİLLERİ */
         .controls {
             margin-top: 15px;
             margin-bottom: 15px;
@@ -420,7 +411,7 @@
             text-align: right;
         }
 
-        /* ANLIK ÇALAN ŞARKI PANELSİ (NOW PLAYING) */
+        /* ANLIK ÇALAN ŞARKI PANELİ (NOW PLAYING) */
         .now-playing-bar {
             background: rgba(15, 15, 15, 0.85);
             backdrop-filter: blur(12px);
@@ -517,14 +508,11 @@
                 <button class="start-btn">CANLI YAYINA KATIL</button>
             </div>
 
-            <!-- Tıklama ve durdurmayı engelleyen şeffaf katman -->
-            <div class="video-overlay"></div>
             <div id="player"></div>
         </div>
 
         <!-- SES SPEKTRUMU (AUDIO VISUALIZER) -->
         <div class="visualizer-container" id="visualizer">
-            <!-- 16 Adet Spektrum Çubuğu -->
             <div class="v-bar"></div><div class="v-bar"></div><div class="v-bar"></div><div class="v-bar"></div>
             <div class="v-bar"></div><div class="v-bar"></div><div class="v-bar"></div><div class="v-bar"></div>
             <div class="v-bar"></div><div class="v-bar"></div><div class="v-bar"></div><div class="v-bar"></div>
@@ -535,7 +523,6 @@
         <div class="controls">
             <div class="volume-control-panel">
                 <button id="mute-btn" class="mute-btn" onclick="toggleMute()" title="Sesi Aç / Kapat">
-                    <!-- Ses Açık İkonu (SVG) -->
                     <svg id="volume-icon" viewBox="0 0 24 24">
                         <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
                     </svg>
@@ -545,7 +532,7 @@
             </div>
         </div>
 
-        <!-- ANLIK ÇALAN ŞARKI PANELSİ -->
+        <!-- ANLIK ÇALAN ŞARKI PANELİ -->
         <div class="now-playing-bar">
             <span>CANLI YAYIN:</span>
             <strong id="now-playing-text">EA$Y FM CANLI STREAMING</strong>
@@ -553,9 +540,7 @@
     </div>
 
     <script>
-        // -------------------------------------------------------------
         // DIAMOND GLOW TOGGLE SİSTEMİ
-        // -------------------------------------------------------------
         function toggleDiamondGlow(checkbox) {
             if (checkbox.checked) {
                 document.body.classList.add('diamond-mode-active');
@@ -564,9 +549,7 @@
             }
         }
 
-        // -------------------------------------------------------------
-        // HAREKETLİ KRİSTAL / ELMAS PARÇACIK ARKA PLAN ANİMASYONU
-        // -------------------------------------------------------------
+        // HAREKETLİ KRİSTAL PARÇACIK ANİMASYONU
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
 
@@ -635,9 +618,7 @@
         initParticles();
         animateParticles();
 
-        // -------------------------------------------------------------
         // DİNAMİK VISUALIZER SPEKTRUMU
-        // -------------------------------------------------------------
         const vBars = document.querySelectorAll('.v-bar');
         function animateVisualizer() {
             if (isStarted && player && player.getPlayerState() === YT.PlayerState.PLAYING && !player.isMuted()) {
@@ -651,9 +632,7 @@
         }
         setInterval(animateVisualizer, 120);
 
-        // -------------------------------------------------------------
-        // 1. FIREBASE KURULUMU VE ANLIK İZLEYİCİ TAKİP SİSTEMİ
-        // -------------------------------------------------------------
+        // FIREBASE KURULUMU VE ANLIK İZLEYİCİ TAKİP SİSTEMİ
         const firebaseConfig = {
             apiKey: "AIzaSyBaTlb6V6e4FMLTYNXAPBgdzsgiclL8Qw8",
             authDomain: "easyfm-37b9e.firebaseapp.com",
@@ -684,9 +663,7 @@
             document.getElementById('listener-count').innerText = count;
         });
         
-        // -------------------------------------------------------------
-        // 2. CANLI SENKRONİZASYON VE KİLİTLENME ÖNLEYİCİ SİSTEM
-        // -------------------------------------------------------------
+        // CANLI SENKRONİZASYON VE PLAYLIST SİSTEMİ
         const songList = [
             { id: '1IEg_3x35go', duration: 120, title: 'HIP-HOP HIT BANGER' },
             { id: 'qAlF70MdfwU', duration: 207, title: 'HEAVY TRAP BEATS' }, 
@@ -737,9 +714,7 @@
                 videoId: currentLoadedVideoId,
                 playerVars: {
                     'autoplay': 0,
-                    'controls': 0,
-                    'disablekb': 1,
-                    'modestbranding': 1,
+                    'controls': 1,
                     'rel': 0,
                     'loop': 0,
                     'playsinline': 1
@@ -774,9 +749,7 @@
             document.getElementById('visualizer').classList.add('active');
         }
 
-        // -------------------------------------------------------------
-        // 3. GELİŞMİŞ SES AYARLAMA VE MUTING FONKSİYONLARI
-        // -------------------------------------------------------------
+        // SES AYARLAMA VE MUTING FONKSİYONLARI
         const volumeIconHigh = '<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>';
         const volumeIconMute = '<path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>';
 

@@ -335,7 +335,6 @@
         /* SES KONTROL PANELİ STİLLERİ */
         .controls {
             margin-top: 15px;
-            margin-bottom: 15px;
             z-index: 20;
         }
 
@@ -422,29 +421,6 @@
             text-align: right;
         }
 
-        /* ANLIK ÇALAN ŞARKI PANELİ (NOW PLAYING) */
-        .now-playing-bar {
-            background: rgba(15, 15, 15, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-size: 11px;
-            letter-spacing: 2px;
-            color: #aaa;
-            text-transform: uppercase;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-        }
-
-        .now-playing-bar strong {
-            color: #fff;
-            font-weight: 900;
-        }
-
         /* MOBİL UYUM OPTİMİZASYONLARI */
         @media (max-width: 768px) {
             .glow-toggle-container {
@@ -473,10 +449,6 @@
             }
             .volume-slider {
                 width: 80px;
-            }
-            .now-playing-bar {
-                font-size: 9px;
-                padding: 6px 14px;
             }
         }
     </style>
@@ -544,12 +516,6 @@
                 <input type="range" id="volume-slider" class="volume-slider" min="0" max="100" value="100" oninput="changeVolume(this.value)">
                 <span id="volume-text" class="volume-percentage">100%</span>
             </div>
-        </div>
-
-        <!-- ANLIK ÇALAN ŞARKI PANELİ -->
-        <div class="now-playing-bar">
-            <span>CANLI YAYIN:</span>
-            <strong id="now-playing-text">EA$Y FM CANLI STREAMING</strong>
         </div>
     </div>
 
@@ -679,13 +645,13 @@
         
         // CANLI SENKRONİZASYON VE PLAYLIST SİSTEMİ
         const songList = [
-            { id: '1IEg_3x35go', duration: 120, title: 'HIP-HOP HIT BANGER' },
-            { id: 'qAlF70MdfwU', duration: 207, title: 'HEAVY TRAP BEATS' }, 
-            { id: 'L_BpiSsIBFM', duration: 236, title: 'STREET MENACE ANTHEM' }, 
-            { id: 'cTGQrA5HHIU', duration: 204, title: 'CERTIFIED CLUB BANGER' }, 
-            { id: 'ftaXMKV3ffE', duration: 160, title: 'DRILL VIBES 24/7' },
-            { id: 'LPTlvQ1Zet0', duration: 188, title: 'SLIME ENERGY' },
-            { id: 'EfHNIPXTxy0', duration: 276, title: 'MIDNIGHT TRAP SOUNDS' }
+            { id: '1IEg_3x35go', duration: 120 },
+            { id: 'qAlF70MdfwU', duration: 207 }, 
+            { id: 'L_BpiSsIBFM', duration: 236 }, 
+            { id: 'cTGQrA5HHIU', duration: 204 }, 
+            { id: 'ftaXMKV3ffE', duration: 160 },
+            { id: 'LPTlvQ1Zet0', duration: 188 },
+            { id: 'EfHNIPXTxy0', duration: 276 }
         ];
 
         const STREAM_START_TIME = 1700000000; 
@@ -722,7 +688,6 @@
         function onYouTubeIframeAPIReady() {
             const state = getCurrentStreamState();
             currentLoadedVideoId = songList[state.songIndex].id;
-            updateNowPlaying(state.songIndex);
 
             player = new YT.Player('player', {
                 videoId: currentLoadedVideoId,
@@ -739,13 +704,6 @@
                     'onStateChange': onPlayerStateChange
                 }
             });
-        }
-
-        function updateNowPlaying(index) {
-            const titleElem = document.getElementById('now-playing-text');
-            if (songList[index] && songList[index].title) {
-                titleElem.innerText = songList[index].title;
-            }
         }
 
         function startRadio() {
@@ -825,8 +783,6 @@
 
             const state = getCurrentStreamState();
             const targetSong = songList[state.songIndex];
-
-            updateNowPlaying(state.songIndex);
 
             if (currentLoadedVideoId !== targetSong.id) {
                 isChangingSong = true;

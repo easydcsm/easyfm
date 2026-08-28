@@ -26,7 +26,7 @@
             position: relative;
         }
 
-        /* EQUALIZER DİK ÇİZGİLER KANVASI (ARKA PLAN) */
+        /* EQUALIZER DİK ÇİZGİLER KANVASI */
         #bg-canvas {
             position: fixed;
             top: 0;
@@ -531,7 +531,7 @@
         }, 5000);
 
         // -------------------------------------------------------------
-        // 4. MÜZİK SENKRONİZASYONLU DİK ÇİZGİLER (FREKANS EQUALIZER)
+        // 4. DİKEY ZIPLAMA / BEAT EQUALIZER ANİMASYONU (SABİT DİK ÇİZGİLER)
         // -------------------------------------------------------------
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
@@ -543,55 +543,58 @@
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
 
-        let timeOffset = 0;
+        let animTime = 0;
+        let barHeights = []; // Her çubuğun anlık yumuşak yüksekliği
 
         function drawEqualizer() {
             ctx.fillStyle = '#050505';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Şarkı aktifken ritim takibi
-            let currentSeek = 0;
-            if (isStarted && player && typeof player.getCurrentTime === 'function') {
-                currentSeek = player.getCurrentTime();
-            } else {
-                timeOffset += 0.05;
-                currentSeek = timeOffset;
-            }
-
-            const barWidth = window.innerWidth < 600 ? 5 : 8;  // Mobilde daha ince dik çizgiler
-            const barGap = window.innerWidth < 600 ? 6 : 10;   // Çizgi aralıkları
+            const isMobile = window.innerWidth < 600;
+            const barWidth = isMobile ? 4 : 8;    // Çubuk genişliği
+            const barGap = isMobile ? 4 : 8;      // Aralık
             const totalBars = Math.floor(canvas.width / (barWidth + barGap));
             const centerY = canvas.height / 2;
 
+            // Çubuk dizisini ekran ilk açıldığında hazırlama
+            if (barHeights.length !== totalBars) {
+                barHeights = new Array(totalBars).fill(10);
+            }
+
+            animTime += 0.08;
+
+            // Hip-hop vuruşu (Bass beat simülasyonu)
+            const beatPulse = Math.pow(Math.sin(animTime * 2.5), 6) * 1.5;
+
             for (let i = 0; i < totalBars; i++) {
-                // Her dik çizginin şarkının saniyesi ve vuruşlarına göre farklı yükseklik alması
-                const freq = (i * 0.15) + (currentSeek * 4.5);
-                const beatNoise = Math.sin(freq) * Math.cos(freq * 0.5);
-                
-                // Şarkı vuruş şiddetini simüle eden genlik
-                let targetHeight = Math.abs(beatNoise) * (canvas.height * 0.45);
-                
-                // Minimum çubuk yüksekliği
-                if (targetHeight < 8) targetHeight = 8;
+                // Merkezden uzaklığa göre çubuk yükseklik katsayısı
+                const distanceFromCenter = Math.abs(i - totalBars / 2) / (totalBars / 2);
+                const centerMultiplier = 1 - Math.pow(distanceFromCenter, 2);
 
+                // Gerçek zamanlı zıplama hesabı
+                const noise1 = Math.sin(i * 0.2 + animTime * 3);
+                const noise2 = Math.cos(i * 0.4 - animTime * 4);
+                
+                // Hedef dikey yükseklik
+                let targetH = (Math.abs(noise1 + noise2) * 60 + beatPulse * 90) * centerMultiplier;
+                
+                if (targetH < 6) targetH = 6; // Minimum yükseklik
+
+                // Çubukların aniden sıçramayıp akıcı/yumuşak inip çıkması (Lerp)
+                barHeights[i] += (targetH - barHeights[i]) * 0.25;
+
+                const currentH = barHeights[i];
                 const x = i * (barWidth + barGap);
-                const y = centerY - (targetHeight / 2);
+                const y = centerY - (currentH / 2); // Tam dikey merkezleme
 
-                // Parlayan kristal/beyaz görünüm ve degrade şeffaflık
-                const alpha = 0.15 + (Math.abs(beatNoise) * 0.75);
-                
+                // Parlak beyaz / kristal görünüm
+                const alpha = 0.2 + (currentH / 180);
                 ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
-                ctx.shadowBlur = 10;
-                ctx.shadowColor = `rgba(255, 255, 255, ${alpha * 0.8})`;
+                ctx.shadowBlur = isMobile ? 4 : 8;
+                ctx.shadowColor = 'rgba(255, 255, 255, 0.6)';
 
-                // Köşeleri yuvarlatılmış dik equalizer çizgileri
-                ctx.beginPath();
-                if (ctx.roundRect) {
-                    ctx.roundRect(x, y, barWidth, targetHeight, 4);
-                } else {
-                    ctx.rect(x, y, barWidth, targetHeight);
-                }
-                ctx.fill();
+                // Düzgün dik çubuklar
+                ctx.fillRect(x, y, barWidth, currentH);
             }
 
             requestAnimationFrame(drawEqualizer);

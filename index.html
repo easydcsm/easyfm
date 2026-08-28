@@ -3,15 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EA$Y FM - Canlı Spektrum</title>
+    <title>EA$Y FM</title>
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:wght@800;900&display=swap" rel="stylesheet">
     
     <style>
-        * { box-sizing: border-box; }
+        * {
+            box-sizing: border-box;
+        }
 
         body {
             margin: 0;
-            background-color: #000;
+            background-color: #050505;
             color: #fff;
             font-family: 'Montserrat', sans-serif;
             display: flex;
@@ -19,59 +22,148 @@
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            overflow: hidden;
+            overflow-x: hidden;
             position: relative;
         }
 
-        /* 1. ÖN PLANA ÇIKARILMIŞ KANVAS */
+        /* EQUALIZER DİK ÇİZGİLER KANVASI (ARKA PLAN) */
         #bg-canvas {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            z-index: 1; /* Videonun altında ama katman olarak net görünen hiyerarşi */
+            z-index: 1;
             pointer-events: none;
         }
 
+        /* Pırlanta / Kristal Işıltılı Siyah-Beyaz Logo */
         .logo-container {
             text-align: center;
             margin-bottom: 20px;
+            margin-top: 20px;
             z-index: 10;
         }
 
         h1 {
             margin: 0;
             font-family: 'Anton', sans-serif;
-            font-size: 58px;
+            font-size: 64px;
             letter-spacing: 4px;
             text-transform: uppercase;
-            background: linear-gradient(135deg, #ffffff 0%, #a6a6a6 50%, #ffffff 100%);
+            
+            background: linear-gradient(
+                135deg, 
+                #ffffff 0%, 
+                #a6a6a6 25%, 
+                #ffffff 50%, 
+                #737373 75%, 
+                #ffffff 100%
+            );
+            background-size: 200% auto;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+            
+            text-shadow: 
+                0 0 10px rgba(255, 255, 255, 0.8),
+                0 0 20px rgba(255, 255, 255, 0.4),
+                0 0 30px rgba(255, 255, 255, 0.2);
+                
+            transform: skew(-4deg);
+            animation: diamondShine 4s linear infinite;
+        }
+
+        @keyframes diamondShine {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
         }
 
         .subtitle {
-            font-size: 11px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 900;
+            font-size: 13px;
+            color: #ffffff;
             letter-spacing: 5px;
-            margin-top: 5px;
-            color: #aaa;
+            margin-top: 8px;
+            text-transform: uppercase;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+            opacity: 0.9;
         }
 
-        /* 2. ARKASINI GÖSTEREN (YARI ŞEFFAF) VİDEO/MÜZİK KUTUSU */
-        .player-card {
+        /* Anlık İzleyici/Dinleyici Rozeti */
+        .listener-badge {
+            background-color: rgba(17, 17, 17, 0.7);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 8px 22px;
+            border-radius: 30px;
+            font-size: 13px;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 20px rgba(255, 255, 255, 0.05);
+            z-index: 10;
+        }
+
+        .live-dot {
+            width: 9px;
+            height: 9px;
+            background-color: #ffffff;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 10px #ffffff, 0 0 15px #ffffff;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.3; transform: scale(0.85); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        /* ARKASI NET GÖRÜNEN YARI ŞEFFAF VİDEO ÇERÇEVESİ */
+        .video-container {
             position: relative;
             width: 85%;
-            max-width: 500px;
-            background: rgba(15, 15, 15, 0.65); /* Yarı şeffaf arka plan */
-            backdrop-filter: blur(12px); /* Buzlu cam efekti */
+            max-width: 750px;
+            padding-bottom: 42%; 
+            height: 0;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 20px;
-            padding: 30px;
-            text-align: center;
-            box-shadow: 0 0 50px rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
             z-index: 10;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            opacity: 0.85; /* Çizgilerin öne çıkması için hafif şeffaf */
+        }
+        
+        /* BAŞLATMA OVERLAY EKRANI */
+        #start-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(5, 5, 5, 0.95);
+            z-index: 30;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: opacity 0.5s ease;
         }
 
         .start-btn {
@@ -79,78 +171,312 @@
             color: #000;
             font-family: 'Montserrat', sans-serif;
             font-weight: 900;
-            font-size: 15px;
-            padding: 16px 36px;
+            font-size: 16px;
+            padding: 14px 32px;
             border: none;
             border-radius: 50px;
             cursor: pointer;
             letter-spacing: 2px;
-            box-shadow: 0 0 25px rgba(255, 255, 255, 0.5);
-            transition: transform 0.2s;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .start-btn:hover {
             transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
         }
 
-        .volume-control {
+        /* SES KONTROL PANELİ STİLLERİ */
+        .controls {
             margin-top: 20px;
+            margin-bottom: 30px;
+            z-index: 20;
+        }
+
+        .volume-control-panel {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(17, 17, 17, 0.7);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 10px 20px;
+            border-radius: 30px;
+            box-shadow: 0 4px 20px rgba(255, 255, 255, 0.05);
+        }
+
+        .mute-btn {
+            background: transparent;
+            border: none;
+            color: #ffffff;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            padding: 4px;
+            transition: transform 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .mute-btn:hover {
+            transform: scale(1.15);
+        }
+
+        .mute-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: #ffffff;
         }
 
         .volume-slider {
             -webkit-appearance: none;
-            width: 100px;
-            height: 4px;
-            background: #444;
-            border-radius: 2px;
+            appearance: none;
+            width: 120px;
+            height: 5px;
+            border-radius: 5px;
+            background: #333333;
             outline: none;
+            cursor: pointer;
         }
 
         .volume-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 14px;
-            height: 14px;
+            appearance: none;
+            width: 15px;
+            height: 15px;
             border-radius: 50%;
-            background: #fff;
+            background: #ffffff;
             cursor: pointer;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+        }
+
+        .volume-percentage {
+            font-size: 12px;
+            font-weight: 800;
+            color: #888888;
+            min-width: 35px;
+            text-align: right;
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 44px; letter-spacing: 2px; }
+            .subtitle { font-size: 10px; letter-spacing: 3px; }
+            .video-container { width: 92%; padding-bottom: 50%; }
+            .volume-slider { width: 90px; }
         }
     </style>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body>
 
+    <!-- EQUALIZER ARKA PLAN KANVASI -->
     <canvas id="bg-canvas"></canvas>
 
+    <!-- Pırlanta Işıltılı Siyah-Beyaz Logo -->
     <div class="logo-container">
         <h1>EA$Y FM</h1>
-        <div class="subtitle">7/24 GERÇEK ZAMANLI SPEKTRUM RADYO</div>
+        <div class="subtitle">7/24 YÜZDE YÜZ MÜZİK</div>
     </div>
 
-    <div class="player-card">
-        <button id="play-btn" class="start-btn" onclick="initAudio()">CANLI YAYINI BAŞLAT</button>
-        
-        <div class="volume-control" id="controls" style="display: none;">
-            <span>🔊</span>
-            <input type="range" id="vol-control" class="volume-slider" min="0" max="1" step="0.01" value="1">
+    <!-- İzleyici Sayacı Rozeti -->
+    <div class="listener-badge">
+        <span class="live-dot"></span>
+        <span>Anlık Dinleyici: <strong id="listener-count" style="color: #ffffff;">0</strong></span>
+    </div>
+
+    <div class="video-container">
+        <!-- Başlatma Kaplaması -->
+        <div id="start-overlay" onclick="startRadio()">
+            <button class="start-btn">CANLI YAYINA KATIL</button>
+        </div>
+        <div id="player"></div>
+    </div>
+
+    <!-- Ses Kontrol Paneli -->
+    <div class="controls">
+        <div class="volume-control-panel">
+            <button id="mute-btn" class="mute-btn" onclick="toggleMute()" title="Sesi Aç / Kapat">
+                <svg id="volume-icon" viewBox="0 0 24 24">
+                    <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+                </svg>
+            </button>
+            <input type="range" id="volume-slider" class="volume-slider" min="0" max="100" value="100" oninput="changeVolume(this.value)">
+            <span id="volume-text" class="volume-percentage">100%</span>
         </div>
     </div>
 
-    <!-- MÜZİK KAYNAĞI (HTML5 Audio Elementi) -->
-    <audio id="audio-element" crossOrigin="anonymous" src="https://stream.zeno.fm/f3wvbbqmdg8uv"></audio>
-
     <script>
+        // -------------------------------------------------------------
+        // 1. FIREBASE ANLIK İZLEYİCİ TAKİP SİSTEMİ
+        // -------------------------------------------------------------
+        const firebaseConfig = {
+            apiKey: "AIzaSyBaTlb6V6e4FMLTYNXAPBgdzsgiclL8Qw8",
+            authDomain: "easyfm-37b9e.firebaseapp.com",
+            databaseURL: "https://easyfm-37b9e-default-rtdb.firebaseio.com",
+            projectId: "easyfm-37b9e",
+            storageBucket: "easyfm-37b9e.firebasestorage.app",
+            messagingSenderId: "869244564550",
+            appId: "1:869244564550:web:f0824148dbcae6b7024647",
+            measurementId: "G-7WEFWTKBC7"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        const myConnectionsRef = db.ref('online_listeners');
+        const connectedRef = db.ref('.info/connected');
+
+        connectedRef.on('value', (snap) => {
+            if (snap.val() === true) {
+                const con = myConnectionsRef.push();
+                con.onDisconnect().remove();
+                con.set(true);
+            }
+        });
+
+        myConnectionsRef.on('value', (snap) => {
+            document.getElementById('listener-count').innerText = snap.numChildren();
+        });
+        
+        // -------------------------------------------------------------
+        // 2. SENİN ORİJİNAL ŞARKI LİSTEN VE TEMPO (BPM) BİLGİLERİ
+        // -------------------------------------------------------------
+        const songList = [
+            { id: '1IEg_3x35go', duration: 120, bpm: 128 },
+            { id: 'qAlF70MdfwU', duration: 207, bpm: 95 }, 
+            { id: 'L_BpiSsIBFM', duration: 236, bpm: 110 }, 
+            { id: 'cTGQrA5HHIU', duration: 204, bpm: 120 }, 
+            { id: 'ftaXMKV3ffE', duration: 160, bpm: 130 },
+            { id: 'LPTlvQ1Zet0', duration: 188, bpm: 100 },
+            { id: 'EfHNIPXTxy0', duration: 276, bpm: 115 }
+        ];
+
+        const STREAM_START_TIME = 1700000000; 
+        const totalPlaylistDuration = songList.reduce((acc, song) => acc + song.duration, 0);
+
+        let player;
+        let currentLoadedVideoId = null;
+        let isChangingSong = false;
+        let isStarted = false;
+        let lastVolumeLevel = 100;
+
+        function getCurrentStreamState() {
+            const nowInSeconds = Math.floor(Date.now() / 1000);
+            const elapsedTime = (nowInSeconds - STREAM_START_TIME) % totalPlaylistDuration;
+
+            let accumulatedTime = 0;
+            for (let i = 0; i < songList.length; i++) {
+                if (elapsedTime < accumulatedTime + songList[i].duration) {
+                    return {
+                        songIndex: i,
+                        seekTo: elapsedTime - accumulatedTime,
+                        songData: songList[i]
+                    };
+                }
+                accumulatedTime += songList[i].duration;
+            }
+            return { songIndex: 0, seekTo: 0, songData: songList[0] };
+        }
+
+        const tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        const firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        function onYouTubeIframeAPIReady() {
+            const state = getCurrentStreamState();
+            currentLoadedVideoId = songList[state.songIndex].id;
+
+            player = new YT.Player('player', {
+                videoId: currentLoadedVideoId,
+                playerVars: {
+                    'autoplay': 0,
+                    'controls': 0,
+                    'disablekb': 1,
+                    'modestbranding': 1,
+                    'rel': 0,
+                    'loop': 0,
+                    'playsinline': 1
+                },
+                events: {
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+        }
+
+        function startRadio() {
+            if (!player) return;
+            const state = getCurrentStreamState();
+            
+            player.seekTo(state.seekTo, true);
+            player.playVideo();
+            player.unMute();
+            player.setVolume(100);
+            
+            const overlay = document.getElementById('start-overlay');
+            overlay.style.opacity = '0';
+            setTimeout(() => { overlay.style.display = 'none'; }, 500);
+            isStarted = true;
+        }
+
+        // SES KONTROLLERİ
+        const volumeIconHigh = '<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>';
+        const volumeIconMute = '<path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>';
+
+        function changeVolume(val) {
+            if (!player) return;
+            player.setVolume(val);
+            document.getElementById('volume-text').innerText = val + '%';
+            const icon = document.getElementById('volume-icon');
+            if (val == 0) { player.mute(); icon.innerHTML = volumeIconMute; }
+            else { if (player.isMuted()) player.unMute(); icon.innerHTML = volumeIconHigh; lastVolumeLevel = val; }
+        }
+
+        function toggleMute() {
+            if (!player) return;
+            const slider = document.getElementById('volume-slider');
+            const icon = document.getElementById('volume-icon');
+            if (player.isMuted() || slider.value == 0) {
+                const targetVolume = lastVolumeLevel > 0 ? lastVolumeLevel : 50;
+                player.unMute(); player.setVolume(targetVolume); slider.value = targetVolume;
+                document.getElementById('volume-text').innerText = targetVolume + '%'; icon.innerHTML = volumeIconHigh;
+            } else {
+                lastVolumeLevel = slider.value; player.mute(); slider.value = 0;
+                document.getElementById('volume-text').innerText = '0%'; icon.innerHTML = volumeIconMute;
+            }
+        }
+
+        function syncToCurrentStream() {
+            if (!player || isChangingSong || !isStarted) return;
+            const state = getCurrentStreamState();
+            const targetSong = songList[state.songIndex];
+
+            if (currentLoadedVideoId !== targetSong.id) {
+                isChangingSong = true;
+                currentLoadedVideoId = targetSong.id;
+                player.loadVideoById({ videoId: targetSong.id, startSeconds: state.seekTo });
+                setTimeout(() => { isChangingSong = false; }, 1500);
+            } else {
+                const currentTime = player.getCurrentTime ? player.getCurrentTime() : 0;
+                if (Math.abs(currentTime - state.seekTo) > 3) player.seekTo(state.seekTo, true);
+            }
+        }
+
+        function onPlayerStateChange(event) {
+            if (event.data === YT.PlayerState.ENDED) syncToCurrentStream();
+        }
+
+        setInterval(syncToCurrentStream, 5000);
+
+        // -------------------------------------------------------------
+        // 3. ŞARKI RİTMİNE TAM SENKRONİZE DİK SPEKTRUM ÇİZGİLERİ
+        // -------------------------------------------------------------
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
-        const audio = document.getElementById('audio-element');
-        
-        let audioCtx;
-        let analyser;
-        let source;
-        let dataArray;
-        let isPlaying = false;
 
         function resizeCanvas() {
             canvas.width = window.innerWidth;
@@ -159,80 +485,72 @@
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
 
-        function initAudio() {
-            if (isPlaying) return;
+        let barHeights = [];
 
-            // Web Audio API başlatma
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            analyser = audioCtx.createAnalyser();
-            
-            // Gerçek zamanlı frekans çözünürlüğü (FFT Size)
-            analyser.fftSize = 128; 
-
-            source = audioCtx.createMediaElementSource(audio);
-            source.connect(analyser);
-            analyser.connect(audioCtx.destination);
-
-            const bufferLength = analyser.frequencyBinCount;
-            dataArray = new Uint8Array(bufferLength);
-
-            audio.play();
-            isPlaying = true;
-
-            document.getElementById('play-btn').innerText = "YAYIN CANLI";
-            document.getElementById('controls').style.display = 'flex';
-
-            // Ses Slider Kontrolü
-            document.getElementById('vol-control').addEventListener('input', (e) => {
-                audio.volume = e.target.value;
-            });
-
-            renderFrame();
-        }
-
-        // -------------------------------------------------------------
-        // GERÇEK ZAMANLI SENKRON SPEKTRUM ÇİZİMİ
-        // -------------------------------------------------------------
-        function renderFrame() {
-            requestAnimationFrame(renderFrame);
-
+        function drawEqualizer() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            if (!isPlaying) return;
-
-            // Anlık frekans verilerini oku
-            analyser.getByteFrequencyData(dataArray);
-
             const isMobile = window.innerWidth < 600;
-            const barWidth = isMobile ? 6 : 12;
+            const barWidth = isMobile ? 6 : 10;
             const barGap = isMobile ? 6 : 10;
-            
-            const totalBars = dataArray.length;
-            const totalWidth = (totalBars * (barWidth + barGap));
-            const startX = (canvas.width - totalWidth) / 2; // Çizgileri ekrana ortala
+            const totalBars = Math.floor(canvas.width / (barWidth + barGap));
             const centerY = canvas.height / 2;
 
+            if (barHeights.length !== totalBars) {
+                barHeights = new Array(totalBars).fill(8);
+            }
+
+            // Şarkı çalma konumunu ve ritmini al
+            let currentTime = 0;
+            let currentBpm = 120;
+
+            if (isStarted && player && typeof player.getCurrentTime === 'function') {
+                currentTime = player.getCurrentTime();
+                const state = getCurrentStreamState();
+                currentBpm = state.songData.bpm || 120;
+            } else {
+                currentTime = Date.now() / 1000;
+            }
+
+            // Şarkının vuruş bas frekansı (BPM bazlı vuruş zıplaması)
+            const bps = currentBpm / 60; // saniyelik vuruş
+            const beatPulse = Math.pow(Math.abs(Math.sin(currentTime * Math.PI * bps)), 4);
+
             for (let i = 0; i < totalBars; i++) {
-                // Şarkının anlık dikey yüksekliği (0 - 255 arası gerçek veri)
-                const value = dataArray[i];
+                // Merkezden kenarlara doğru çubuk yükselti dağılımı
+                const distanceFromCenter = Math.abs(i - totalBars / 2) / (totalBars / 2);
+                const centerMultiplier = 1 - Math.pow(distanceFromCenter, 1.5);
+
+                // Şarkı saniyesine özel frekans dalgası
+                const freq1 = Math.sin(i * 0.35 + currentTime * 8);
+                const freq2 = Math.cos(i * 0.15 - currentTime * 5);
                 
-                // Yüksekliği ekran boyutuna ölçekle
-                const percent = value / 255;
-                const barHeight = (percent * (canvas.height * 0.6)) + 6;
+                // Gerçek vuruş anında zıplama hesabı
+                let targetH = (Math.abs(freq1 + freq2) * 50 + beatPulse * 140) * centerMultiplier;
+                
+                if (targetH < 8) targetH = 8; // Minimum yükseklik
 
-                const x = startX + (i * (barWidth + barGap));
-                const y = centerY - (barHeight / 2); // Merkezden dikey büyütme
+                // Yumuşak geçişli lerp zıplama
+                barHeights[i] += (targetH - barHeights[i]) * 0.3;
 
-                // Gerçek sese duyarlı parlaklık ve netlik
-                const alpha = 0.3 + (percent * 0.7);
+                const currentH = barHeights[i];
+                const x = i * (barWidth + barGap);
+                const y = centerY - (currentH / 2);
+
+                // Parlaklık ve dinamik saydamlık
+                const alpha = 0.25 + (beatPulse * 0.5) + (currentH / 300);
                 ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
-                ctx.shadowBlur = percent * 25; // Bas vurdukça parlar
+                ctx.shadowBlur = beatPulse * 15 + 5;
                 ctx.shadowColor = 'rgba(255, 255, 255, 0.9)';
 
-                // Sabit dikey çizgileri çiz
-                ctx.fillRect(x, y, barWidth, barHeight);
+                // Sabit sütunlu dikey çubuk
+                ctx.fillRect(x, y, barWidth, currentH);
             }
+
+            requestAnimationFrame(drawEqualizer);
         }
+
+        drawEqualizer();
     </script>
 </body>
 </html>

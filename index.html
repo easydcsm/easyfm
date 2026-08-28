@@ -237,11 +237,12 @@
             100% { opacity: 1; transform: scale(1); }
         }
 
+        /* UFAKTILMIŞ VİDEO KONTEYNERİ */
         .video-container {
             position: relative;
-            width: 85%;
-            max-width: 800px;
-            padding-bottom: 47.8%; /* 16:9 oranı */
+            width: 80%;
+            max-width: 650px;
+            padding-bottom: 36.56%; /* 650px genişliğe göre 16:9 oranlı yükseklik */
             height: 0;
             border-radius: 16px;
             overflow: hidden;
@@ -332,9 +333,10 @@
             transition: height 0.1s ease;
         }
 
-        /* SES KONTROL PANELİ STİLLERİ */
+        /* SES KONTROL PANELİ STİLLERİ (ALT BOŞLUK ARTIRILDI) */
         .controls {
             margin-top: 15px;
+            margin-bottom: 50px;
             z-index: 20;
         }
 
@@ -440,8 +442,8 @@
                 letter-spacing: 3px;
             }
             .video-container {
-                width: 92%;
-                padding-bottom: 51.75%;
+                width: 90%;
+                padding-bottom: 50.62%;
             }
             .listener-badge {
                 padding: 6px 16px;
@@ -449,6 +451,9 @@
             }
             .volume-slider {
                 width: 80px;
+            }
+            .controls {
+                margin-bottom: 35px;
             }
         }
     </style>
@@ -693,7 +698,7 @@
                 videoId: currentLoadedVideoId,
                 playerVars: {
                     'autoplay': 0,
-                    'controls': 0, // YouTube yerleşik kontrol çubuğu kapalı
+                    'controls': 0,
                     'disablekb': 1,
                     'modestbranding': 1,
                     'rel': 0,
@@ -814,7 +819,6 @@
         }
 
         setInterval(() => {
-            // Video oynatılıyorsa canlı yayın senkronizasyonunu sürdür
             if (player && player.getPlayerState() === YT.PlayerState.PLAYING) {
                 syncToCurrentStream();
             }

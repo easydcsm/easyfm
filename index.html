@@ -3,13 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EA$Y FM</title>
-    <!-- Google Fonts üzerinden keskin ve güçlü hip-hop fontları -->
+    <title>EA$Y FM - 24/7 TRAP & HIP-HOP</title>
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:wght@800;900&display=swap" rel="stylesheet">
     
     <style>
         * {
             box-sizing: border-box;
+        }
+
+        :root {
+            --glow-color: rgba(255, 255, 255, 0.8);
+            --accent-color: #ffffff;
+            --particle-color: #ffffff;
+        }
+
+        /* SLIME GREEN NEON MODE */
+        body.slime-mode-active {
+            --glow-color: rgba(57, 255, 20, 0.8);
+            --accent-color: #39ff14;
+            --particle-color: #39ff14;
         }
 
         body {
@@ -24,9 +37,10 @@
             min-height: 100vh;
             overflow-x: hidden;
             position: relative;
+            transition: background-color 0.5s;
         }
 
-        /* HAREKETLİ KRİSTAL PARÇACIKLI ARKA PLAN CANVAS */
+        /* ARKA PLAN CANVAS */
         #bg-canvas {
             position: fixed;
             top: 0;
@@ -37,7 +51,6 @@
             pointer-events: none;
         }
 
-        /* DİNAMİK ARKA PLAN RADİAL ISILTI */
         .ambient-glow {
             position: fixed;
             top: 50%;
@@ -48,10 +61,10 @@
             background: radial-gradient(circle, rgba(255, 255, 255, 0.04) 0%, rgba(0, 0, 0, 0) 70%);
             z-index: 2;
             pointer-events: none;
-            transition: opacity 0.5s ease;
+            transition: background 0.5s ease;
         }
 
-        /* SAĞ ÜST: DIAMOND GLOW TOGGLE BUTONU */
+        /* ÜST SAĞ MOD TOGGLE PANELİ */
         .glow-toggle-container {
             position: fixed;
             top: 20px;
@@ -59,7 +72,7 @@
             z-index: 100;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 15px;
             background: rgba(17, 17, 17, 0.7);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
@@ -69,10 +82,16 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
 
+        .toggle-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
         .glow-toggle-label {
-            font-size: 10px;
+            font-size: 9px;
             font-weight: 900;
-            letter-spacing: 1.5px;
+            letter-spacing: 1px;
             color: #fff;
             text-transform: uppercase;
         }
@@ -80,15 +99,11 @@
         .switch {
             position: relative;
             display: inline-block;
-            width: 36px;
-            height: 20px;
+            width: 32px;
+            height: 18px;
         }
 
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
+        .switch input { opacity: 0; width: 0; height: 0; }
 
         .slider-toggle {
             position: absolute;
@@ -103,8 +118,8 @@
         .slider-toggle:before {
             position: absolute;
             content: "";
-            height: 12px;
-            width: 12px;
+            height: 10px;
+            width: 10px;
             left: 3px;
             bottom: 3px;
             background-color: white;
@@ -113,30 +128,19 @@
             box-shadow: 0 0 5px #fff;
         }
 
-        input:checked + .slider-toggle {
-            background-color: #ffffff;
-        }
-
+        input:checked + .slider-toggle { background-color: var(--accent-color); }
         input:checked + .slider-toggle:before {
-            transform: translateX(15px);
+            transform: translateX(12px);
             background-color: #000;
         }
 
-        /* EXTRA DIAMOND GLOW MODU AKTİFKEN UYGULANACAK STİLLER */
+        /* DIAMOND & SLIME MODE EFFECTS */
         body.diamond-mode-active .ambient-glow {
             background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.02) 50%, rgba(0, 0, 0, 0) 75%);
         }
 
-        body.diamond-mode-active h1 {
-            text-shadow: 
-                0 0 15px rgba(255, 255, 255, 1),
-                0 0 30px rgba(255, 255, 255, 0.8),
-                0 0 45px rgba(255, 255, 255, 0.5);
-        }
-
-        body.diamond-mode-active .video-container {
-            box-shadow: 0 0 35px rgba(255, 255, 255, 0.25), 0 10px 40px rgba(0, 0, 0, 0.8);
-            border-color: rgba(255, 255, 255, 0.5);
+        body.slime-mode-active .ambient-glow {
+            background: radial-gradient(circle, rgba(57, 255, 20, 0.15) 0%, rgba(57, 255, 20, 0.02) 50%, rgba(0, 0, 0, 0) 75%);
         }
 
         .main-wrapper {
@@ -150,11 +154,16 @@
             padding: 20px 10px;
         }
 
-        /* Pırlanta / Kristal Işıltılı Siyah-Beyaz Logo */
         .logo-container {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             margin-top: 10px;
+            transition: transform 0.1s ease;
+        }
+
+        /* BEAT BOUNCE EFEKTİ */
+        .beat-bounce {
+            transform: scale(1.02);
         }
 
         h1 {
@@ -176,14 +185,16 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             
-            text-shadow: 
-                0 0 10px rgba(255, 255, 255, 0.8),
-                0 0 20px rgba(255, 255, 255, 0.4),
-                0 0 30px rgba(255, 255, 255, 0.2);
-                
+            text-shadow: 0 0 15px var(--glow-color);
             transform: skew(-4deg);
             animation: diamondShine 4s linear infinite;
             transition: text-shadow 0.3s;
+        }
+
+        body.slime-mode-active h1 {
+            background: linear-gradient(135deg, #39ff14 0%, #1c800a 50%, #39ff14 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         @keyframes diamondShine {
@@ -194,40 +205,42 @@
         .subtitle {
             font-family: 'Montserrat', sans-serif;
             font-weight: 900;
-            font-size: 13px;
+            font-size: 12px;
             color: #ffffff;
             letter-spacing: 5px;
-            margin-top: 8px;
+            margin-top: 6px;
             text-transform: uppercase;
-            text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
             opacity: 0.9;
         }
 
-        /* Anlık İzleyici Rozeti */
+        /* İZLEYİCİ VE CANLI YAYIN BİLGİ ROZETLERİ */
+        .badge-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
         .listener-badge {
             background: rgba(17, 17, 17, 0.7);
             backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.15);
-            padding: 8px 22px;
+            padding: 6px 18px;
             border-radius: 30px;
-            font-size: 13px;
+            font-size: 12px;
             letter-spacing: 1px;
-            margin-bottom: 20px;
             display: flex;
             align-items: center;
-            gap: 12px;
-            box-shadow: 0 4px 20px rgba(255, 255, 255, 0.05);
-            transition: border 0.3s;
+            gap: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
         }
 
         .live-dot {
-            width: 9px;
-            height: 9px;
-            background-color: #ffffff;
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent-color);
             border-radius: 50%;
             display: inline-block;
-            box-shadow: 0 0 10px #ffffff, 0 0 15px #ffffff;
+            box-shadow: 0 0 10px var(--accent-color);
             animation: pulse 1.5s infinite;
         }
 
@@ -237,18 +250,56 @@
             100% { opacity: 1; transform: scale(1); }
         }
 
-        /* UFAKTILMIŞ VİDEO KONTEYNERİ */
+        /* YENİ: DINAMIK PARÇA TICKER */
+        .track-ticker-container {
+            width: 80%;
+            max-width: 650px;
+            background: rgba(10, 10, 10, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 6px 15px;
+            margin-bottom: 12px;
+            overflow: hidden;
+            white-space: nowrap;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+        }
+
+        .track-ticker {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            color: #aaa;
+            text-transform: uppercase;
+            animation: marquee 15s linear infinite;
+        }
+
+        .track-ticker span {
+            color: var(--accent-color);
+        }
+
+        @keyframes marquee {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* VİDEO KONTEYNERİ */
         .video-container {
             position: relative;
             width: 80%;
             max-width: 650px;
-            padding-bottom: 36.56%; /* 650px genişliğe göre 16:9 oranlı yükseklik */
+            padding-bottom: 36.56%;
             height: 0;
             border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 10px 40px rgba(255, 255, 255, 0.08);
-            border: 1px solid #222222;
-            transition: box-shadow 0.4s, border-color 0.4s;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: box-shadow 0.3s, border-color 0.3s, transform 0.1s;
+        }
+
+        .video-container.beat-glow {
+            box-shadow: 0 0 30px var(--glow-color);
+            border-color: var(--accent-color);
         }
 
         .video-container iframe {
@@ -260,24 +311,16 @@
             border: none;
         }
 
-        /* YALNIZCA PLAY/PAUSE İÇİN ŞEFFAF TIKLAMA KATMANI */
         .click-toggle-overlay {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             z-index: 15;
             cursor: pointer;
         }
 
-        /* BAŞLATMA OVERLAY EKRANI */
         #start-overlay {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(5, 5, 5, 0.98);
             z-index: 30;
             display: flex;
@@ -289,27 +332,23 @@
         }
 
         .start-btn {
-            background: #ffffff;
+            background: var(--accent-color);
             color: #000;
             font-family: 'Montserrat', sans-serif;
             font-weight: 900;
-            font-size: 16px;
+            font-size: 15px;
             padding: 14px 32px;
             border: none;
             border-radius: 50px;
             cursor: pointer;
             letter-spacing: 2px;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
-            transition: transform 0.2s, box-shadow 0.2s;
-            -webkit-tap-highlight-color: transparent;
+            box-shadow: 0 0 20px var(--glow-color);
+            transition: transform 0.2s;
         }
 
-        .start-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
-        }
+        .start-btn:hover { transform: scale(1.05); }
 
-        /* GELİŞMİŞ SES SPEKTRUMU / VISUALIZER BAR */
+        /* VISUALIZER SPEKTRUMU */
         .visualizer-container {
             display: flex;
             align-items: flex-end;
@@ -321,22 +360,20 @@
             transition: opacity 0.5s;
         }
 
-        .visualizer-container.active {
-            opacity: 1;
-        }
+        .visualizer-container.active { opacity: 1; }
 
         .v-bar {
             width: 4px;
-            background: linear-gradient(to top, #666, #fff);
+            background: linear-gradient(to top, #444, var(--accent-color));
             border-radius: 3px;
             height: 10%;
             transition: height 0.1s ease;
         }
 
-        /* SES KONTROL PANELİ STİLLERİ (ALT BOŞLUK ARTIRILDI) */
+        /* SES KONTROL PANELİ */
         .controls {
             margin-top: 15px;
-            margin-bottom: 50px;
+            margin-bottom: 40px;
             z-index: 20;
         }
 
@@ -346,11 +383,10 @@
             gap: 12px;
             background: rgba(17, 17, 17, 0.7);
             backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.15);
             padding: 10px 20px;
             border-radius: 30px;
-            box-shadow: 0 4px 20px rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
         }
 
         .mute-btn {
@@ -360,149 +396,115 @@
             cursor: pointer;
             display: flex;
             align-items: center;
-            justify-content: center;
             padding: 4px;
-            transition: transform 0.2s;
-            -webkit-tap-highlight-color: transparent;
         }
 
-        .mute-btn:hover {
-            transform: scale(1.15);
-        }
-
-        .mute-btn svg {
-            width: 20px;
-            height: 20px;
-            fill: #ffffff;
-        }
+        .mute-btn svg { width: 18px; height: 18px; fill: #ffffff; }
 
         .volume-slider {
             -webkit-appearance: none;
             appearance: none;
-            width: 120px;
-            height: 5px;
+            width: 110px;
+            height: 4px;
             border-radius: 5px;
-            background: #333333;
+            background: #333;
             outline: none;
             cursor: pointer;
-            transition: background 0.3s;
         }
 
         .volume-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
-            appearance: none;
-            width: 15px;
-            height: 15px;
+            width: 14px;
+            height: 14px;
             border-radius: 50%;
-            background: #ffffff;
+            background: var(--accent-color);
             cursor: pointer;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
-            transition: transform 0.15s;
-        }
-
-        .volume-slider::-webkit-slider-thumb:hover {
-            transform: scale(1.2);
-        }
-
-        .volume-slider::-moz-range-thumb {
-            width: 15px;
-            height: 15px;
-            border-radius: 50%;
-            background: #ffffff;
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
-            transition: transform 0.15s;
+            box-shadow: 0 0 8px var(--glow-color);
         }
 
         .volume-percentage {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 800;
-            color: #888888;
-            min-width: 35px;
+            color: #888;
+            min-width: 32px;
             text-align: right;
         }
 
-        /* MOBİL UYUM OPTİMİZASYONLARI */
+        /* KISAYOL İPUCU FOOTER */
+        .hotkey-hint {
+            position: fixed;
+            bottom: 12px;
+            font-size: 9px;
+            color: #555;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            z-index: 20;
+            pointer-events: none;
+        }
+
         @media (max-width: 768px) {
-            .glow-toggle-container {
-                top: 12px;
-                right: 12px;
-                padding: 6px 12px;
-            }
-            .glow-toggle-label {
-                font-size: 8px;
-            }
-            h1 {
-                font-size: 40px;
-                letter-spacing: 2px;
-            }
-            .subtitle {
-                font-size: 10px;
-                letter-spacing: 3px;
-            }
-            .video-container {
-                width: 90%;
-                padding-bottom: 50.62%;
-            }
-            .listener-badge {
-                padding: 6px 16px;
-                font-size: 11px;
-            }
-            .volume-slider {
-                width: 80px;
-            }
-            .controls {
-                margin-bottom: 35px;
-            }
+            .glow-toggle-container { top: 10px; right: 10px; padding: 6px 12px; }
+            h1 { font-size: 38px; }
+            .video-container { width: 92%; padding-bottom: 51.75%; }
+            .track-ticker-container { width: 92%; }
+            .hotkey-hint { display: none; }
         }
     </style>
 
-    <!-- Firebase SDK (Anlık Sayaç İçin) -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body>
 
-    <!-- DIAMOND GLOW NEON TOGGLE BUTONU -->
+    <!-- MOD SEÇENEKLERİ -->
     <div class="glow-toggle-container">
-        <span class="glow-toggle-label">DIAMOND GLOW</span>
-        <label class="switch">
-            <input type="checkbox" id="glow-toggle" onchange="toggleDiamondGlow(this)">
-            <span class="slider-toggle"></span>
-        </label>
+        <div class="toggle-group">
+            <span class="glow-toggle-label">DIAMOND</span>
+            <label class="switch">
+                <input type="checkbox" id="glow-toggle" onchange="toggleDiamondGlow(this)">
+                <span class="slider-toggle"></span>
+            </label>
+        </div>
+        <div class="toggle-group">
+            <span class="glow-toggle-label" style="color: #39ff14;">SLIME</span>
+            <label class="switch">
+                <input type="checkbox" id="slime-toggle" onchange="toggleSlimeMode(this)">
+                <span class="slider-toggle"></span>
+            </label>
+        </div>
     </div>
 
-    <!-- Arka Plan Hareketli Kristal Parçacık Tuvali -->
     <canvas id="bg-canvas"></canvas>
     <div class="ambient-glow"></div>
 
     <div class="main-wrapper">
-        <!-- Pırlanta Işıltılı Siyah-Beyaz Logo Alanı -->
-        <div class="logo-container">
+        <div class="logo-container" id="logo-box">
             <h1>EA$Y FM</h1>
             <div class="subtitle">7/24 YÜZDE YÜZ MÜZİK</div>
         </div>
 
-        <!-- İzleyici Sayacı Rozeti -->
-        <div class="listener-badge">
-            <span class="live-dot"></span>
-            <span>Anlık Dinleyici: <strong id="listener-count" style="color: #ffffff;">0</strong></span>
+        <div class="badge-container">
+            <div class="listener-badge">
+                <span class="live-dot"></span>
+                <span>Anlık Dinleyici: <strong id="listener-count" style="color: #fff;">0</strong></span>
+            </div>
         </div>
 
-        <div class="video-container">
-            <!-- Başlatma Kaplaması -->
+        <!-- DİNAMİK CANLI YAYIN PARÇA TICKER -->
+        <div class="track-ticker-container">
+            <div class="track-ticker" id="track-ticker">
+                ŞU AN YAYINDA: <span id="current-track-name">YÜKLENİYOR...</span> — EA$Y FM TRAP RADIO
+            </div>
+        </div>
+
+        <div class="video-container" id="video-box">
             <div id="start-overlay" onclick="startRadio()">
                 <button class="start-btn">CANLI YAYINA KATIL</button>
             </div>
-
-            <!-- Tıklandığında sadece Durdur/Oynat yapan şeffaf katman -->
             <div class="click-toggle-overlay" onclick="togglePlayPause()"></div>
-
             <div id="player"></div>
         </div>
 
-        <!-- SES SPEKTRUMU (AUDIO VISUALIZER) -->
         <div class="visualizer-container" id="visualizer">
             <div class="v-bar"></div><div class="v-bar"></div><div class="v-bar"></div><div class="v-bar"></div>
             <div class="v-bar"></div><div class="v-bar"></div><div class="v-bar"></div><div class="v-bar"></div>
@@ -510,10 +512,9 @@
             <div class="v-bar"></div><div class="v-bar"></div><div class="v-bar"></div><div class="v-bar"></div>
         </div>
 
-        <!-- Gelişmiş Ses Kontrol Paneli -->
         <div class="controls">
             <div class="volume-control-panel">
-                <button id="mute-btn" class="mute-btn" onclick="toggleMute()" title="Sesi Aç / Kapat">
+                <button id="mute-btn" class="mute-btn" onclick="toggleMute()">
                     <svg id="volume-icon" viewBox="0 0 24 24">
                         <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
                     </svg>
@@ -524,22 +525,34 @@
         </div>
     </div>
 
+    <div class="hotkey-hint">[SPACE] OYNAT/DURDUR &nbsp;|&nbsp; [M] MUTE &nbsp;|&nbsp; [▲/▼] SES</div>
+
     <script>
-        // DIAMOND GLOW TOGGLE SİSTEMİ
-        function toggleDiamondGlow(checkbox) {
-            if (checkbox.checked) {
+        // MOD TOGGLE SİSTEMLERİ
+        function toggleDiamondGlow(cb) {
+            if(cb.checked) {
+                document.getElementById('slime-toggle').checked = false;
+                document.body.classList.remove('slime-mode-active');
                 document.body.classList.add('diamond-mode-active');
             } else {
                 document.body.classList.remove('diamond-mode-active');
             }
         }
 
-        // HAREKETLİ KRİSTAL PARÇACIK ANİMASYONU
+        function toggleSlimeMode(cb) {
+            if(cb.checked) {
+                document.getElementById('glow-toggle').checked = false;
+                document.body.classList.remove('diamond-mode-active');
+                document.body.classList.add('slime-mode-active');
+            } else {
+                document.body.classList.remove('slime-mode-active');
+            }
+        }
+
+        // CANVAS PARÇACIK ANİMASYONU
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
-
         let particlesArray = [];
-        const numberOfParticles = 45;
 
         function resizeCanvas() {
             canvas.width = window.innerWidth;
@@ -556,27 +569,22 @@
                 this.speedX = (Math.random() - 0.5) * 0.4;
                 this.speedY = (Math.random() - 0.5) * 0.4;
                 this.opacity = Math.random() * 0.7 + 0.2;
-                this.pulseSpeed = Math.random() * 0.02 + 0.005;
             }
 
             update() {
                 this.x += this.speedX;
                 this.y += this.speedY;
-
                 if (this.x < 0) this.x = canvas.width;
                 if (this.x > canvas.width) this.x = 0;
                 if (this.y < 0) this.y = canvas.height;
                 if (this.y > canvas.height) this.y = 0;
-
-                this.opacity += Math.sin(Date.now() * this.pulseSpeed) * 0.01;
-                if (this.opacity < 0.1) this.opacity = 0.1;
-                if (this.opacity > 0.9) this.opacity = 0.9;
             }
 
             draw() {
-                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
-                ctx.shadowBlur = 10;
-                ctx.shadowColor = "#ffffff";
+                const color = getComputedStyle(document.body).getPropertyValue('--particle-color').trim() || '#ffffff';
+                ctx.fillStyle = color;
+                ctx.shadowBlur = 8;
+                ctx.shadowColor = color;
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                 ctx.fill();
@@ -584,40 +592,46 @@
             }
         }
 
-        function initParticles() {
-            particlesArray = [];
-            for (let i = 0; i < numberOfParticles; i++) {
-                particlesArray.push(new Particle());
-            }
-        }
+        for (let i = 0; i < 45; i++) particlesArray.push(new Particle());
 
         function animateParticles() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            for (let i = 0; i < particlesArray.length; i++) {
-                particlesArray[i].update();
-                particlesArray[i].draw();
-            }
+            particlesArray.forEach(p => { p.update(); p.draw(); });
             requestAnimationFrame(animateParticles);
         }
-
-        initParticles();
         animateParticles();
 
-        // DİNAMİK VISUALIZER SPEKTRUMU
+        // BEAT PULSE & VISUALIZER
         const vBars = document.querySelectorAll('.v-bar');
+        const videoBox = document.getElementById('video-box');
+        const logoBox = document.getElementById('logo-box');
+
         function animateVisualizer() {
             if (isStarted && player && player.getPlayerState() === YT.PlayerState.PLAYING && !player.isMuted()) {
+                let maxBarHeight = 0;
                 vBars.forEach(bar => {
                     const randomHeight = Math.floor(Math.random() * 85) + 15;
                     bar.style.height = randomHeight + '%';
+                    if (randomHeight > maxBarHeight) maxBarHeight = randomHeight;
                 });
+
+                // Bas Vurma Efekti
+                if (maxBarHeight > 75) {
+                    videoBox.classList.add('beat-glow');
+                    logoBox.classList.add('beat-bounce');
+                } else {
+                    videoBox.classList.remove('beat-glow');
+                    logoBox.classList.remove('beat-bounce');
+                }
             } else {
                 vBars.forEach(bar => { bar.style.height = '10%'; });
+                videoBox.classList.remove('beat-glow');
+                logoBox.classList.remove('beat-bounce');
             }
         }
-        setInterval(animateVisualizer, 120);
+        setInterval(animateVisualizer, 110);
 
-        // FIREBASE KURULUMU VE ANLIK İZLEYİCİ TAKİP SİSTEMİ
+        // FIREBASE İZLEYİCİ TAKİBİ
         const firebaseConfig = {
             apiKey: "AIzaSyBaTlb6V6e4FMLTYNXAPBgdzsgiclL8Qw8",
             authDomain: "easyfm-37b9e.firebaseapp.com",
@@ -625,17 +639,13 @@
             projectId: "easyfm-37b9e",
             storageBucket: "easyfm-37b9e.firebasestorage.app",
             messagingSenderId: "869244564550",
-            appId: "1:869244564550:web:f0824148dbcae6b7024647",
-            measurementId: "G-7WEFWTKBC7"
+            appId: "1:869244564550:web:f0824148dbcae6b7024647"
         };
-
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
-
         const myConnectionsRef = db.ref('online_listeners');
-        const connectedRef = db.ref('.info/connected');
 
-        connectedRef.on('value', (snap) => {
+        db.ref('.info/connected').on('value', (snap) => {
             if (snap.val() === true) {
                 const con = myConnectionsRef.push();
                 con.onDisconnect().remove();
@@ -644,19 +654,18 @@
         });
 
         myConnectionsRef.on('value', (snap) => {
-            const count = snap.numChildren();
-            document.getElementById('listener-count').innerText = count;
+            document.getElementById('listener-count').innerText = snap.numChildren();
         });
-        
-        // CANLI SENKRONİZASYON VE PLAYLIST SİSTEMİ
+
+        // PLAYLIST VE PARÇA BİLGİLERİ
         const songList = [
-            { id: '1IEg_3x35go', duration: 120 },
-            { id: 'qAlF70MdfwU', duration: 207 }, 
-            { id: 'L_BpiSsIBFM', duration: 236 }, 
-            { id: 'cTGQrA5HHIU', duration: 204 }, 
-            { id: 'ftaXMKV3ffE', duration: 160 },
-            { id: 'LPTlvQ1Zet0', duration: 188 },
-            { id: 'EfHNIPXTxy0', duration: 276 }
+            { id: '1IEg_3x35go', duration: 120, title: "JackBoys - GANG GANG" },
+            { id: 'qAlF70MdfwU', duration: 207, title: "Travis Scott - HIGHEST IN THE ROOM" }, 
+            { id: 'L_BpiSsIBFM', duration: 236, title: "Young Thug - Solid ft. Drake" }, 
+            { id: 'cTGQrA5HHIU', duration: 204, title: "Kodak Black - Super Gremlin" }, 
+            { id: 'ftaXMKV3ffE', duration: 160, title: "NLE Choppa - Walk Em Down" },
+            { id: 'LPTlvQ1Zet0', duration: 188, title: "Future - Mask Off" },
+            { id: 'EfHNIPXTxy0', duration: 276, title: "Playboi Carti - Sky" }
         ];
 
         const STREAM_START_TIME = 1700000000; 
@@ -677,44 +686,40 @@
                 if (elapsedTime < accumulatedTime + songList[i].duration) {
                     return {
                         songIndex: i,
-                        seekTo: elapsedTime - accumulatedTime
+                        seekTo: elapsedTime - accumulatedTime,
+                        title: songList[i].title
                     };
                 }
                 accumulatedTime += songList[i].duration;
             }
-            return { songIndex: 0, seekTo: 0 };
+            return { songIndex: 0, seekTo: 0, title: songList[0].title };
         }
 
         const tag = document.createElement('script');
         tag.src = "https://www.youtube.com/iframe_api";
-        const firstScriptTag = document.getElementsByTagName('script')[0];
-        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+        document.getElementsByTagName('script')[0].parentNode.insertBefore(tag, document.getElementsByTagName('script')[0]);
 
         function onYouTubeIframeAPIReady() {
             const state = getCurrentStreamState();
             currentLoadedVideoId = songList[state.songIndex].id;
+            updateTickerTitle(state.title);
 
             player = new YT.Player('player', {
                 videoId: currentLoadedVideoId,
                 playerVars: {
-                    'autoplay': 0,
-                    'controls': 0,
-                    'disablekb': 1,
-                    'modestbranding': 1,
-                    'rel': 0,
-                    'loop': 0,
-                    'playsinline': 1
+                    'autoplay': 0, 'controls': 0, 'disablekb': 1, 'modestbranding': 1, 'rel': 0, 'playsinline': 1
                 },
-                events: {
-                    'onStateChange': onPlayerStateChange
-                }
+                events: { 'onStateChange': onPlayerStateChange }
             });
+        }
+
+        function updateTickerTitle(title) {
+            document.getElementById('current-track-name').innerText = title;
         }
 
         function startRadio() {
             if (!player) return;
             const state = getCurrentStreamState();
-            
             player.seekTo(state.seekTo, true);
             player.playVideo();
             player.unMute();
@@ -728,11 +733,9 @@
             document.getElementById('visualizer').classList.add('active');
         }
 
-        // VİDEOYA TIKLANDIĞINDA SADECE DURDUR / DEVAM ETTİR
         function togglePlayPause() {
             if (!player || !isStarted) return;
-            const state = player.getPlayerState();
-            if (state === YT.PlayerState.PLAYING) {
+            if (player.getPlayerState() === YT.PlayerState.PLAYING) {
                 player.pauseVideo();
             } else {
                 syncToCurrentStream();
@@ -740,67 +743,43 @@
             }
         }
 
-        // SES AYARLAMA VE MUTING FONKSİYONLARI
-        const volumeIconHigh = '<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>';
-        const volumeIconMute = '<path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>';
-
         function changeVolume(val) {
             if (!player) return;
-            const volumeText = document.getElementById('volume-text');
-            const icon = document.getElementById('volume-icon');
-
             player.setVolume(val);
-            volumeText.innerText = val + '%';
-
-            if (val == 0) {
-                player.mute();
-                icon.innerHTML = volumeIconMute;
-            } else {
-                if (player.isMuted()) player.unMute();
-                icon.innerHTML = volumeIconHigh;
-                lastVolumeLevel = val;
-            }
+            document.getElementById('volume-text').innerText = val + '%';
+            if (val == 0) player.mute();
+            else if (player.isMuted()) player.unMute();
         }
 
         function toggleMute() {
             if (!player) return;
             const slider = document.getElementById('volume-slider');
-            const icon = document.getElementById('volume-icon');
-
             if (player.isMuted() || slider.value == 0) {
-                const targetVolume = lastVolumeLevel > 0 ? lastVolumeLevel : 50;
+                const target = lastVolumeLevel > 0 ? lastVolumeLevel : 50;
                 player.unMute();
-                player.setVolume(targetVolume);
-                slider.value = targetVolume;
-                document.getElementById('volume-text').innerText = targetVolume + '%';
-                icon.innerHTML = volumeIconHigh;
+                player.setVolume(target);
+                slider.value = target;
+                document.getElementById('volume-text').innerText = target + '%';
             } else {
                 lastVolumeLevel = slider.value;
                 player.mute();
                 slider.value = 0;
                 document.getElementById('volume-text').innerText = '0%';
-                icon.innerHTML = volumeIconMute;
             }
         }
 
         function syncToCurrentStream() {
             if (!player || isChangingSong || !isStarted) return;
-
             const state = getCurrentStreamState();
             const targetSong = songList[state.songIndex];
+
+            updateTickerTitle(state.title);
 
             if (currentLoadedVideoId !== targetSong.id) {
                 isChangingSong = true;
                 currentLoadedVideoId = targetSong.id;
-                
-                player.loadVideoById({
-                    videoId: targetSong.id,
-                    startSeconds: state.seekTo
-                });
-                
-                setTimeout(() => { 
-                    isChangingSong = false; 
-                }, 2000);
+                player.loadVideoById({ videoId: targetSong.id, startSeconds: state.seekTo });
+                setTimeout(() => { isChangingSong = false; }, 2000);
             } else {
                 const currentTime = player.getCurrentTime ? player.getCurrentTime() : 0;
                 if (Math.abs(currentTime - state.seekTo) > 3) {
@@ -810,11 +789,9 @@
         }
 
         function onPlayerStateChange(event) {
-            if (event.data === YT.PlayerState.ENDED) {
-                if (isStarted) {
-                    syncToCurrentStream();
-                    player.playVideo();
-                }
+            if (event.data === YT.PlayerState.ENDED && isStarted) {
+                syncToCurrentStream();
+                player.playVideo();
             }
         }
 
@@ -823,6 +800,28 @@
                 syncToCurrentStream();
             }
         }, 5000);
+
+        // KLAVYE KISAYOLLARI (HOTKEYS)
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                togglePlayPause();
+            } else if (e.code === 'KeyM') {
+                toggleMute();
+            } else if (e.code === 'ArrowUp') {
+                e.preventDefault();
+                const slider = document.getElementById('volume-slider');
+                const newVal = Math.min(100, parseInt(slider.value) + 5);
+                slider.value = newVal;
+                changeVolume(newVal);
+            } else if (e.code === 'ArrowDown') {
+                e.preventDefault();
+                const slider = document.getElementById('volume-slider');
+                const newVal = Math.max(0, parseInt(slider.value) - 5);
+                slider.value = newVal;
+                changeVolume(newVal);
+            }
+        });
     </script>
 </body>
 </html>

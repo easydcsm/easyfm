@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EA$Y FM | LIVE</title>
+    <title>EA$Y FM | CANLI</title>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     
@@ -618,13 +618,13 @@
         }
         drawVisualizer();
 
-        // PLAYLIST & CANLI YAYIN HESAPLAMA SİSTEMİ (TEMALAR EKLENDİ)
+        // PLAYLIST & CANLI YAYIN HESAPLAMA SİSTEMİ
         const songList = [
             { id: '1IEg_3x35go', duration: 120, title: 'FRANCHISE', theme: '#c67d34', glow: 'rgba(198, 125, 52, 0.4)', bgGlow: 'rgba(198, 125, 52, 0.12)' },
             { id: 'qAlF70MdfwU', duration: 207, title: 'OUT WEST', theme: '#ff7700', glow: 'rgba(255, 119, 0, 0.4)', bgGlow: 'rgba(255, 119, 0, 0.12)' }, 
             { id: 'L_BpiSsIBFM', duration: 236, title: 'BROTHER STONE', theme: '#8a2be2', glow: 'rgba(138, 43, 226, 0.4)', bgGlow: 'rgba(138, 43, 226, 0.12)' }, 
             { id: 'cTGQrA5HHIU', duration: 204, title: 'WITH THAT', theme: '#39ff14', glow: 'rgba(57, 255, 20, 0.4)', bgGlow: 'rgba(57, 255, 20, 0.12)' }, 
-            { id: 'ftaXMKV3ffE', duration: 160, title: 'BACKR00MS', theme: '#4a4a4a', glow: 'rgba(100, 100, 100, 0.4)', bgGlow: 'rgba(80, 80, 80, 0.15)' },
+            { id: 'ftaXMKV3ffE', duration: 160, title: 'BACKR00MS', theme: '#5a5a5a', glow: 'rgba(100, 100, 100, 0.4)', bgGlow: 'rgba(80, 80, 80, 0.15)' },
             { id: 'LPTlvQ1Zet0', duration: 188, title: 'RIC FLAIR DRIP', theme: '#00d2ff', glow: 'rgba(0, 210, 255, 0.4)', bgGlow: 'rgba(0, 210, 255, 0.12)' },
             { id: 'EfHNIPXTxy0', duration: 276, title: 'ZEZE', theme: '#00f0ff', glow: 'rgba(0, 240, 255, 0.4)', bgGlow: 'rgba(0, 240, 255, 0.12)' }
         ];
@@ -734,6 +734,7 @@
                 videoId: targetSong.id,
                 startSeconds: Math.floor(state.seekTo)
             });
+            player.playVideo();
         }
 
         // HER 3 SANİYEDE BİR ÇALIŞAN CANLI YAYIN SENKRONİZASYON KONTROLÜ

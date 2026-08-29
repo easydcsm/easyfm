@@ -684,11 +684,13 @@
                 videoId: currentLoadedVideoId,
                 playerVars: {
                     'autoplay': 0,
-                    'controls': 1,
-                    'disablekb': 0,
-                    'modestbranding': 1,
-                    'rel': 0,
-                    'loop': 0,
+                    'controls': 1,            // Reklam atlama ve tıklama için açık kalmalı
+                    'cc_load_policy': 0,      // Altyazıları varsayılan olarak KAPATIR
+                    'iv_load_policy': 3,      // Video içi kartları/notları GİZLER
+                    'fs': 0,                  // Tam ekran butonunu GİZLER
+                    'modestbranding': 1,      // YouTube logosunu küçültür
+                    'rel': 0,                  // İlgili videoları kısıtlar
+                    'disablekb': 1,           // Klavye kısayollarını devre dışı bırakır
                     'playsinline': 1
                 },
                 events: {

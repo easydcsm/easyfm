@@ -48,82 +48,6 @@
             background: radial-gradient(circle, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.02) 50%, rgba(0, 0, 0, 0) 75%);
             z-index: 2;
             pointer-events: none;
-            transition: opacity 1.5s ease, background 1.5s ease;
-        }
-
-        /* DIAMOND GLOW TOGGLE */
-        .glow-toggle-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 100;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: rgba(15, 15, 15, 0.85);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 8px 16px;
-            border-radius: 30px;
-            box-shadow: 0 4px 20px rgba(255,255,255,0.1);
-        }
-
-        .glow-toggle-label {
-            font-size: 10px;
-            font-weight: 900;
-            letter-spacing: 1.5px;
-            color: #fff;
-            text-transform: uppercase;
-        }
-
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 36px;
-            height: 20px;
-        }
-
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .slider-toggle {
-            position: absolute;
-            cursor: pointer;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #222;
-            transition: .4s;
-            border-radius: 20px;
-            border: 1px solid #444;
-        }
-
-        .slider-toggle:before {
-            position: absolute;
-            content: "";
-            height: 12px;
-            width: 12px;
-            left: 3px;
-            bottom: 3px;
-            background-color: #fff;
-            transition: .4s;
-            border-radius: 50%;
-            box-shadow: 0 0 5px #fff;
-        }
-
-        input:checked + .slider-toggle {
-            background-color: #ffffff;
-        }
-
-        input:checked + .slider-toggle:before {
-            transform: translateX(15px);
-            background-color: #000;
-        }
-
-        body.diamond-mode-active .ambient-glow {
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.28) 0%, rgba(200, 200, 200, 0.08) 50%, rgba(0, 0, 0, 0) 80%);
         }
 
         .main-wrapper {
@@ -361,14 +285,6 @@
 </head>
 <body>
 
-    <div class="glow-toggle-container">
-        <span class="glow-toggle-label">DIAMOND GLOW</span>
-        <label class="switch">
-            <input type="checkbox" id="glow-toggle" onchange="toggleDiamondGlow(this)">
-            <span class="slider-toggle"></span>
-        </label>
-    </div>
-
     <canvas id="bg-canvas"></canvas>
     <div class="ambient-glow"></div>
 
@@ -414,10 +330,6 @@
         let isPlayingState = false;
         let currentLoadedVideoId = null;
         let syncCheckInterval = null;
-
-        function toggleDiamondGlow(checkbox) {
-            document.body.classList.toggle('diamond-mode-active', checkbox.checked);
-        }
 
         // --- PLAYLIST VE ZAMAN HESAPLAMALARI ---
         const songList = [
@@ -521,11 +433,9 @@
             const startSec = Math.floor(state.seekTo);
             const iframe = document.getElementById('player-iframe');
 
-            // Iframe URL'sini doğrudan set et (Autoplay ve JS API aktif)
             iframe.src = `https://www.youtube.com/embed/${targetSong.id}?autoplay=1&start=${startSec}&enablejsapi=1&rel=0&controls=1`;
             isPlayingState = true;
 
-            // YouTube API bağlama kontrolü
             if (window.YT && window.YT.Player) {
                 onYouTubeIframeAPIReady();
             }
@@ -585,7 +495,7 @@
         function createOrbitRingText() {
             const canvas = document.createElement('canvas');
             canvas.width = 2048;
-            canvas.height = 512; // Çift katlı metin için yükseklik arttırıldı
+            canvas.height = 512;
             const ctx = canvas.getContext('2d');
 
             ctx.fillStyle = 'transparent';
@@ -636,7 +546,6 @@
         function animateGlobe() {
             requestAnimationFrame(animateGlobe);
 
-            // DÜNYA SÜREKLİ DÖNER (Akış başlayınca hızı artar)
             const globeSpeed = isPlayingState ? 0.006 : 0.002;
             const ringSpeed = isPlayingState ? 0.009 : 0.003;
 
@@ -644,13 +553,11 @@
             if (ringMesh) ringMesh.rotation.y -= ringSpeed;
 
             if (isPlayingState) {
-                // SADECE AKIŞ BAŞLAYINCA BASS PATLAMALARI/VURUŞLARI
                 bassAngle += 0.08;
                 const bassScale = 1 + Math.pow(Math.sin(bassAngle), 6) * 0.06;
                 globeMesh.scale.set(bassScale, bassScale, bassScale);
                 atmosMesh.scale.set(bassScale, bassScale, bassScale);
             } else {
-                // Sakin modda sabit kalır
                 globeMesh.scale.lerp(new THREE.Vector3(1, 1, 1), 0.1);
                 atmosMesh.scale.lerp(new THREE.Vector3(1, 1, 1), 0.1);
             }

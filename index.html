@@ -66,7 +66,7 @@
             align-items: center;
             justify-content: center; /* Elemanlar ekrana eşit dağıtıldı */
             padding: 10px 15px;
-            gap: 10px; /* Elemanlar arası dengeli esnek boşluk */
+            gap: 8px; /* Elemanlar arası dengeli boşluk */
         }
 
         /* LOGO & 3D DÜNYA ALANI */
@@ -74,7 +74,7 @@
             text-align: center;
             position: relative;
             width: 100%;
-            height: 180px;
+            height: 230px; /* Dünya için alan 180px -> 230px'e çıkarıldı */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -88,8 +88,8 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%) scale(0.6);
-            width: 180px;
-            height: 180px;
+            width: 220px;
+            height: 220px;
             border-radius: 50%;
             border: 4px solid rgba(255, 255, 255, 1);
             box-shadow: 0 0 80px rgba(255, 255, 255, 1), inset 0 0 50px rgba(255, 255, 255, 0.9);
@@ -116,8 +116,8 @@
         }
 
         #globe-3d-container {
-            width: 400px;
-            height: 180px;
+            width: 480px;
+            height: 230px;
             position: relative;
             z-index: 2;
             overflow: visible;
@@ -168,7 +168,7 @@
         .video-container {
             position: relative;
             width: 100%;
-            padding-bottom: 50%; /* Dikey oranı sıkılaştırıldı */
+            padding-bottom: 46%; /* Dikey denge sağlandı */
             height: 0;
             border-radius: 14px;
             overflow: hidden;
@@ -459,16 +459,16 @@
         // --- THREE.JS 3D DÜNYA VE YÖRÜNGE METNİ ---
         const globeContainer = document.getElementById('globe-3d-container');
         const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(45, 400 / 180, 0.1, 1000);
+        const camera = new THREE.PerspectiveCamera(45, 480 / 230, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-        renderer.setSize(400, 180);
+        renderer.setSize(480, 230);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         globeContainer.appendChild(renderer.domElement);
 
         const textureLoader = new THREE.TextureLoader();
         const earthTexture = textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_atmos_2048.jpg');
 
-        const baseRadius = 1.35;
+        const baseRadius = 1.85; /* Dünya Yarıçapı 1.35'ten 1.85'e Büyütüldü */
         const geometry = new THREE.SphereGeometry(baseRadius, 64, 64);
         const material = new THREE.MeshStandardMaterial({
             map: earthTexture,
@@ -479,7 +479,7 @@
         scene.add(globeMesh);
 
         // Atmosfer Katmanı
-        const atmosGeo = new THREE.SphereGeometry(baseRadius + 0.03, 64, 64);
+        const atmosGeo = new THREE.SphereGeometry(baseRadius + 0.04, 64, 64);
         const atmosMat = new THREE.MeshBasicMaterial({
             color: 0xffffff,
             transparent: true,
@@ -530,7 +530,7 @@
             ringTex.magFilter = THREE.LinearFilter;
             ringTex.anisotropy = renderer.capabilities.getMaxAnisotropy();
 
-            const ringGeo = new THREE.CylinderGeometry(baseRadius + 0.24, baseRadius + 0.24, 0.75, 64, 1, true);
+            const ringGeo = new THREE.CylinderGeometry(baseRadius + 0.30, baseRadius + 0.30, 1.0, 64, 1, true);
             const ringMat = new THREE.MeshBasicMaterial({
                 map: ringTex,
                 transparent: true,
@@ -547,7 +547,7 @@
             createOrbitRingText();
         });
 
-        camera.position.z = 5.0;
+        camera.position.z = 5.2;
 
         let bassAngle = 0;
 
@@ -562,7 +562,7 @@
 
             if (isPlayingState) {
                 bassAngle += 0.08;
-                const bassScale = 1 + Math.pow(Math.sin(bassAngle), 6) * 0.06;
+                const bassScale = 1 + Math.pow(Math.sin(bassAngle), 6) * 0.05;
                 globeMesh.scale.set(bassScale, bassScale, bassScale);
                 atmosMesh.scale.set(bassScale, bassScale, bassScale);
             } else {

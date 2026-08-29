@@ -14,24 +14,37 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        html, body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
+        html {
+            background-color: #000000 !important;
             height: 100%;
-            height: 100dvh; /* Dynamic Viewport Height: Mobil tarayıcı çubuklarını dinamik hesaplar */
+            width: 100%;
             overflow: hidden;
-            background-color: #000000;
-            color: #fff;
-            font-family: 'Montserrat', sans-serif;
+            /* Mobilde dokunarak esnetme / kaydırma efektini kilitler */
+            overscroll-behavior: none;
+            overscroll-behavior-y: none;
         }
 
         body {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100%;
+            height: 100dvh;
+            overflow: hidden;
+            background-color: #000000 !important;
+            color: #fff;
+            font-family: 'Montserrat', sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            position: relative;
+            justify-content: space-between;
+            /* Sayfayı mobil ekrana sabitleyerek alt çubuk beyazlığını yok eder */
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overscroll-behavior: none;
         }
 
         /* ARKA PLAN CANVAS */
@@ -63,13 +76,13 @@
             width: 100%;
             max-width: 680px;
             height: 100%;
-            max-height: 100dvh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: space-between; /* Mobilde öğeleri dengeli dağıtır */
-            padding: 15px 15px calc(15px + env(safe-area-inset-bottom)); /* iOS alt çizgi alanını korur */
-            gap: 6px;
+            justify-content: space-between;
+            padding: 10px 15px calc(10px + env(safe-area-inset-bottom, 0px));
+            gap: 4px;
+            overflow: hidden;
         }
 
         /* LOGO & 3D DÜNYA ALANI */
@@ -77,13 +90,13 @@
             text-align: center;
             position: relative;
             width: 100%;
-            height: 200px;
+            height: 180px;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: visible;
             margin-top: 0px;
-            margin-bottom: 25px;
+            margin-bottom: 10px;
             flex-shrink: 0;
         }
 
@@ -123,7 +136,7 @@
         #globe-3d-container {
             width: 100%;
             max-width: 480px;
-            height: 200px;
+            height: 180px;
             position: relative;
             z-index: 2;
             overflow: visible;
@@ -135,8 +148,8 @@
             gap: 10px;
             flex-wrap: wrap;
             justify-content: center;
-            margin-top: 5px;
-            margin-bottom: 5px;
+            margin-top: 2px;
+            margin-bottom: 2px;
             flex-shrink: 0;
         }
 
@@ -342,6 +355,11 @@
     </div>
 
     <script>
+        // Mobilde dokunarak sayfayı aşağı/yukarı kaydırmayı (rubber-banding / bounce) engeller
+        document.addEventListener('touchmove', function(e) {
+            e.preventDefault();
+        }, { passive: false });
+
         let player = null;
         let isPlayerReady = false;
         let isPlayingState = false;
@@ -628,7 +646,6 @@
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
             
-            // 3D Dünya boyutunu resize esnasında güncelle
             if (camera && renderer && globeContainer) {
                 camera.aspect = globeContainer.offsetWidth / globeContainer.offsetHeight;
                 camera.updateProjectionMatrix();

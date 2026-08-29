@@ -3,17 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EA$Y FM | CANLI</title>
+    <title>EA$Y FM | LIVE</title>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     
     <style>
-        :root {
-            --theme-color: #ffffff;
-            --theme-glow: rgba(255, 255, 255, 0.4);
-            --theme-bg-glow: rgba(255, 255, 255, 0.08);
-        }
-
         * {
             box-sizing: border-box;
             user-select: none;
@@ -31,9 +25,9 @@
             min-height: 100vh;
             overflow-x: hidden;
             position: relative;
-            transition: background-color 1s ease;
         }
 
+        /* KRİSTAL PARÇACIKLI ARKA PLAN */
         #bg-canvas {
             position: fixed;
             top: 0;
@@ -49,14 +43,15 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 90vw;
-            height: 90vh;
-            background: radial-gradient(circle, var(--theme-bg-glow) 0%, rgba(0, 0, 0, 0) 70%);
+            width: 80vw;
+            height: 80vh;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.04) 0%, rgba(0, 0, 0, 0) 70%);
             z-index: 2;
             pointer-events: none;
-            transition: background 1.2s ease, opacity 0.5s ease;
+            transition: opacity 0.5s ease;
         }
 
+        /* SAĞ ÜST: DIAMOND GLOW TOGGLE */
         .glow-toggle-container {
             position: fixed;
             top: 20px;
@@ -119,7 +114,7 @@
         }
 
         input:checked + .slider-toggle {
-            background-color: var(--theme-color);
+            background-color: #ffffff;
         }
 
         input:checked + .slider-toggle:before {
@@ -128,19 +123,19 @@
         }
 
         body.diamond-mode-active .ambient-glow {
-            background: radial-gradient(circle, var(--theme-glow) 0%, var(--theme-bg-glow) 50%, rgba(0, 0, 0, 0) 80%);
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.03) 50%, rgba(0, 0, 0, 0) 75%);
         }
 
         body.diamond-mode-active h1 {
             text-shadow: 
-                0 0 15px var(--theme-color),
-                0 0 30px var(--theme-color),
-                0 0 45px var(--theme-glow);
+                0 0 15px rgba(255, 255, 255, 1),
+                0 0 30px rgba(255, 255, 255, 0.8),
+                0 0 45px rgba(255, 255, 255, 0.5);
         }
 
         body.diamond-mode-active .video-container {
-            box-shadow: 0 0 40px var(--theme-glow), 0 10px 40px rgba(0, 0, 0, 0.8);
-            border-color: var(--theme-color);
+            box-shadow: 0 0 40px rgba(255, 255, 255, 0.3), 0 10px 40px rgba(0, 0, 0, 0.8);
+            border-color: rgba(255, 255, 255, 0.6);
         }
 
         .main-wrapper {
@@ -155,9 +150,10 @@
             padding: 20px 15px;
         }
 
+        /* LOGO & DÖNEN VINYL EFFECT */
         .logo-container {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             margin-top: 10px;
             position: relative;
         }
@@ -166,74 +162,23 @@
             position: absolute;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%) scale(1);
-            width: 240px;
-            height: 240px;
-            border: 3px dashed var(--theme-color);
+            transform: translate(-50%, -50%) rotate(0deg);
+            width: 220px;
+            height: 220px;
+            border: 2px dashed rgba(255, 255, 255, 0.15);
             border-radius: 50%;
             z-index: -1;
-            opacity: 0.3;
-            transition: border-color 1s ease, box-shadow 0.3s ease, opacity 0.5s ease;
-        }
-
-        .vinyl-pulse-outer {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(1);
-            width: 290px;
-            height: 290px;
-            border: 1px solid var(--theme-color);
-            border-radius: 50%;
-            z-index: -2;
-            opacity: 0;
-            transition: border-color 1s ease;
+            transition: border-color 0.5s;
         }
 
         .is-playing .vinyl-ring {
-            opacity: 0.95;
-            animation: spinVinyl 10s linear infinite, bassBump 0.8s ease-in-out infinite alternate;
-            box-shadow: 0 0 25px var(--theme-color), inset 0 0 15px var(--theme-color);
-        }
-
-        .is-playing .vinyl-pulse-outer {
-            animation: outerBassPulse 0.8s ease-in-out infinite alternate;
+            animation: spinVinyl 8s linear infinite;
+            border-color: rgba(255, 255, 255, 0.6);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
         }
 
         @keyframes spinVinyl {
-            0% { transform: translate(-50%, -50%) rotate(0deg) scale(1); }
-            100% { transform: translate(-50%, -50%) rotate(360deg) scale(1); }
-        }
-
-        @keyframes bassBump {
-            0% {
-                transform: translate(-50%, -50%) scale(0.96);
-                box-shadow: 0 0 15px var(--theme-color);
-            }
-            50% {
-                transform: translate(-50%, -50%) scale(1.08);
-                box-shadow: 0 0 35px var(--theme-color), 0 0 60px var(--theme-glow);
-            }
-            100% {
-                transform: translate(-50%, -50%) scale(0.98);
-                box-shadow: 0 0 20px var(--theme-color);
-            }
-        }
-
-        @keyframes outerBassPulse {
-            0% {
-                transform: translate(-50%, -50%) scale(0.9);
-                opacity: 0.1;
-            }
-            50% {
-                transform: translate(-50%, -50%) scale(1.15);
-                opacity: 0.4;
-                box-shadow: 0 0 20px var(--theme-color);
-            }
-            100% {
-                transform: translate(-50%, -50%) scale(0.95);
-                opacity: 0.1;
-            }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
         }
 
         h1 {
@@ -242,21 +187,27 @@
             font-size: 72px;
             letter-spacing: 5px;
             text-transform: uppercase;
+            
             background: linear-gradient(
                 135deg, 
                 #ffffff 0%, 
-                var(--theme-color) 50%, 
+                #a6a6a6 25%, 
+                #ffffff 50%, 
+                #737373 75%, 
                 #ffffff 100%
             );
             background-size: 200% auto;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            
             text-shadow: 
-                0 0 10px var(--theme-color),
-                0 0 20px var(--theme-glow);
+                0 0 10px rgba(255, 255, 255, 0.8),
+                0 0 20px rgba(255, 255, 255, 0.4),
+                0 0 30px rgba(255, 255, 255, 0.2);
+                
             transform: skew(-4deg);
             animation: diamondShine 4s linear infinite;
-            transition: text-shadow 0.8s ease;
+            transition: text-shadow 0.3s;
         }
 
         @keyframes diamondShine {
@@ -272,11 +223,11 @@
             letter-spacing: 5px;
             margin-top: 8px;
             text-transform: uppercase;
-            text-shadow: 0 0 8px var(--theme-color);
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
             opacity: 0.9;
-            transition: text-shadow 0.8s ease;
         }
 
+        /* BADGES BAR */
         .status-bar {
             display: flex;
             gap: 12px;
@@ -289,7 +240,7 @@
             background: rgba(17, 17, 17, 0.7);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
-            border: 1px solid var(--theme-color);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             padding: 6px 16px;
             border-radius: 30px;
             font-size: 11px;
@@ -299,17 +250,15 @@
             align-items: center;
             gap: 8px;
             text-transform: uppercase;
-            transition: border-color 0.8s ease;
         }
 
         .live-dot {
             width: 8px;
             height: 8px;
-            background-color: var(--theme-color);
+            background-color: #ffffff;
             border-radius: 50%;
-            box-shadow: 0 0 10px var(--theme-color);
+            box-shadow: 0 0 10px #ffffff;
             animation: pulse 1.5s infinite;
-            transition: background-color 0.8s ease, box-shadow 0.8s ease;
         }
 
         @keyframes pulse {
@@ -318,6 +267,7 @@
             100% { opacity: 1; transform: scale(1); }
         }
 
+        /* VİDEO ÇERÇEVESİ VE OVERLAY */
         .video-container {
             position: relative;
             width: 100%;
@@ -325,9 +275,9 @@
             height: 0;
             border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            transition: box-shadow 0.8s ease, border-color 0.8s ease;
+            box-shadow: 0 10px 40px rgba(255, 255, 255, 0.08);
+            border: 1px solid #222222;
+            transition: box-shadow 0.4s, border-color 0.4s;
             margin-bottom: 15px;
         }
 
@@ -357,7 +307,7 @@
         }
 
         .start-btn {
-            background: var(--theme-color);
+            background: #ffffff;
             color: #000;
             font-family: 'Montserrat', sans-serif;
             font-weight: 900;
@@ -367,21 +317,22 @@
             border-radius: 50px;
             cursor: pointer;
             letter-spacing: 2px;
-            box-shadow: 0 0 20px var(--theme-glow);
-            transition: transform 0.2s, box-shadow 0.2s, background-color 0.8s ease;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
         .start-btn:hover {
             transform: scale(1.05);
-            box-shadow: 0 0 35px var(--theme-color);
+            box-shadow: 0 0 35px rgba(255, 255, 255, 0.9);
         }
 
+        /* NOW PLAYING CARD */
         .now-playing-card {
             width: 100%;
             background: rgba(15, 15, 15, 0.85);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            border: 1px solid var(--theme-color);
+            border: 1px solid rgba(255, 255, 255, 0.12);
             border-radius: 12px;
             padding: 12px 20px;
             display: flex;
@@ -389,7 +340,6 @@
             justify-content: space-between;
             margin-bottom: 15px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-            transition: border-color 0.8s ease;
         }
 
         .track-info {
@@ -426,12 +376,14 @@
             text-overflow: ellipsis;
         }
 
+        /* CANLI EQ VISUALIZER CANVAS */
         #visualizer-canvas {
             width: 100%;
             height: 35px;
         }
     </style>
 
+    <!-- Firebase SDK (Anlık Sayaç İçin) -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
@@ -451,7 +403,6 @@
     <div class="main-wrapper" id="main-wrapper">
         <div class="logo-container">
             <div class="vinyl-ring"></div>
-            <div class="vinyl-pulse-outer"></div>
             <h1>EA$Y FM</h1>
             <div class="subtitle">7/24 YÜZDE YÜZ MÜZİK</div>
         </div>
@@ -473,6 +424,7 @@
             <div id="player"></div>
         </div>
 
+        <!-- ŞU AN ÇALAN SİSTEMİ -->
         <div class="now-playing-card">
             <div class="track-info">
                 <span class="track-label">ŞU AN YAYINDA</span>
@@ -484,9 +436,11 @@
             </div>
         </div>
 
+        <!-- SPEKTRUM BARS VISUALIZER -->
         <canvas id="visualizer-canvas"></canvas>
     </div>
 
+    <!-- YouTube IFrame API -->
     <script src="https://www.youtube.com/iframe_api"></script>
 
     <script>
@@ -495,12 +449,12 @@
         let checkAudioInterval = null;
         let autoSyncInterval = null;
         let currentLoadedVideoId = null;
-        let currentThemeColor = '#ffffff';
 
         function toggleDiamondGlow(checkbox) {
             document.body.classList.toggle('diamond-mode-active', checkbox.checked);
         }
 
+        // KRİSTAL PARÇACIK ANİMASYONU
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
         let particlesArray = [];
@@ -548,6 +502,7 @@
         }
         animateParticles();
 
+        // FIREBASE SAYAÇ
         const firebaseConfig = {
             apiKey: "AIzaSyBaTlb6V6e4FMLTYNXAPBgdzsgiclL8Qw8",
             authDomain: "easyfm-37b9e.firebaseapp.com",
@@ -571,6 +526,7 @@
             document.getElementById('listener-count').innerText = snap.numChildren();
         });
 
+        // SPEKTRUM VISUALIZER (DYNAMIC BARS)
         const vCanvas = document.getElementById('visualizer-canvas');
         const vCtx = vCanvas.getContext('2d');
         const numBars = 32;
@@ -594,21 +550,22 @@
                 const x = i * (barWidth + 4);
                 const y = vCanvas.height - barHeights[i];
 
-                vCtx.fillStyle = currentThemeColor;
+                vCtx.fillStyle = 'rgba(255, 255, 255, 0.85)';
                 vCtx.fillRect(x, y, barWidth, barHeights[i]);
             }
             requestAnimationFrame(drawVisualizer);
         }
         drawVisualizer();
 
+        // PLAYLIST & CANLI YAYIN HESAPLAMA SİSTEMİ
         const songList = [
-            { id: '1IEg_3x35go', duration: 120, title: 'FRANCHISE', theme: '#c67d34', glow: 'rgba(198, 125, 52, 0.4)', bgGlow: 'rgba(198, 125, 52, 0.12)' },
-            { id: 'qAlF70MdfwU', duration: 207, title: 'OUT WEST', theme: '#ff7700', glow: 'rgba(255, 119, 0, 0.4)', bgGlow: 'rgba(255, 119, 0, 0.12)' }, 
-            { id: 'L_BpiSsIBFM', duration: 236, title: 'BROTHER STONE', theme: '#8a2be2', glow: 'rgba(138, 43, 226, 0.4)', bgGlow: 'rgba(138, 43, 226, 0.12)' }, 
-            { id: 'cTGQrA5HHIU', duration: 204, title: 'WITH THAT', theme: '#39ff14', glow: 'rgba(57, 255, 20, 0.4)', bgGlow: 'rgba(57, 255, 20, 0.12)' }, 
-            { id: 'ftaXMKV3ffE', duration: 160, title: 'BACKR00MS', theme: '#5a5a5a', glow: 'rgba(100, 100, 100, 0.4)', bgGlow: 'rgba(80, 80, 80, 0.15)' },
-            { id: 'LPTlvQ1Zet0', duration: 188, title: 'RIC FLAIR DRIP', theme: '#00d2ff', glow: 'rgba(0, 210, 255, 0.4)', bgGlow: 'rgba(0, 210, 255, 0.12)' },
-            { id: 'EfHNIPXTxy0', duration: 276, title: 'ZEZE', theme: '#00f0ff', glow: 'rgba(0, 240, 255, 0.4)', bgGlow: 'rgba(0, 240, 255, 0.12)' }
+            { id: '1IEg_3x35go', duration: 120, title: 'FRANCHISE' },
+            { id: 'qAlF70MdfwU', duration: 207, title: 'OUT WEST' }, 
+            { id: 'L_BpiSsIBFM', duration: 236, title: 'BROTHER STONE' }, 
+            { id: 'cTGQrA5HHIU', duration: 204, title: 'WITH THAT' }, 
+            { id: 'ftaXMKV3ffE', duration: 160, title: 'BACKR00MS' },
+            { id: 'LPTlvQ1Zet0', duration: 188, title: 'RIC FLAIR DRIP' },
+            { id: 'EfHNIPXTxy0', duration: 276, title: 'ZEZE' }
         ];
 
         const STREAM_START_TIME = 1700000000; 
@@ -630,13 +587,6 @@
             return { songIndex: 0, seekTo: 0 };
         }
 
-        function applyTheme(song) {
-            currentThemeColor = song.theme;
-            document.documentElement.style.setProperty('--theme-color', song.theme);
-            document.documentElement.style.setProperty('--theme-glow', song.glow);
-            document.documentElement.style.setProperty('--theme-bg-glow', song.bgGlow);
-        }
-
         function updateTrackLabels(currentIndex) {
             const currentSong = songList[currentIndex];
             const nextIndex = (currentIndex + 1) % songList.length;
@@ -644,13 +594,12 @@
 
             document.getElementById('current-track-name').innerText = currentSong.title;
             document.getElementById('next-track-name').innerText = nextSong.title;
-
-            applyTheme(currentSong);
         }
 
         const initialState = getCurrentStreamState();
         updateTrackLabels(initialState.songIndex);
 
+        // YOUTUBE API PLAYER KURULUMU
         function onYouTubeIframeAPIReady() {
             const state = getCurrentStreamState();
             currentLoadedVideoId = songList[state.songIndex].id;
@@ -663,15 +612,9 @@
                     'start': Math.floor(state.seekTo)
                 },
                 events: {
-                    'onReady': onPlayerReady,
                     'onStateChange': onPlayerStateChange
                 }
             });
-        }
-
-        function onPlayerReady(event) {
-            const state = getCurrentStreamState();
-            player.seekTo(state.seekTo, true);
         }
 
         function setPlaybackVisualState(active) {
@@ -723,22 +666,27 @@
             });
         }
 
+        // HER 3 SANİYEDE BİR ÇALIŞAN CANLI YAYIN SENKRONİZASYON KONTROLÜ
         function checkLiveSync() {
             if (!player || typeof player.getPlayerState !== 'function') return;
 
+            // Sadece video aktif olarak oynatılıyorsa senkron kontrolü yap
             if (player.getPlayerState() === YT.PlayerState.PLAYING) {
                 const state = getCurrentStreamState();
                 const expectedSong = songList[state.songIndex];
 
+                // Şarkı değiştiyse doğrudan yeni şarkıya geç
                 if (currentLoadedVideoId !== expectedSong.id) {
                     syncAndPlay();
                     return;
                 }
 
+                // Aynı şarkıdaysa süreyi kontrol et
                 const currentTime = player.getCurrentTime();
                 const timeDiff = Math.abs(currentTime - state.seekTo);
 
-                if (timeDiff > 2) {
+                // Eğer canlı yayından 1.5 saniyeden fazla sapma varsa süreyi düzelt
+                if (timeDiff > 1.5) {
                     player.seekTo(state.seekTo, true);
                 }
             }
@@ -749,16 +697,12 @@
             overlay.style.opacity = '0';
             setTimeout(() => { overlay.style.display = 'none'; }, 500);
 
-            if (player && typeof player.playVideo === 'function') {
-                const state = getCurrentStreamState();
-                player.unMute();
-                player.seekTo(state.seekTo, true);
-                player.playVideo();
-            }
+            syncAndPlay();
 
             if (checkAudioInterval) clearInterval(checkAudioInterval);
             checkAudioInterval = setInterval(checkAudioState, 400);
 
+            // 3 SANİYEDE BİR SENKRONİZASYON KONTROLÜ BAŞLAT
             if (autoSyncInterval) clearInterval(autoSyncInterval);
             autoSyncInterval = setInterval(checkLiveSync, 3000);
         }

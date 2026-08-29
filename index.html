@@ -26,7 +26,7 @@
             position: relative;
         }
 
-        /* HAREKETLİ KRİSTAL PARÇACIKLI ARKA PLAN CANVAS */
+        /* KRİSTAL PARÇACIKLI ARKA PLAN */
         #bg-canvas {
             position: fixed;
             top: 0;
@@ -37,7 +37,6 @@
             pointer-events: none;
         }
 
-        /* DİNAMİK ARKA PLAN RADİAL ISILTI */
         .ambient-glow {
             position: fixed;
             top: 50%;
@@ -51,7 +50,7 @@
             transition: opacity 0.5s ease;
         }
 
-        /* SAĞ ÜST: DIAMOND GLOW TOGGLE BUTONU */
+        /* SAĞ ÜST: DIAMOND GLOW TOGGLE */
         .glow-toggle-container {
             position: fixed;
             top: 20px;
@@ -122,7 +121,6 @@
             background-color: #000;
         }
 
-        /* DIAMOND GLOW MODU AKTİFKEN UYGULANACAK STİLLER */
         body.diamond-mode-active .ambient-glow {
             background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.02) 50%, rgba(0, 0, 0, 0) 75%);
         }
@@ -151,7 +149,6 @@
             padding: 20px 15px;
         }
 
-        /* Pırlanta / Kristal Işıltılı Siyah-Beyaz Logo */
         .logo-container {
             text-align: center;
             margin-bottom: 20px;
@@ -183,13 +180,8 @@
                 0 0 30px rgba(255, 255, 255, 0.2);
                 
             transform: skew(-4deg);
-            animation: diamondShine 4s linear infinite, bassVibe 1.2s ease-in-out infinite alternate;
+            animation: diamondShine 4s linear infinite;
             transition: text-shadow 0.3s;
-        }
-
-        @keyframes bassVibe {
-            0% { transform: skew(-4deg) scale(1); }
-            100% { transform: skew(-4deg) scale(1.02); }
         }
 
         @keyframes diamondShine {
@@ -209,7 +201,6 @@
             opacity: 0.9;
         }
 
-        /* Anlık İzleyici Rozeti */
         .listener-badge {
             background: rgba(17, 17, 17, 0.7);
             backdrop-filter: blur(10px);
@@ -224,7 +215,6 @@
             align-items: center;
             gap: 12px;
             box-shadow: 0 4px 20px rgba(255, 255, 255, 0.05);
-            transition: border 0.3s;
         }
 
         .live-dot {
@@ -243,7 +233,7 @@
             100% { opacity: 1; transform: scale(1); }
         }
 
-        /* VİDEO ÇERÇEVESİ */
+        /* VİDEO ÇERÇEVESİ VE OVERLAY */
         .video-container {
             position: relative;
             width: 100%;
@@ -266,7 +256,6 @@
             border: none;
         }
 
-        /* BAŞLATMA OVERLAY EKRANI */
         #start-overlay {
             position: absolute;
             top: 0;
@@ -296,7 +285,6 @@
             letter-spacing: 2px;
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
             transition: transform 0.2s, box-shadow 0.2s;
-            -webkit-tap-highlight-color: transparent;
         }
 
         .start-btn:hover {
@@ -304,34 +292,10 @@
             box-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
         }
 
-        /* FREKANS DALGASI CANVAS (WAVE SPECTRUM) */
         #wave-canvas {
             width: 100%;
             height: 40px;
             margin-top: 10px;
-        }
-
-        @media (max-width: 768px) {
-            .glow-toggle-container {
-                top: 12px;
-                right: 12px;
-                padding: 6px 12px;
-            }
-            .glow-toggle-label {
-                font-size: 8px;
-            }
-            h1 {
-                font-size: 40px;
-                letter-spacing: 2px;
-            }
-            .subtitle {
-                font-size: 10px;
-                letter-spacing: 3px;
-            }
-            .listener-badge {
-                padding: 6px 16px;
-                font-size: 11px;
-            }
         }
     </style>
 
@@ -341,7 +305,6 @@
 </head>
 <body>
 
-    <!-- DIAMOND GLOW TOGGLE BUTONU -->
     <div class="glow-toggle-container">
         <span class="glow-toggle-label">DIAMOND GLOW</span>
         <label class="switch">
@@ -350,52 +313,39 @@
         </label>
     </div>
 
-    <!-- Arka Plan Hareketli Kristal Parçacık Tuvali -->
     <canvas id="bg-canvas"></canvas>
     <div class="ambient-glow"></div>
 
     <div class="main-wrapper">
-        <!-- Pırlanta Işıltılı Siyah-Beyaz Logo Alanı -->
         <div class="logo-container">
             <h1>EA$Y FM</h1>
             <div class="subtitle">7/24 YÜZDE YÜZ MÜZİK</div>
         </div>
 
-        <!-- İzleyici Sayacı Rozeti -->
         <div class="listener-badge">
             <span class="live-dot"></span>
             <span>Anlık Dinleyici: <strong id="listener-count" style="color: #ffffff;">0</strong></span>
         </div>
 
         <div class="video-container">
-            <!-- Başlatma Kaplaması -->
             <div id="start-overlay" onclick="startRadio()">
                 <button class="start-btn">CANLI YAYINA KATIL</button>
             </div>
-
             <div id="player"></div>
         </div>
 
-        <!-- RADYO FREKANS DALGASI (WAVE SPECTRUM) -->
         <canvas id="wave-canvas"></canvas>
     </div>
 
     <script>
-        // DIAMOND GLOW TOGGLE SİSTEMİ
         function toggleDiamondGlow(checkbox) {
-            if (checkbox.checked) {
-                document.body.classList.add('diamond-mode-active');
-            } else {
-                document.body.classList.remove('diamond-mode-active');
-            }
+            document.body.classList.toggle('diamond-mode-active', checkbox.checked);
         }
 
-        // HAREKETLİ KRİSTAL PARÇACIK ANİMASYONU
+        // KRİSTAL PARÇACIK ANİMASYONU
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
-
         let particlesArray = [];
-        const numberOfParticles = 45;
 
         function resizeCanvas() {
             canvas.width = window.innerWidth;
@@ -412,54 +362,35 @@
                 this.speedX = (Math.random() - 0.5) * 0.4;
                 this.speedY = (Math.random() - 0.5) * 0.4;
                 this.opacity = Math.random() * 0.7 + 0.2;
-                this.pulseSpeed = Math.random() * 0.02 + 0.005;
             }
 
             update() {
                 this.x += this.speedX;
                 this.y += this.speedY;
-
                 if (this.x < 0) this.x = canvas.width;
                 if (this.x > canvas.width) this.x = 0;
                 if (this.y < 0) this.y = canvas.height;
                 if (this.y > canvas.height) this.y = 0;
-
-                this.opacity += Math.sin(Date.now() * this.pulseSpeed) * 0.01;
-                if (this.opacity < 0.1) this.opacity = 0.1;
-                if (this.opacity > 0.9) this.opacity = 0.9;
             }
 
             draw() {
                 ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
-                ctx.shadowBlur = 10;
-                ctx.shadowColor = "#ffffff";
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                 ctx.fill();
-                ctx.shadowBlur = 0;
             }
         }
 
-        function initParticles() {
-            particlesArray = [];
-            for (let i = 0; i < numberOfParticles; i++) {
-                particlesArray.push(new Particle());
-            }
-        }
+        for (let i = 0; i < 45; i++) particlesArray.push(new Particle());
 
         function animateParticles() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            for (let i = 0; i < particlesArray.length; i++) {
-                particlesArray[i].update();
-                particlesArray[i].draw();
-            }
+            particlesArray.forEach(p => { p.update(); p.draw(); });
             requestAnimationFrame(animateParticles);
         }
-
-        initParticles();
         animateParticles();
 
-        // FIREBASE KURULUMU VE SAYAÇ SİSTEMİ
+        // FIREBASE SAYAÇ
         const firebaseConfig = {
             apiKey: "AIzaSyBaTlb6V6e4FMLTYNXAPBgdzsgiclL8Qw8",
             authDomain: "easyfm-37b9e.firebaseapp.com",
@@ -467,59 +398,45 @@
             projectId: "easyfm-37b9e",
             storageBucket: "easyfm-37b9e.firebasestorage.app",
             messagingSenderId: "869244564550",
-            appId: "1:869244564550:web:f0824148dbcae6b7024647",
-            measurementId: "G-7WEFWTKBC7"
+            appId: "1:869244564550:web:f0824148dbcae6b7024647"
         };
-
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
-
         const myConnectionsRef = db.ref('online_listeners');
-        const connectedRef = db.ref('.info/connected');
-
-        connectedRef.on('value', (snap) => {
+        db.ref('.info/connected').on('value', (snap) => {
             if (snap.val() === true) {
                 const con = myConnectionsRef.push();
                 con.onDisconnect().remove();
                 con.set(true);
             }
         });
-
         myConnectionsRef.on('value', (snap) => {
-            const count = snap.numChildren();
-            document.getElementById('listener-count').innerText = count;
+            document.getElementById('listener-count').innerText = snap.numChildren();
         });
 
-        // RADYO FREKANS DALGA ANİMASYONU (SPECTRUM WAVE)
+        // FREKANS DALGASI ANİMASYONU
         const wCanvas = document.getElementById('wave-canvas');
         const wCtx = wCanvas.getContext('2d');
         let step = 0;
-
         function drawWave() {
             wCanvas.width = wCanvas.offsetWidth;
             wCanvas.height = wCanvas.offsetHeight;
             wCtx.clearRect(0, 0, wCanvas.width, wCanvas.height);
-
             wCtx.beginPath();
             wCtx.lineWidth = 1.5;
             wCtx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
-
-            const height = wCanvas.height;
-            const width = wCanvas.width;
-
-            for (let x = 0; x < width; x++) {
-                const y = Math.sin((x + step) * 0.04) * (height / 3) + (height / 2);
+            for (let x = 0; x < wCanvas.width; x++) {
+                const y = Math.sin((x + step) * 0.04) * (wCanvas.height / 3) + (wCanvas.height / 2);
                 if (x === 0) wCtx.moveTo(x, y);
                 else wCtx.lineTo(x, y);
             }
             wCtx.stroke();
-
-            step += (player && player.getPlayerState && player.getPlayerState() === YT.PlayerState.PLAYING) ? 2 : 0.3;
+            step += 1.5;
             requestAnimationFrame(drawWave);
         }
         drawWave();
 
-        // CANLI SENKRONİZASYON VE PLAYLIST SİSTEMİ
+        // OYNATICI VE PLAYLIST SİSTEMİ
         const songList = [
             { id: '1IEg_3x35go', duration: 120 },
             { id: 'qAlF70MdfwU', duration: 207 }, 
@@ -533,15 +450,9 @@
         const STREAM_START_TIME = 1700000000; 
         const totalPlaylistDuration = songList.reduce((acc, song) => acc + song.duration, 0);
 
-        let player;
-        let currentLoadedVideoId = null;
-        let isChangingSong = false;
-        let isStarted = false;
-
         function getCurrentStreamState() {
             const nowInSeconds = Math.floor(Date.now() / 1000);
             const elapsedTime = (nowInSeconds - STREAM_START_TIME) % totalPlaylistDuration;
-
             let accumulatedTime = 0;
             for (let i = 0; i < songList.length; i++) {
                 if (elapsedTime < accumulatedTime + songList[i].duration) {
@@ -555,88 +466,38 @@
             return { songIndex: 0, seekTo: 0 };
         }
 
+        let player;
+        let isStarted = false;
+
+        // YouTube API Yükleme
         const tag = document.createElement('script');
         tag.src = "https://www.youtube.com/iframe_api";
-        const firstScriptTag = document.getElementsByTagName('script')[0];
-        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+        document.head.appendChild(tag);
 
         function onYouTubeIframeAPIReady() {
             const state = getCurrentStreamState();
-            currentLoadedVideoId = songList[state.songIndex].id;
-
             player = new YT.Player('player', {
-                videoId: currentLoadedVideoId,
+                videoId: songList[state.songIndex].id,
                 playerVars: {
                     'autoplay': 0,
                     'controls': 1,
-                    'cc_load_policy': 0,
-                    'iv_load_policy': 3,
-                    'fs': 0,
-                    'modestbranding': 1,
-                    'rel': 0,
-                    'disablekb': 1,
-                    'playsinline': 1
-                },
-                events: {
-                    'onStateChange': onPlayerStateChange
+                    'start': Math.floor(state.seekTo),
+                    'rel': 0
                 }
             });
         }
 
         function startRadio() {
-            if (!player) return;
-            const state = getCurrentStreamState();
-            
-            player.seekTo(state.seekTo, true);
-            player.playVideo();
-            player.unMute();
-            
             const overlay = document.getElementById('start-overlay');
             overlay.style.opacity = '0';
             setTimeout(() => { overlay.style.display = 'none'; }, 500);
-            isStarted = true;
-        }
 
-        function syncToCurrentStream() {
-            if (!player || isChangingSong || !isStarted) return;
-
-            const state = getCurrentStreamState();
-            const targetSong = songList[state.songIndex];
-
-            if (currentLoadedVideoId !== targetSong.id) {
-                isChangingSong = true;
-                currentLoadedVideoId = targetSong.id;
-                
-                player.loadVideoById({
-                    videoId: targetSong.id,
-                    startSeconds: state.seekTo
-                });
-                
-                setTimeout(() => { 
-                    isChangingSong = false; 
-                }, 2000);
-            } else {
-                const currentTime = player.getCurrentTime ? player.getCurrentTime() : 0;
-                if (Math.abs(currentTime - state.seekTo) > 4) {
-                    player.seekTo(state.seekTo, true);
-                }
+            if (player && typeof player.playVideo === 'function') {
+                const state = getCurrentStreamState();
+                player.seekTo(state.seekTo, true);
+                player.playVideo();
             }
         }
-
-        function onPlayerStateChange(event) {
-            if (event.data === YT.PlayerState.ENDED) {
-                if (isStarted) {
-                    syncToCurrentStream();
-                    player.playVideo();
-                }
-            }
-        }
-
-        setInterval(() => {
-            if (player && typeof player.getPlayerState === 'function' && player.getPlayerState() === YT.PlayerState.PLAYING) {
-                syncToCurrentStream();
-            }
-        }, 5000);
     </script>
 </body>
 </html>

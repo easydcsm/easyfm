@@ -237,15 +237,15 @@
             100% { opacity: 1; transform: scale(1); }
         }
 
-        /* SÜRE VE SANİYE BARINI TAMAMEN SIFIRLAYAN KONTROL ALANI */
+        /* MİLİMETRİK OPTİMİZE EDİLMİŞ VİDEO ÇERÇEVESİ */
         .video-container {
             position: relative;
             width: 80%;
             max-width: 650px;
-            padding-bottom: 33%; /* Çerçeveyi dikeyde biraz daha daraltır */
+            padding-bottom: 38%; /* Reklam butonunun görünmesi için yüksekliği bir miktar esnetir */
             height: 0;
             border-radius: 16px;
-            overflow: hidden; /* Taşmayı kesin olarak gizler */
+            overflow: hidden;
             box-shadow: 0 10px 40px rgba(255, 255, 255, 0.08);
             border: 1px solid #222222;
             transition: box-shadow 0.4s, border-color 0.4s;
@@ -253,10 +253,10 @@
 
         .video-container iframe {
             position: absolute;
-            top: -18%; /* Süre/saniye çizgisini tamamen ekran altından dışarı iter */
+            top: -10%; /* Süre barını altta tutar ancak reklamı atla butonunu ekranda tutar */
             left: 0;
             width: 100%;
-            height: 145%; /* İframe alanını daha da genişletir */
+            height: 126%;
             border: none;
         }
 
@@ -432,11 +432,11 @@
             }
             .video-container {
                 width: 90%;
-                padding-bottom: 45%;
+                padding-bottom: 50%;
             }
             .video-container iframe {
-                top: -20%;
-                height: 150%;
+                top: -12%;
+                height: 132%;
             }
             .listener-badge {
                 padding: 6px 16px;

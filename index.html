@@ -237,15 +237,15 @@
             100% { opacity: 1; transform: scale(1); }
         }
 
-        /* ALT KONTROL BARI TAMAMEN KESİLMİŞ KONTROL ALANI */
+        /* SÜRE VE SANİYE BARINI TAMAMEN SIFIRLAYAN KONTROL ALANI */
         .video-container {
             position: relative;
             width: 80%;
             max-width: 650px;
-            padding-bottom: 35%; /* Çerçeve oranını korur */
+            padding-bottom: 33%; /* Çerçeveyi dikeyde biraz daha daraltır */
             height: 0;
             border-radius: 16px;
-            overflow: hidden; /* Dışarı taşan YouTube kontrollerini gizler */
+            overflow: hidden; /* Taşmayı kesin olarak gizler */
             box-shadow: 0 10px 40px rgba(255, 255, 255, 0.08);
             border: 1px solid #222222;
             transition: box-shadow 0.4s, border-color 0.4s;
@@ -253,10 +253,10 @@
 
         .video-container iframe {
             position: absolute;
-            top: -12%; /* Üst ve alt çubukları çerçevenin dışına iter */
+            top: -18%; /* Süre/saniye çizgisini tamamen ekran altından dışarı iter */
             left: 0;
             width: 100%;
-            height: 130%; /* Boyutu büyüterek ses ve altyazı butonlarını kırpar */
+            height: 145%; /* İframe alanını daha da genişletir */
             border: none;
         }
 
@@ -432,11 +432,11 @@
             }
             .video-container {
                 width: 90%;
-                padding-bottom: 48%;
+                padding-bottom: 45%;
             }
             .video-container iframe {
-                top: -14%;
-                height: 135%;
+                top: -20%;
+                height: 150%;
             }
             .listener-badge {
                 padding: 6px 16px;

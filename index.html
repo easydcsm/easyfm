@@ -138,170 +138,128 @@
             padding: 20px 15px;
         }
 
-        /* LOGO & GERÇEK 3D DÜNYA KÜRESİ */
+        /* LOGO & GERÇEK 3D THREE.JS DÜNYA VE DÖNEN YAZI */
         .logo-container {
             text-align: center;
             margin-bottom: 25px;
             margin-top: 15px;
             position: relative;
+            width: 320px;
+            height: 320px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        /* PATLAMA SHOCKWAVE HALKASI */
+        /* HIZLI PATLAMA (FAST SHOCKWAVE) HALKASI */
         .blast-wave {
             position: absolute;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%) scale(0.8);
-            width: 220px;
-            height: 220px;
+            transform: translate(-50%, -50%) scale(0.6);
+            width: 200px;
+            height: 200px;
             border-radius: 50%;
-            border: 2px solid rgba(255, 255, 255, 0.9);
-            box-shadow: 0 0 50px rgba(0, 195, 255, 0.9), inset 0 0 30px rgba(255, 255, 255, 0.8);
+            border: 4px solid rgba(255, 255, 255, 1);
+            box-shadow: 0 0 60px rgba(0, 200, 255, 1), inset 0 0 40px rgba(255, 255, 255, 0.9);
             opacity: 0;
             pointer-events: none;
-            z-index: -1;
+            z-index: 5;
         }
 
         .blast-active {
-            animation: explode 1.2s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+            animation: fastExplode 0.45s cubic-bezier(0.0, 0.9, 0.2, 1) forwards;
         }
 
-        @keyframes explode {
+        @keyframes fastExplode {
             0% {
-                transform: translate(-50%, -50%) scale(0.9);
+                transform: translate(-50%, -50%) scale(0.7);
                 opacity: 1;
-                border-width: 6px;
-            }
-            50% {
-                opacity: 0.8;
+                border-width: 8px;
             }
             100% {
-                transform: translate(-50%, -50%) scale(2.2);
+                transform: translate(-50%, -50%) scale(2.4);
                 opacity: 0;
                 border-width: 1px;
             }
         }
 
-        .vinyl-ring {
+        /* 3D GLOBE CONTAINER */
+        #globe-3d-container {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            box-shadow: 0 0 35px rgba(0, 150, 255, 0.4);
+            position: relative;
+            z-index: 2;
+            transition: box-shadow 1s ease, transform 0.6s ease;
+        }
+
+        .is-playing #globe-3d-container {
+            animation: smoothGlobePulse 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes smoothGlobePulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 30px rgba(0, 150, 255, 0.4);
+            }
+            100% {
+                transform: scale(1.08);
+                box-shadow: 0 0 60px rgba(0, 200, 255, 0.85), 0 0 90px rgba(255, 255, 255, 0.4);
+            }
+        }
+
+        /* DÜNYA ETRAFINDAN 360 DÖNEN "EA$Y FM" YAZISI */
+        .orbit-text-ring {
             position: absolute;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%);
-            width: 220px;
-            height: 220px;
+            width: 310px;
+            height: 310px;
+            margin-top: -155px;
+            margin-left: -155px;
             border-radius: 50%;
-            z-index: -2;
-            background: #020b18;
-            box-shadow: 
-                0 0 25px rgba(0, 132, 255, 0.35),
-                inset 0 0 20px rgba(0, 0, 0, 0.9);
-            overflow: hidden;
-            transition: box-shadow 1.2s ease, transform 1s ease;
-            border: 1px solid rgba(255, 255, 255, 0.25);
+            z-index: 3;
+            pointer-events: none;
+            animation: rotateOrbitText 12s linear infinite;
         }
 
-        /* Gerçek Dünya Kaplaması ve Küresel Derinlik Maskesi */
-        .globe-texture {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 200%;
-            height: 100%;
-            /* Gerçek Renkli Dünya Haritası */
-            background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Blue_Marble_2002.png/1024px-Blue_Marble_2002.png');
-            background-size: 50% 100%;
-            background-repeat: repeat-x;
-            opacity: 0.9;
-            animation: rotateGlobe 32s linear infinite;
-            transition: opacity 1.5s ease, filter 1.5s ease;
-        }
-
-        /* Orthographic Spherify Lens & Atmosfer Gölgesi */
-        .globe-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
+        .orbit-text-svg {
             width: 100%;
             height: 100%;
-            border-radius: 50%;
-            background: 
-                radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0) 35%),
-                radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0) 50%, rgba(2, 10, 25, 0.85) 82%, #010610 100%);
-            box-shadow: inset 0 0 18px rgba(0, 183, 255, 0.4);
-            pointer-events: none;
+            overflow: visible;
         }
 
-        /* Çalma Durumundaki Yumuşak Efektler */
-        .is-playing .vinyl-ring {
-            animation: smoothBassPulse 1.8s ease-in-out infinite alternate;
+        .orbit-text-path {
+            fill: none;
+            stroke: none;
         }
 
-        .is-playing .globe-texture {
-            animation-duration: 18s;
-            opacity: 1;
-            filter: brightness(1.15) contrast(1.05);
-        }
-
-        @keyframes rotateGlobe {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-
-        @keyframes smoothBassPulse {
-            0% {
-                transform: translate(-50%, -50%) scale(1);
-                box-shadow: 
-                    0 0 25px rgba(0, 140, 255, 0.4),
-                    inset 0 0 20px rgba(0, 0, 0, 0.9);
-            }
-            100% {
-                transform: translate(-50%, -50%) scale(1.08);
-                box-shadow: 
-                    0 0 50px rgba(0, 183, 255, 0.8),
-                    0 0 80px rgba(255, 255, 255, 0.4),
-                    inset 0 0 15px rgba(255, 255, 255, 0.6);
-            }
-        }
-
-        h1 {
-            margin: 0;
+        .orbit-text-style {
             font-family: 'Anton', sans-serif;
-            font-size: 72px;
-            letter-spacing: 5px;
-            text-transform: uppercase;
-            
-            background: linear-gradient(
-                135deg, 
-                #ffffff 0%, 
-                #a6a6a6 25%, 
-                #ffffff 50%, 
-                #737373 75%, 
-                #ffffff 100%
-            );
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            
+            font-size: 20px;
+            letter-spacing: 7px;
+            fill: #ffffff;
             text-shadow: 
-                0 0 10px rgba(255, 255, 255, 0.8),
-                0 0 20px rgba(255, 255, 255, 0.4);
-                
-            transform: skew(-4deg);
-            animation: diamondShine 4s linear infinite;
+                0 0 8px rgba(255, 255, 255, 0.9),
+                0 0 15px rgba(0, 180, 255, 0.7);
         }
 
-        @keyframes diamondShine {
-            0% { background-position: 0% center; }
-            100% { background-position: 200% center; }
+        @keyframes rotateOrbitText {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         .subtitle {
+            position: absolute;
+            bottom: -10px;
+            width: 100%;
             font-family: 'Montserrat', sans-serif;
             font-weight: 900;
-            font-size: 13px;
+            font-size: 12px;
             color: #ffffff;
-            letter-spacing: 5px;
-            margin-top: 8px;
+            letter-spacing: 4px;
             text-transform: uppercase;
             text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
             opacity: 0.9;
@@ -465,6 +423,9 @@
         }
     </style>
 
+    <!-- Three.js (Gerçek 3D Küresel Dünya İçi) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -484,15 +445,24 @@
 
     <div class="main-wrapper" id="main-wrapper">
         <div class="logo-container">
-            <!-- PATLAMA DALGASI KATMANI -->
+            <!-- HIZLI PATLAMA DALGASI -->
             <div class="blast-wave" id="blast-wave"></div>
             
-            <!-- GERÇEK 3D DÜNYA KÜRESİ -->
-            <div class="vinyl-ring">
-                <div class="globe-texture"></div>
-                <div class="globe-overlay"></div>
+            <!-- THREE.JS GERÇEK 3D DÜNYA KÜRESİ -->
+            <div id="globe-3d-container"></div>
+
+            <!-- ETRAFINDA 360 DÖNEN "EA$Y FM" YAZISI -->
+            <div class="orbit-text-ring">
+                <svg class="orbit-text-svg" viewBox="0 0 300 300">
+                    <path id="orbitPath" class="orbit-text-path" d="M 150, 150 m -125, 0 a 125,125 0 1,1 250,0 a 125,125 0 1,1 -250,0" />
+                    <text class="orbit-text-style">
+                        <textPath href="#orbitPath" startOffset="0%">
+                            EA$Y FM • EA$Y FM • EA$Y FM • EA$Y FM •
+                        </textPath>
+                    </text>
+                </svg>
             </div>
-            <h1>EA$Y FM</h1>
+
             <div class="subtitle">7/24 YÜZDE YÜZ MÜZİK</div>
         </div>
 
@@ -543,6 +513,46 @@
         function toggleDiamondGlow(checkbox) {
             document.body.classList.toggle('diamond-mode-active', checkbox.checked);
         }
+
+        // Three.js GERÇEK 3D DÜNYA KURULUMU
+        const globeContainer = document.getElementById('globe-3d-container');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        renderer.setSize(200, 200);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        globeContainer.appendChild(renderer.domElement);
+
+        // Geometri ve Yüksek Çözünürlüklü NASA Uydu Dokusu
+        const geometry = new THREE.SphereGeometry(2.2, 64, 64);
+        const textureLoader = new THREE.TextureLoader();
+        const earthTexture = textureLoader.load('https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Blue_Marble_2002.png/1024px-Blue_Marble_2002.png');
+        
+        const material = new THREE.MeshPhongMaterial({
+            map: earthTexture,
+            shininess: 15
+        });
+
+        const globeMesh = new THREE.Mesh(geometry, material);
+        scene.add(globeMesh);
+
+        // Işıklandırma (Güneş Işığı ve Atmosfer Parlaması)
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
+        scene.add(ambientLight);
+
+        const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        dirLight.position.set(5, 3, 5);
+        scene.add(dirLight);
+
+        camera.position.z = 6;
+
+        function animateGlobe() {
+            requestAnimationFrame(animateGlobe);
+            // Dönüş Hızı (Çalma Durumunda İvmelenir)
+            globeMesh.rotation.y += isPlayingState ? 0.009 : 0.003;
+            renderer.render(scene, camera);
+        }
+        animateGlobe();
 
         // KRİSTAL PARÇACIK ANİMASYONU
         const canvas = document.getElementById('bg-canvas');
@@ -632,7 +642,6 @@
             for (let i = 0; i < numBars; i++) {
                 if (isPlayingState) {
                     const target = Math.random() * (vCanvas.height - 4) + 4;
-                    /* Yumuşak ivmelenme faktörü: 0.12 */
                     barHeights[i] += (target - barHeights[i]) * 0.12;
                 } else {
                     barHeights[i] += (2 - barHeights[i]) * 0.08;
@@ -648,7 +657,7 @@
         }
         drawVisualizer();
 
-        // PLAYLIST & CANLI YAYIN SENSÖRÜ
+        // PLAYLIST & CANLI YAYIN HESAPLAMASI
         const songList = [
             { id: '1IEg_3x35go', duration: 120, title: 'FRANCHISE' },
             { id: 'qAlF70MdfwU', duration: 207, title: 'OUT WEST' }, 
@@ -783,20 +792,20 @@
         }
 
         function startRadio() {
-            // PATLAMA EFEKTİ TETİKLEME
+            // HIZLI VE KESKİN PATLAMA EFEKTİ
             const blast = document.getElementById('blast-wave');
             blast.classList.remove('blast-active');
             void blast.offsetWidth; // Reflow reset
             blast.classList.add('blast-active');
 
-            // YUMUŞAK OVERLAY KAYBOLMA
+            // OVERLAY YUMUŞAKÇA KAYBOLUR
             const overlay = document.getElementById('start-overlay');
             overlay.style.opacity = '0';
             setTimeout(() => { 
                 overlay.style.visibility = 'hidden'; 
             }, 800);
 
-            // AKIŞI BAŞLAT VE SENKRONİZE ET
+            // AKIŞI BAŞLAT
             if (player && isPlayerReady) {
                 syncAndPlay();
             } else {

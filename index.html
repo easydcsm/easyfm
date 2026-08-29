@@ -150,7 +150,7 @@
             padding: 20px 15px;
         }
 
-        /* LOGO & DÖNEN 3D DÜNYA KÜRESİ */
+        /* LOGO & RENKLİ 3D DÜNYA KÜRESİ */
         .logo-container {
             text-align: center;
             margin-bottom: 25px;
@@ -163,32 +163,38 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 210px;
-            height: 210px;
+            width: 220px;
+            height: 220px;
             border-radius: 50%;
             z-index: -1;
-            border: 2px dashed rgba(255, 255, 255, 0.3);
+            /* Derinlikli Okyanus Rengi Mavi Arka Plan */
+            background: radial-gradient(circle at 30% 30%, #1e528e 0%, #0b2240 60%, #020914 100%);
             box-shadow: 
-                0 0 20px rgba(255, 255, 255, 0.15),
-                inset 0 0 30px rgba(0, 0, 0, 0.95);
+                0 0 25px rgba(0, 150, 255, 0.3),
+                inset 0 0 25px rgba(0, 0, 0, 0.9);
             overflow: hidden;
-            transition: border-color 0.5s, box-shadow 0.5s, transform 0.3s;
+            transition: box-shadow 0.5s, transform 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
+        /* Renkli Dönen Harita Katmanı */
         .globe-texture {
             position: absolute;
             top: 0;
             left: 0;
             width: 200%;
             height: 100%;
+            /* Harita Görseli: Renkli Kıta Vurguları */
             background-image: url('https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg');
             background-size: 50% 100%;
             background-repeat: repeat-x;
-            opacity: 0.55;
-            filter: invert(1) drop-shadow(0 0 2px rgba(255,255,255,0.8));
-            animation: rotateGlobe 18s linear infinite;
+            opacity: 0.85;
+            /* Yeşil ve Altın Büyüleyici Kıta Renklendirmesi */
+            filter: drop-shadow(0 0 4px rgba(72, 239, 128, 0.6)) hue-rotate(90deg) brightness(1.2) contract(1.1);
+            animation: rotateGlobe 16s linear infinite;
         }
 
+        /* 3D Küresel Bükülme ve Işık/Gölge Katmanı (Spherical Lens Effect) */
         .globe-overlay {
             position: absolute;
             top: 0;
@@ -196,20 +202,22 @@
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.25) 0%, rgba(0, 0, 0, 0.4) 50%, rgba(0, 0, 0, 0.95) 100%);
+            /* Küresel Parlama ve Kenar Gölgelemesi */
+            background: 
+                radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0) 45%),
+                radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0) 55%, rgba(2, 9, 20, 0.92) 90%, #000000 100%);
+            box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.3);
             pointer-events: none;
         }
 
         /* Çalma Durumunda Efektler */
         .is-playing .vinyl-ring {
             animation: bassPulse 0.8s ease-in-out infinite alternate;
-            border-style: solid;
-            border-color: rgba(255, 255, 255, 0.9);
         }
 
         .is-playing .globe-texture {
             animation-duration: 9s;
-            opacity: 0.85;
+            opacity: 0.95;
         }
 
         @keyframes rotateGlobe {
@@ -221,17 +229,15 @@
             0% {
                 transform: translate(-50%, -50%) scale(1);
                 box-shadow: 
-                    0 0 20px rgba(255, 255, 255, 0.3),
+                    0 0 25px rgba(0, 150, 255, 0.4),
                     inset 0 0 25px rgba(0, 0, 0, 0.9);
-                border-color: rgba(255, 255, 255, 0.4);
             }
             100% {
                 transform: translate(-50%, -50%) scale(1.12);
                 box-shadow: 
-                    0 0 50px rgba(255, 255, 255, 0.9),
-                    0 0 80px rgba(255, 255, 255, 0.4),
-                    inset 0 0 20px rgba(255, 255, 255, 0.6);
-                border-color: #ffffff;
+                    0 0 55px rgba(0, 200, 255, 0.9),
+                    0 0 85px rgba(255, 255, 255, 0.5),
+                    inset 0 0 15px rgba(255, 255, 255, 0.6);
             }
         }
 
@@ -456,7 +462,7 @@
 
     <div class="main-wrapper" id="main-wrapper">
         <div class="logo-container">
-            <!-- DÖNEN 3D DÜNYA KÜRESİ -->
+            <!-- RENKLİ 3D DÜNYA KÜRESİ -->
             <div class="vinyl-ring">
                 <div class="globe-texture"></div>
                 <div class="globe-overlay"></div>
@@ -757,7 +763,6 @@
             if (player && isPlayerReady) {
                 syncAndPlay();
             } else {
-                // Eğer player tam hazır olmadan tıklanırsa kısa gecikmeyle çalıştır
                 let waitReady = setInterval(() => {
                     if (isPlayerReady) {
                         clearInterval(waitReady);

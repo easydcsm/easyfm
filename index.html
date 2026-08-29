@@ -34,7 +34,6 @@
             transition: background-color 1s ease;
         }
 
-        /* KRİSTAL PARÇACIKLI ARKA PLAN */
         #bg-canvas {
             position: fixed;
             top: 0;
@@ -58,7 +57,6 @@
             transition: background 1.2s ease, opacity 0.5s ease;
         }
 
-        /* SAĞ ÜST: DIAMOND GLOW TOGGLE */
         .glow-toggle-container {
             position: fixed;
             top: 20px;
@@ -157,7 +155,6 @@
             padding: 20px 15px;
         }
 
-        /* LOGO & BASS PULSING VINYL EFFECT */
         .logo-container {
             text-align: center;
             margin-bottom: 20px;
@@ -245,7 +242,6 @@
             font-size: 72px;
             letter-spacing: 5px;
             text-transform: uppercase;
-            
             background: linear-gradient(
                 135deg, 
                 #ffffff 0%, 
@@ -255,11 +251,9 @@
             background-size: 200% auto;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            
             text-shadow: 
                 0 0 10px var(--theme-color),
                 0 0 20px var(--theme-glow);
-                
             transform: skew(-4deg);
             animation: diamondShine 4s linear infinite;
             transition: text-shadow 0.8s ease;
@@ -283,7 +277,6 @@
             transition: text-shadow 0.8s ease;
         }
 
-        /* BADGES BAR */
         .status-bar {
             display: flex;
             gap: 12px;
@@ -325,7 +318,6 @@
             100% { opacity: 1; transform: scale(1); }
         }
 
-        /* VİDEO ÇERÇEVESİ VE OVERLAY */
         .video-container {
             position: relative;
             width: 100%;
@@ -384,7 +376,6 @@
             box-shadow: 0 0 35px var(--theme-color);
         }
 
-        /* NOW PLAYING CARD */
         .now-playing-card {
             width: 100%;
             background: rgba(15, 15, 15, 0.85);
@@ -435,14 +426,12 @@
             text-overflow: ellipsis;
         }
 
-        /* CANLI EQ VISUALIZER CANVAS */
         #visualizer-canvas {
             width: 100%;
             height: 35px;
         }
     </style>
 
-    <!-- Firebase SDK (Anlık Sayaç İçin) -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
@@ -484,7 +473,6 @@
             <div id="player"></div>
         </div>
 
-        <!-- ŞU AN ÇALAN SİSTEMİ -->
         <div class="now-playing-card">
             <div class="track-info">
                 <span class="track-label">ŞU AN YAYINDA</span>
@@ -496,11 +484,9 @@
             </div>
         </div>
 
-        <!-- SPEKTRUM BARS VISUALIZER -->
         <canvas id="visualizer-canvas"></canvas>
     </div>
 
-    <!-- YouTube IFrame API -->
     <script src="https://www.youtube.com/iframe_api"></script>
 
     <script>
@@ -515,7 +501,6 @@
             document.body.classList.toggle('diamond-mode-active', checkbox.checked);
         }
 
-        // KRİSTAL PARÇACIK ANİMASYONU
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
         let particlesArray = [];
@@ -563,7 +548,6 @@
         }
         animateParticles();
 
-        // FIREBASE SAYAÇ
         const firebaseConfig = {
             apiKey: "AIzaSyBaTlb6V6e4FMLTYNXAPBgdzsgiclL8Qw8",
             authDomain: "easyfm-37b9e.firebaseapp.com",
@@ -587,7 +571,6 @@
             document.getElementById('listener-count').innerText = snap.numChildren();
         });
 
-        // SPEKTRUM VISUALIZER (DYNAMIC BARS)
         const vCanvas = document.getElementById('visualizer-canvas');
         const vCtx = vCanvas.getContext('2d');
         const numBars = 32;
@@ -618,7 +601,6 @@
         }
         drawVisualizer();
 
-        // PLAYLIST & CANLI YAYIN HESAPLAMA SİSTEMİ
         const songList = [
             { id: '1IEg_3x35go', duration: 120, title: 'FRANCHISE', theme: '#c67d34', glow: 'rgba(198, 125, 52, 0.4)', bgGlow: 'rgba(198, 125, 52, 0.12)' },
             { id: 'qAlF70MdfwU', duration: 207, title: 'OUT WEST', theme: '#ff7700', glow: 'rgba(255, 119, 0, 0.4)', bgGlow: 'rgba(255, 119, 0, 0.12)' }, 
@@ -669,7 +651,6 @@
         const initialState = getCurrentStreamState();
         updateTrackLabels(initialState.songIndex);
 
-        // YOUTUBE API PLAYER KURULUMU
         function onYouTubeIframeAPIReady() {
             const state = getCurrentStreamState();
             currentLoadedVideoId = songList[state.songIndex].id;
@@ -682,9 +663,15 @@
                     'start': Math.floor(state.seekTo)
                 },
                 events: {
+                    'onReady': onPlayerReady,
                     'onStateChange': onPlayerStateChange
                 }
             });
+        }
+
+        function onPlayerReady(event) {
+            const state = getCurrentStreamState();
+            player.seekTo(state.seekTo, true);
         }
 
         function setPlaybackVisualState(active) {
@@ -734,10 +721,8 @@
                 videoId: targetSong.id,
                 startSeconds: Math.floor(state.seekTo)
             });
-            player.playVideo();
         }
 
-        // HER 3 SANİYEDE BİR ÇALIŞAN CANLI YAYIN SENKRONİZASYON KONTROLÜ
         function checkLiveSync() {
             if (!player || typeof player.getPlayerState !== 'function') return;
 
@@ -753,7 +738,7 @@
                 const currentTime = player.getCurrentTime();
                 const timeDiff = Math.abs(currentTime - state.seekTo);
 
-                if (timeDiff > 1.5) {
+                if (timeDiff > 2) {
                     player.seekTo(state.seekTo, true);
                 }
             }
@@ -764,7 +749,12 @@
             overlay.style.opacity = '0';
             setTimeout(() => { overlay.style.display = 'none'; }, 500);
 
-            syncAndPlay();
+            if (player && typeof player.playVideo === 'function') {
+                const state = getCurrentStreamState();
+                player.unMute();
+                player.seekTo(state.seekTo, true);
+                player.playVideo();
+            }
 
             if (checkAudioInterval) clearInterval(checkAudioInterval);
             checkAudioInterval = setInterval(checkAudioState, 400);

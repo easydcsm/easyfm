@@ -28,7 +28,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start; /* İçeriği yukarı çekmek için flex-start yapıldı */
+            justify-content: center; /* Tam dikey ortalama */
             position: relative;
         }
 
@@ -64,22 +64,22 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start; /* Üst hizalama sıkılaştırıldı */
-            padding: 10px 15px 5px 15px; /* Üst dikey boşluk ayarlandı */
+            justify-content: center; /* Elemanlar ekrana eşit dağıtıldı */
+            padding: 10px 15px;
+            gap: 10px; /* Elemanlar arası dengeli esnek boşluk */
         }
 
         /* LOGO & 3D DÜNYA ALANI */
         .logo-container {
             text-align: center;
-            margin-bottom: 2px;
-            margin-top: -10px; /* Logo yukarıya yaklaştırıldı */
             position: relative;
             width: 100%;
-            height: 185px; /* 210px -> 185px çekilerek üst boşluk alındı */
+            height: 180px;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: visible;
+            margin: 0;
         }
 
         /* ANLIK PIRLANTA PATLAMA HALKASI */
@@ -117,7 +117,7 @@
 
         #globe-3d-container {
             width: 400px;
-            height: 185px;
+            height: 180px;
             position: relative;
             z-index: 2;
             overflow: visible;
@@ -127,9 +127,9 @@
         .status-bar {
             display: flex;
             gap: 10px;
-            margin-bottom: 8px;
             flex-wrap: wrap;
             justify-content: center;
+            margin: 0;
         }
 
         .badge {
@@ -168,15 +168,15 @@
         .video-container {
             position: relative;
             width: 100%;
-            padding-bottom: 52%; /* Boyut optimize edildi */
+            padding-bottom: 50%; /* Dikey oranı sıkılaştırıldı */
             height: 0;
             border-radius: 14px;
             overflow: hidden;
             box-shadow: 0 10px 40px rgba(255, 255, 255, 0.08);
             border: 1px solid rgba(255, 255, 255, 0.2);
             transition: box-shadow 0.6s, border-color 0.6s;
-            margin-bottom: 8px;
             background: #000;
+            margin: 0;
         }
 
         #player-iframe {
@@ -236,8 +236,8 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 8px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+            margin: 0;
         }
 
         .track-info {
@@ -276,7 +276,8 @@
 
         #visualizer-canvas {
             width: 100%;
-            height: 26px;
+            height: 20px;
+            margin: 0;
             transition: opacity 1s ease;
         }
     </style>
@@ -458,9 +459,9 @@
         // --- THREE.JS 3D DÜNYA VE YÖRÜNGE METNİ ---
         const globeContainer = document.getElementById('globe-3d-container');
         const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(45, 400 / 185, 0.1, 1000);
+        const camera = new THREE.PerspectiveCamera(45, 400 / 180, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-        renderer.setSize(400, 185);
+        renderer.setSize(400, 180);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         globeContainer.appendChild(renderer.domElement);
 

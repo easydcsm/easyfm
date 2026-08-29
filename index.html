@@ -17,11 +17,11 @@
             margin: 0;
             padding: 0;
             width: 100%;
-            height: 100%;
-            overflow: hidden;
+            min-height: 100vh;
             background-color: #000000;
             color: #fff;
             font-family: 'Montserrat', sans-serif;
+            overflow-x: hidden;
         }
 
         body {
@@ -60,13 +60,13 @@
             z-index: 10;
             width: 100%;
             max-width: 680px;
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: space-evenly;
-            padding: 10px 15px;
-            gap: 4px;
+            justify-content: center;
+            padding: 20px 15px;
+            gap: 12px;
         }
 
         /* LOGO & 3D DÜNYA ALANI */
@@ -74,13 +74,13 @@
             text-align: center;
             position: relative;
             width: 100%;
-            height: 220px;
+            max-width: 440px;
+            height: 240px;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: visible;
-            margin-top: 0px;
-            margin-bottom: 20px;
+            margin: 0 auto;
         }
 
         /* ANLIK PIRLANTA PATLAMA HALKASI */
@@ -118,8 +118,7 @@
 
         #globe-3d-container {
             width: 100%;
-            max-width: 480px;
-            height: 220px;
+            height: 100%;
             position: relative;
             z-index: 2;
             overflow: visible;
@@ -128,13 +127,18 @@
             justify-content: center;
         }
 
+        #globe-3d-container canvas {
+            display: block;
+            outline: none;
+        }
+
         /* BADGES BAR */
         .status-bar {
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
             justify-content: center;
-            margin-top: 0px;
+            margin-top: 5px;
             margin-bottom: 5px;
         }
 
@@ -174,7 +178,7 @@
         .video-container {
             position: relative;
             width: 100%;
-            padding-bottom: 46%;
+            padding-bottom: 48%;
             height: 0;
             border-radius: 14px;
             overflow: hidden;
@@ -215,8 +219,8 @@
             color: #000;
             font-family: 'Montserrat', sans-serif;
             font-weight: 900;
-            font-size: 14px;
-            padding: 12px 32px;
+            font-size: 13px;
+            padding: 12px 28px;
             border: none;
             border-radius: 50px;
             cursor: pointer;
@@ -282,30 +286,32 @@
 
         #visualizer-canvas {
             width: 100%;
-            height: 20px;
+            height: 18px;
             margin: 0;
             transition: opacity 1s ease;
         }
 
-        /* MOBİL UYUMLULUK DÜZELTMELERİ */
+        /* MOBİL UYUMLULUK VE KISITLAMA DÜZELTMELERİ */
         @media (max-width: 600px) {
+            html, body {
+                overflow-y: auto;
+            }
+
             .main-wrapper {
-                padding: 12px 10px;
-                justify-content: space-evenly;
+                padding: 15px 12px;
+                min-height: 100vh;
+                justify-content: flex-start;
+                gap: 10px;
             }
 
             .logo-container {
-                height: 190px;
-                margin-top: 10px;
-                margin-bottom: 10px;
+                height: 200px;
+                width: 100%;
+                margin-top: 5px;
             }
 
-            #globe-3d-container {
-                height: 190px;
-            }
-
-            .status-bar {
-                margin-top: 0px;
+            .video-container {
+                padding-bottom: 52%;
             }
 
             .now-playing-card {
@@ -314,7 +320,7 @@
 
             .start-btn {
                 font-size: 11px;
-                padding: 10px 20px;
+                padding: 10px 22px;
             }
         }
     </style>
@@ -532,40 +538,40 @@
             handleUserClick();
         });
 
-        // THREE.JS 3D DÜNYA VE YÖRÜNGE METNİ (RESPONSIVE)
+        // THREE.JS 3D DÜNYA VE YÖRÜNGE METNİ
         const globeContainer = document.getElementById('globe-3d-container');
-        let containerW = globeContainer.clientWidth || 340;
-        let containerH = globeContainer.clientHeight || 220;
-
+        
         const scene = new THREE.Scene();
-        // Kamera FOV değerini dinamik yapıyoruz (Mobilde 65, Masaüstünde 45)
-        const initialFov = window.innerWidth <= 600 ? 65 : 45;
-        const camera = new THREE.PerspectiveCamera(initialFov, containerW / containerH, 0.1, 1000);
+        const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
         
         const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-        renderer.setSize(containerW, containerH);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         globeContainer.appendChild(renderer.domElement);
 
-        function updateCameraView() {
+        function resizeThreeJS() {
+            const width = globeContainer.clientWidth;
+            const height = globeContainer.clientHeight;
+            if (width === 0 || height === 0) return;
+
+            camera.aspect = width / height;
+
+            // Kamera mesafesini kapağa sığacak şekilde ayarlama
             if (window.innerWidth <= 400) {
-                camera.fov = 68;
-                camera.position.z = 8.5;
+                camera.position.z = 5.8;
             } else if (window.innerWidth <= 600) {
-                camera.fov = 62;
-                camera.position.z = 7.5;
+                camera.position.z = 5.4;
             } else {
-                camera.fov = 45;
-                camera.position.z = 5.2;
+                camera.position.z = 5.0;
             }
+
             camera.updateProjectionMatrix();
+            renderer.setSize(width, height);
         }
-        updateCameraView();
 
         const textureLoader = new THREE.TextureLoader();
         const earthTexture = textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_atmos_2048.jpg');
 
-        const baseRadius = 1.85;
+        const baseRadius = 1.65;
         const geometry = new THREE.SphereGeometry(baseRadius, 64, 64);
         const material = new THREE.MeshStandardMaterial({
             map: earthTexture,
@@ -622,7 +628,7 @@
             ringTex.magFilter = THREE.LinearFilter;
             ringTex.anisotropy = renderer.capabilities.getMaxAnisotropy();
 
-            const ringGeo = new THREE.CylinderGeometry(baseRadius + 0.30, baseRadius + 0.30, 1.0, 64, 1, true);
+            const ringGeo = new THREE.CylinderGeometry(baseRadius + 0.28, baseRadius + 0.28, 0.95, 64, 1, true);
             const ringMat = new THREE.MeshBasicMaterial({
                 map: ringTex,
                 transparent: true,
@@ -662,6 +668,8 @@
 
             renderer.render(scene, camera);
         }
+        
+        resizeThreeJS();
         animateGlobe();
 
         // PARÇACIK ANİMASYONU VE RESIZE
@@ -672,14 +680,7 @@
         function handleResize() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-
-            const w = globeContainer.clientWidth;
-            const h = globeContainer.clientHeight;
-            if (w && h) {
-                camera.aspect = w / h;
-                updateCameraView();
-                renderer.setSize(w, h);
-            }
+            resizeThreeJS();
         }
         window.addEventListener('resize', handleResize);
         handleResize();

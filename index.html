@@ -18,7 +18,7 @@
             padding: 0;
             width: 100%;
             height: 100%;
-            overflow: hidden; /* Sayfa kaydırması kesin olarak engellendi */
+            overflow: hidden;
             background-color: #000000;
             color: #fff;
             font-family: 'Montserrat', sans-serif;
@@ -28,7 +28,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center; /* Tam dikey ortalama */
+            justify-content: center;
             position: relative;
         }
 
@@ -64,9 +64,9 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center; /* Elemanlar ekrana eşit dağıtıldı */
+            justify-content: center;
             padding: 10px 15px;
-            gap: 8px; /* Elemanlar arası dengeli boşluk */
+            gap: 8px;
         }
 
         /* LOGO & 3D DÜNYA ALANI */
@@ -80,7 +80,7 @@
             justify-content: center;
             overflow: visible;
             margin-top: 0px;
-            margin-bottom: 55px; /* DÜNYA İLE ROZETLER ARASINDAKİ MESAFA ARTIRILDI */
+            margin-bottom: 55px;
         }
 
         /* ANLIK PIRLANTA PATLAMA HALKASI */
@@ -130,7 +130,7 @@
             gap: 10px;
             flex-wrap: wrap;
             justify-content: center;
-            margin-top: 15px;      /* DÜNYADAN UZAKLAŞTIRMAK İÇİN ÜST MARJ YÜKSELTİLDİ */
+            margin-top: 15px;
             margin-bottom: 5px;
         }
 
@@ -170,7 +170,7 @@
         .video-container {
             position: relative;
             width: 100%;
-            padding-bottom: 46%; /* Dikey denge sağlandı */
+            padding-bottom: 46%;
             height: 0;
             border-radius: 14px;
             overflow: hidden;
@@ -181,7 +181,7 @@
             margin: 0;
         }
 
-        #player-iframe {
+        #youtube-player {
             position: absolute;
             top: 0;
             left: 0;
@@ -317,7 +317,7 @@
             <div id="start-overlay" onclick="startRadio()">
                 <button class="start-btn">CANLI YAYINA KATIL</button>
             </div>
-            <div id="player-iframe"></div>
+            <div id="youtube-player"></div>
         </div>
 
         <div class="now-playing-card">
@@ -336,10 +336,10 @@
 
     <script>
         let player = null;
+        let isPlayerReady = false;
         let isPlayingState = false;
         let currentLoadedVideoId = null;
         let syncCheckInterval = null;
-        let isApiReady = false;
 
         // --- PLAYLIST VE ZAMAN HESAPLAMALARI ---
         const songList = [
@@ -383,20 +383,19 @@
         const initialState = getCurrentStreamState();
         updateTrackLabels(initialState.songIndex);
 
-        // --- YOUTUBE API KURULUMU VE OTOMATİK GEÇİŞ ---
+        // --- YOUTUBE API VE GEÇİŞ MEKANİZMASI ---
         function onYouTubeIframeAPIReady() {
-            isApiReady = true;
-        }
+            const state = getCurrentStreamState();
+            const targetSong = songList[state.songIndex];
+            currentLoadedVideoId = targetSong.id;
 
-        function initPlayer(videoId, startSeconds) {
-            player = new YT.Player('player-iframe', {
-                videoId: videoId,
+            player = new YT.Player('youtube-player', {
+                videoId: targetSong.id,
                 playerVars: {
-                    'autoplay': 1,
+                    'autoplay': 0,
                     'controls': 1,
                     'rel': 0,
-                    'start': Math.floor(startSeconds),
-                    'enablejsapi': 1
+                    'start': Math.floor(state.seekTo)
                 },
                 events: {
                     'onReady': onPlayerReady,
@@ -406,8 +405,7 @@
         }
 
         function onPlayerReady(event) {
-            event.target.playVideo();
-            isPlayingState = true;
+            isPlayerReady = true;
         }
 
         function onPlayerStateChange(event) {
@@ -421,10 +419,12 @@
         }
 
         function forceLiveSync() {
-            if (!player || typeof player.getCurrentTime !== 'function') return;
+            if (!isPlayerReady || !player) return;
 
             const state = getCurrentStreamState();
             const targetSong = songList[state.songIndex];
+
+            updateTrackLabels(state.songIndex);
 
             if (currentLoadedVideoId !== targetSong.id) {
                 currentLoadedVideoId = targetSong.id;
@@ -432,20 +432,20 @@
                     videoId: targetSong.id,
                     startSeconds: Math.floor(state.seekTo)
                 });
-                updateTrackLabels(state.songIndex);
                 isPlayingState = true;
                 return;
             }
 
-            const currentTime = player.getCurrentTime();
-            const timeDiff = Math.abs(currentTime - state.seekTo);
-
-            if (timeDiff > 3) {
-                player.seekTo(state.seekTo, true);
+            if (typeof player.getCurrentTime === 'function') {
+                const currentTime = player.getCurrentTime();
+                const timeDiff = Math.abs(currentTime - state.seekTo);
+                if (timeDiff > 4) {
+                    player.seekTo(state.seekTo, true);
+                }
             }
         }
 
-        // CANLI YAYINI BAŞLATMA
+        // CANLI YAYINI BAŞLATMA (BUTONA BASILDIĞINDA)
         function startRadio() {
             const blast = document.getElementById('blast-wave');
             blast.classList.remove('blast-active');
@@ -460,20 +460,28 @@
 
             const state = getCurrentStreamState();
             const targetSong = songList[state.songIndex];
-            currentLoadedVideoId = targetSong.id;
 
-            if (isApiReady) {
-                initPlayer(targetSong.id, state.seekTo);
-            } else {
-                window.onYouTubeIframeAPIReady = () => {
-                    initPlayer(targetSong.id, state.seekTo);
-                };
+            updateTrackLabels(state.songIndex);
+
+            if (isPlayerReady && player) {
+                if (currentLoadedVideoId !== targetSong.id) {
+                    currentLoadedVideoId = targetSong.id;
+                    player.loadVideoById({
+                        videoId: targetSong.id,
+                        startSeconds: Math.floor(state.seekTo)
+                    });
+                } else {
+                    player.seekTo(state.seekTo, true);
+                    player.playVideo();
+                }
             }
+
+            isPlayingState = true;
 
             if (syncCheckInterval) clearInterval(syncCheckInterval);
             syncCheckInterval = setInterval(() => {
                 forceLiveSync();
-            }, 3000);
+            }, 4000);
         }
 
         // --- THREE.JS 3D DÜNYA VE YÖRÜNGE METNİ ---
@@ -488,7 +496,7 @@
         const textureLoader = new THREE.TextureLoader();
         const earthTexture = textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_atmos_2048.jpg');
 
-        const baseRadius = 1.85; /* Dünya Yarıçapı */
+        const baseRadius = 1.85;
         const geometry = new THREE.SphereGeometry(baseRadius, 64, 64);
         const material = new THREE.MeshStandardMaterial({
             map: earthTexture,

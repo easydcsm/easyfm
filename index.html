@@ -158,7 +158,6 @@
             position: relative;
         }
 
-        /* Dönen Dünya Küresi Çerçevesi */
         .vinyl-ring {
             position: absolute;
             top: 50%;
@@ -173,10 +172,9 @@
                 0 0 20px rgba(255, 255, 255, 0.15),
                 inset 0 0 30px rgba(0, 0, 0, 0.95);
             overflow: hidden;
-            transition: border-color 0.5s, box-shadow 0.5s;
+            transition: border-color 0.5s, box-shadow 0.5s, transform 0.3s;
         }
 
-        /* Küre Üzerindeki Dünya Haritası Dokusu */
         .globe-texture {
             position: absolute;
             top: 0;
@@ -191,7 +189,6 @@
             animation: rotateGlobe 18s linear infinite;
         }
 
-        /* 3D Küre Gölgelendirme Efekti (Spherical Overlay) */
         .globe-overlay {
             position: absolute;
             top: 0;
@@ -211,17 +208,15 @@
         }
 
         .is-playing .globe-texture {
-            animation-duration: 10s; /* Müzik çalarken dünya daha hızlı döner */
+            animation-duration: 9s;
             opacity: 0.85;
         }
 
-        /* Haritanın Yatay Dönüş Animasyonu */
         @keyframes rotateGlobe {
             0% { transform: translateX(0); }
             100% { transform: translateX(-50%); }
         }
 
-        /* Bas Vuruşlarında Dünya Küresinin Büyüyüp Parlaması */
         @keyframes bassPulse {
             0% {
                 transform: translate(-50%, -50%) scale(1);
@@ -231,7 +226,7 @@
                 border-color: rgba(255, 255, 255, 0.4);
             }
             100% {
-                transform: translate(-50%, -50%) scale(1.1);
+                transform: translate(-50%, -50%) scale(1.12);
                 box-shadow: 
                     0 0 50px rgba(255, 255, 255, 0.9),
                     0 0 80px rgba(255, 255, 255, 0.4),
@@ -509,6 +504,7 @@
     <script>
         let isPlayingState = false;
         let player = null;
+        let isPlayerReady = false;
         let checkAudioInterval = null;
         let autoSyncInterval = null;
         let currentLoadedVideoId = null;
@@ -605,15 +601,15 @@
             for (let i = 0; i < numBars; i++) {
                 if (isPlayingState) {
                     const target = Math.random() * (vCanvas.height - 6) + 6;
-                    barHeights[i] += (target - barHeights[i]) * 0.25;
+                    barHeights[i] += (target - barHeights[i]) * 0.35;
                 } else {
-                    barHeights[i] += (3 - barHeights[i]) * 0.1;
+                    barHeights[i] += (3 - barHeights[i]) * 0.15;
                 }
 
                 const x = i * (barWidth + 4);
                 const y = vCanvas.height - barHeights[i];
 
-                vCtx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+                vCtx.fillStyle = 'rgba(255, 255, 255, 0.9)';
                 vCtx.fillRect(x, y, barWidth, barHeights[i]);
             }
             requestAnimationFrame(drawVisualizer);
@@ -675,9 +671,14 @@
                     'start': Math.floor(state.seekTo)
                 },
                 events: {
+                    'onReady': onPlayerReady,
                     'onStateChange': onPlayerStateChange
                 }
             });
+        }
+
+        function onPlayerReady() {
+            isPlayerReady = true;
         }
 
         function setPlaybackVisualState(active) {
@@ -692,7 +693,7 @@
 
         function onPlayerStateChange(event) {
             if (event.data === YT.PlayerState.PLAYING) {
-                checkAudioState();
+                setPlaybackVisualState(true);
             } else {
                 setPlaybackVisualState(false);
             }
@@ -703,13 +704,10 @@
         }
 
         function checkAudioState() {
-            if (!player || typeof player.isMuted !== 'function') return;
+            if (!player || typeof player.getPlayerState !== 'function') return;
             
-            const isMuted = player.isMuted();
-            const volume = player.getVolume();
             const playerState = player.getPlayerState();
-
-            if (playerState === YT.PlayerState.PLAYING && !isMuted && volume > 0) {
+            if (playerState === YT.PlayerState.PLAYING) {
                 setPlaybackVisualState(true);
             } else {
                 setPlaybackVisualState(false);
@@ -717,7 +715,7 @@
         }
 
         function syncAndPlay() {
-            if (!player) return;
+            if (!player || !isPlayerReady) return;
             const state = getCurrentStreamState();
             const targetSong = songList[state.songIndex];
             updateTrackLabels(state.songIndex);
@@ -727,11 +725,11 @@
                 videoId: targetSong.id,
                 startSeconds: Math.floor(state.seekTo)
             });
+            player.playVideo();
         }
 
-        // HER 3 SANİYEDE BİR ÇALIŞAN CANLI YAYIN SENKRONİZASYON KONTROLÜ
         function checkLiveSync() {
-            if (!player || typeof player.getPlayerState !== 'function') return;
+            if (!player || !isPlayerReady || typeof player.getPlayerState !== 'function') return;
 
             if (player.getPlayerState() === YT.PlayerState.PLAYING) {
                 const state = getCurrentStreamState();
@@ -745,7 +743,7 @@
                 const currentTime = player.getCurrentTime();
                 const timeDiff = Math.abs(currentTime - state.seekTo);
 
-                if (timeDiff > 1.5) {
+                if (timeDiff > 2.5) {
                     player.seekTo(state.seekTo, true);
                 }
             }
@@ -756,17 +754,27 @@
             overlay.style.opacity = '0';
             setTimeout(() => { overlay.style.display = 'none'; }, 500);
 
-            syncAndPlay();
+            if (player && isPlayerReady) {
+                syncAndPlay();
+            } else {
+                // Eğer player tam hazır olmadan tıklanırsa kısa gecikmeyle çalıştır
+                let waitReady = setInterval(() => {
+                    if (isPlayerReady) {
+                        clearInterval(waitReady);
+                        syncAndPlay();
+                    }
+                }, 100);
+            }
 
             if (checkAudioInterval) clearInterval(checkAudioInterval);
-            checkAudioInterval = setInterval(checkAudioState, 400);
+            checkAudioInterval = setInterval(checkAudioState, 300);
 
             if (autoSyncInterval) clearInterval(autoSyncInterval);
             autoSyncInterval = setInterval(checkLiveSync, 3000);
         }
 
         document.addEventListener("visibilitychange", () => {
-            if (!document.hidden && player && player.getPlayerState && player.getPlayerState() === YT.PlayerState.PLAYING) {
+            if (!document.hidden && player && isPlayerReady && player.getPlayerState && player.getPlayerState() === YT.PlayerState.PLAYING) {
                 checkLiveSync();
             }
         });

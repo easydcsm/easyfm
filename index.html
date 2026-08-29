@@ -28,7 +28,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start; /* İçeriği yukarı çekmek için flex-start yapıldı */
             position: relative;
         }
 
@@ -60,22 +60,22 @@
             z-index: 10;
             width: 100%;
             max-width: 680px;
-            max-height: 100vh;
+            height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            padding: 5px 15px; /* Dikey boşluklar minimuma indirildi */
+            justify-content: flex-start; /* Üst hizalama sıkılaştırıldı */
+            padding: 10px 15px 5px 15px; /* Üst dikey boşluk ayarlandı */
         }
 
         /* LOGO & 3D DÜNYA ALANI */
         .logo-container {
             text-align: center;
             margin-bottom: 2px;
-            margin-top: 0;
+            margin-top: -10px; /* Logo yukarıya yaklaştırıldı */
             position: relative;
             width: 100%;
-            height: 210px; /* 250px -> 210px düşürüldü */
+            height: 185px; /* 210px -> 185px çekilerek üst boşluk alındı */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -117,7 +117,7 @@
 
         #globe-3d-container {
             width: 400px;
-            height: 210px;
+            height: 185px;
             position: relative;
             z-index: 2;
             overflow: visible;
@@ -168,7 +168,7 @@
         .video-container {
             position: relative;
             width: 100%;
-            padding-bottom: 54%; /* Boyut optimize edildi */
+            padding-bottom: 52%; /* Boyut optimize edildi */
             height: 0;
             border-radius: 14px;
             overflow: hidden;
@@ -276,7 +276,7 @@
 
         #visualizer-canvas {
             width: 100%;
-            height: 28px;
+            height: 26px;
             transition: opacity 1s ease;
         }
     </style>
@@ -458,9 +458,9 @@
         // --- THREE.JS 3D DÜNYA VE YÖRÜNGE METNİ ---
         const globeContainer = document.getElementById('globe-3d-container');
         const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(45, 400 / 210, 0.1, 1000);
+        const camera = new THREE.PerspectiveCamera(45, 400 / 185, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-        renderer.setSize(400, 210);
+        renderer.setSize(400, 185);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         globeContainer.appendChild(renderer.domElement);
 

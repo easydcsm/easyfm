@@ -340,6 +340,7 @@
         let isPlayingState = false;
         let currentLoadedVideoId = null;
         let syncCheckInterval = null;
+        let pendingPlay = false;
 
         // --- PLAYLIST VE ZAMAN HESAPLAMALARI ---
         const songList = [
@@ -395,6 +396,7 @@
                     'autoplay': 0,
                     'controls': 1,
                     'rel': 0,
+                    'playsinline': 1,
                     'start': Math.floor(state.seekTo)
                 },
                 events: {
@@ -406,6 +408,9 @@
 
         function onPlayerReady(event) {
             isPlayerReady = true;
+            if (pendingPlay) {
+                startRadio();
+            }
         }
 
         function onPlayerStateChange(event) {
@@ -447,6 +452,11 @@
 
         // CANLI YAYINI BAŞLATMA (BUTONA BASILDIĞINDA)
         function startRadio() {
+            if (!isPlayerReady || !player) {
+                pendingPlay = true;
+                return;
+            }
+
             const blast = document.getElementById('blast-wave');
             blast.classList.remove('blast-active');
             void blast.offsetWidth;
@@ -463,17 +473,20 @@
 
             updateTrackLabels(state.songIndex);
 
-            if (isPlayerReady && player) {
-                if (currentLoadedVideoId !== targetSong.id) {
-                    currentLoadedVideoId = targetSong.id;
-                    player.loadVideoById({
-                        videoId: targetSong.id,
-                        startSeconds: Math.floor(state.seekTo)
-                    });
-                } else {
-                    player.seekTo(state.seekTo, true);
-                    player.playVideo();
-                }
+            // Sesi aç ve oynat
+            if (typeof player.unMute === 'function') {
+                player.unMute();
+            }
+
+            if (currentLoadedVideoId !== targetSong.id) {
+                currentLoadedVideoId = targetSong.id;
+                player.loadVideoById({
+                    videoId: targetSong.id,
+                    startSeconds: Math.floor(state.seekTo)
+                });
+            } else {
+                player.seekTo(state.seekTo, true);
+                player.playVideo();
             }
 
             isPlayingState = true;

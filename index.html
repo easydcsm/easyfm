@@ -150,7 +150,7 @@
             padding: 20px 15px;
         }
 
-        /* LOGO & DÖNEN VINYL EFFECT + BASS BOOST EFEKTLERİ */
+        /* LOGO & DÖNEN VINYL BASS PATLAMALI EFFECT */
         .logo-container {
             text-align: center;
             margin-bottom: 15px;
@@ -171,7 +171,6 @@
             transition: all 0.5s ease;
         }
 
-        /* Bass Patlaması Halkaları (Ön Tanımlı Arka Katmanlar) */
         .vinyl-ring::before,
         .vinyl-ring::after {
             content: '';
@@ -185,14 +184,12 @@
             transition: opacity 0.5s ease;
         }
 
-        /* Dış Şok Dalgası Halkası */
         .vinyl-ring::before {
             width: 100%;
             height: 100%;
             border: 1px solid rgba(255, 255, 255, 0.4);
         }
 
-        /* İç Parıltı Halkası */
         .vinyl-ring::after {
             width: 80%;
             height: 80%;
@@ -200,11 +197,9 @@
             box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.2);
         }
 
-        /* MÜZİK ÇALARKEN AKTİF OLAN BASS PATLAMA VE DÖNME ANİMASYONLARI */
         .is-playing .vinyl-ring {
             animation: spinVinyl 6s linear infinite, bassPulse 1.2s ease-in-out infinite alternate;
             border-color: rgba(255, 255, 255, 0.8);
-            border-style: dashed;
         }
 
         .is-playing .vinyl-ring::before {
@@ -217,12 +212,10 @@
             animation: innerGlowPulse 0.6s ease-in-out infinite alternate;
         }
 
-        /* Ana Dönüş Anmasyonu */
         @keyframes spinVinyl {
             100% { transform: translate(-50%, -50%) rotate(360deg); }
         }
 
-        /* Ana Halka Bass Vuruş Animasyonu */
         @keyframes bassPulse {
             0% {
                 transform: translate(-50%, -50%) scale(0.98);
@@ -238,7 +231,6 @@
             }
         }
 
-        /* Dışarıya Doğru Genişleyen Bass Şok Dalgası */
         @keyframes shockwavePulse {
             0% {
                 width: 100%;
@@ -254,7 +246,6 @@
             }
         }
 
-        /* İç Halka Hızlı Titreşim / Parıltı */
         @keyframes innerGlowPulse {
             0% {
                 opacity: 0.3;
@@ -468,7 +459,7 @@
         }
     </style>
 
-    <!-- Firebase SDK (Anlık Sayaç İçin) -->
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
@@ -611,7 +602,7 @@
             document.getElementById('listener-count').innerText = snap.numChildren();
         });
 
-        // SPEKTRUM VISUALIZER (DYNAMIC BARS)
+        // SPEKTRUM VISUALIZER
         const vCanvas = document.getElementById('visualizer-canvas');
         const vCtx = vCanvas.getContext('2d');
         const numBars = 32;
@@ -642,7 +633,7 @@
         }
         drawVisualizer();
 
-        // PLAYLIST & CANLI YAYIN HESAPLAMA SİSTEMİ
+        // PLAYLIST & CANLI YAYIN SİSTEMİ
         const songList = [
             { id: '1IEg_3x35go', duration: 120, title: 'FRANCHISE' },
             { id: 'qAlF70MdfwU', duration: 207, title: 'OUT WEST' }, 
@@ -684,7 +675,7 @@
         const initialState = getCurrentStreamState();
         updateTrackLabels(initialState.songIndex);
 
-        // YOUTUBE API PLAYER KURULUMU
+        // YOUTUBE API OYNATICI KURULUMU
         function onYouTubeIframeAPIReady() {
             const state = getCurrentStreamState();
             currentLoadedVideoId = songList[state.songIndex].id;
@@ -749,28 +740,24 @@
                 videoId: targetSong.id,
                 startSeconds: Math.floor(state.seekTo)
             });
+            player.playVideo();
         }
 
-        // HER 3 SANİYEDE BİR ÇALIŞAN CANLI YAYIN SENKRONİZASYON KONTROLÜ
         function checkLiveSync() {
             if (!player || typeof player.getPlayerState !== 'function') return;
 
-            // Sadece video aktif olarak oynatılıyorsa senkron kontrolü yap
             if (player.getPlayerState() === YT.PlayerState.PLAYING) {
                 const state = getCurrentStreamState();
                 const expectedSong = songList[state.songIndex];
 
-                // Şarkı değiştiyse doğrudan yeni şarkıya geç
                 if (currentLoadedVideoId !== expectedSong.id) {
                     syncAndPlay();
                     return;
                 }
 
-                // Aynı şarkıdaysa süreyi kontrol et
                 const currentTime = player.getCurrentTime();
                 const timeDiff = Math.abs(currentTime - state.seekTo);
 
-                // Eğer canlı yayından 1.5 saniyeden fazla sapma varsa süreyi düzelt
                 if (timeDiff > 1.5) {
                     player.seekTo(state.seekTo, true);
                 }
@@ -787,7 +774,6 @@
             if (checkAudioInterval) clearInterval(checkAudioInterval);
             checkAudioInterval = setInterval(checkAudioState, 400);
 
-            // 3 SANİYEDE BİR SENKRONİZASYON KONTROLÜ BAŞLAT
             if (autoSyncInterval) clearInterval(autoSyncInterval);
             autoSyncInterval = setInterval(checkLiveSync, 3000);
         }

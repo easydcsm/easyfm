@@ -338,9 +338,7 @@
         let isPlayingState = false;
         let currentLoadedVideoId = null;
         let syncCheckInterval = null;
-        let hasUserStarted = false;
 
-        // --- PLAYLIST VE ZAMAN HESAPLAMALARI ---
         const songList = [
             { id: '1IEg_3x35go', duration: 120, title: 'FRANCHISE' },
             { id: 'qAlF70MdfwU', duration: 207, title: 'OUT WEST' }, 
@@ -382,11 +380,10 @@
         const initialState = getCurrentStreamState();
         updateTrackLabels(initialState.songIndex);
 
-        // --- YOUTUBE API DİNAMİK YÜKLEME ---
+        // YOUTUBE API YÜKLEME VE KURULUM
         const tag = document.createElement('script');
         tag.src = "https://www.youtube.com/iframe_api";
-        const firstScriptTag = document.getElementsByTagName('script')[0];
-        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+        document.head.appendChild(tag);
 
         function onYouTubeIframeAPIReady() {
             const state = getCurrentStreamState();
@@ -404,30 +401,22 @@
                     'start': Math.floor(state.seekTo)
                 },
                 events: {
-                    'onReady': onPlayerReady,
+                    'onReady': () => { isPlayerReady = true; },
                     'onStateChange': onPlayerStateChange
                 }
             });
         }
 
-        function onPlayerReady(event) {
-            isPlayerReady = true;
-            if (hasUserStarted) {
-                executeStart();
-            }
-        }
-
         function onPlayerStateChange(event) {
             if (event.data === YT.PlayerState.PLAYING) {
                 isPlayingState = true;
-            } else if (event.data === YT.PlayerState.PAUSED) {
+            } else {
                 isPlayingState = false;
-            } else if (event.data === YT.PlayerState.ENDED) {
-                forceLiveSync();
             }
         }
 
-        function forceLiveSync() {
+        // OTOMATİK CANLI SENKRONİZASYON VE GERİ ATMA
+        function syncToLiveStream() {
             if (!isPlayerReady || !player) return;
 
             const state = getCurrentStreamState();
@@ -435,57 +424,30 @@
 
             updateTrackLabels(state.songIndex);
 
+            // Yanlış şarkı çalıyorsa canlıdaki şarkıya fırlat
             if (currentLoadedVideoId !== targetSong.id) {
                 currentLoadedVideoId = targetSong.id;
                 player.loadVideoById({
                     videoId: targetSong.id,
                     startSeconds: Math.floor(state.seekTo)
                 });
-                isPlayingState = true;
+                player.playVideo();
                 return;
             }
 
+            // Doğru şarkıdaysa ve saniye farkı 3 saniyeden fazlaysa canlı süresine zıplat
             if (typeof player.getCurrentTime === 'function') {
                 const currentTime = player.getCurrentTime();
                 const timeDiff = Math.abs(currentTime - state.seekTo);
-                if (timeDiff > 4) {
+                if (timeDiff > 3) {
                     player.seekTo(state.seekTo, true);
+                    player.playVideo();
                 }
             }
         }
 
-        function executeStart() {
-            const state = getCurrentStreamState();
-            const targetSong = songList[state.songIndex];
-
-            updateTrackLabels(state.songIndex);
-
-            if (player && typeof player.unMute === 'function') {
-                player.unMute();
-            }
-
-            if (currentLoadedVideoId !== targetSong.id) {
-                currentLoadedVideoId = targetSong.id;
-                player.loadVideoById({
-                    videoId: targetSong.id,
-                    startSeconds: Math.floor(state.seekTo)
-                });
-            } else {
-                player.seekTo(state.seekTo, true);
-                player.playVideo();
-            }
-
-            isPlayingState = true;
-
-            if (syncCheckInterval) clearInterval(syncCheckInterval);
-            syncCheckInterval = setInterval(() => {
-                forceLiveSync();
-            }, 4000);
-        }
-
+        // BUTONA BASILDIĞINDA TETİKLENEN CANLI BAŞLATMA
         function handleUserClick() {
-            hasUserStarted = true;
-
             const blast = document.getElementById('blast-wave');
             blast.classList.remove('blast-active');
             void blast.offsetWidth;
@@ -497,8 +459,38 @@
                 overlay.style.visibility = 'hidden'; 
             }, 600);
 
+            const startPlaying = () => {
+                const state = getCurrentStreamState();
+                const targetSong = songList[state.songIndex];
+
+                updateTrackLabels(state.songIndex);
+                currentLoadedVideoId = targetSong.id;
+
+                if (typeof player.unMute === 'function') {
+                    player.unMute();
+                }
+
+                player.loadVideoById({
+                    videoId: targetSong.id,
+                    startSeconds: Math.floor(state.seekTo)
+                });
+                player.playVideo();
+                isPlayingState = true;
+
+                // Her 3 saniyede bir akıştan sapma olup olmadığını kontrol et
+                if (syncCheckInterval) clearInterval(syncCheckInterval);
+                syncCheckInterval = setInterval(syncToLiveStream, 3000);
+            };
+
             if (isPlayerReady && player) {
-                executeStart();
+                startPlaying();
+            } else {
+                const checkReady = setInterval(() => {
+                    if (isPlayerReady && player) {
+                        clearInterval(checkReady);
+                        startPlaying();
+                    }
+                }, 100);
             }
         }
 
@@ -508,7 +500,7 @@
             handleUserClick();
         });
 
-        // --- THREE.JS 3D DÜNYA VE YÖRÜNGE METNİ ---
+        // THREE.JS 3D DÜNYA VE YÖRÜNGE METNİ
         const globeContainer = document.getElementById('globe-3d-container');
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(45, 480 / 230, 0.1, 1000);
@@ -530,7 +522,6 @@
         const globeMesh = new THREE.Mesh(geometry, material);
         scene.add(globeMesh);
 
-        // Atmosfer Katmanı
         const atmosGeo = new THREE.SphereGeometry(baseRadius + 0.04, 64, 64);
         const atmosMat = new THREE.MeshBasicMaterial({
             color: 0xffffff,
@@ -541,7 +532,6 @@
         const atmosMesh = new THREE.Mesh(atmosGeo, atmosMat);
         scene.add(atmosMesh);
 
-        // Işıklandırma
         const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
         scene.add(ambientLight);
 
@@ -549,7 +539,6 @@
         dirLight.position.set(5, 3, 5);
         scene.add(dirLight);
 
-        // YÖRÜNGE HALKASI METNİ
         let ringMesh = null;
 
         function createOrbitRingText() {
@@ -568,11 +557,9 @@
             ctx.shadowColor = '#ffffff';
             ctx.shadowBlur = 35;
 
-            // ÜST KAT: EA$Y FM
             ctx.font = '900 160px "Anton", sans-serif';
             ctx.fillText("EA$Y FM", canvas.width / 2, 160);
 
-            // ALT KAT: 7/24 YÜZDE YÜZ MÜZİK
             ctx.font = '900 65px "Montserrat", sans-serif';
             ctx.letterSpacing = '6px';
             ctx.fillText("7/24 YÜZDE YÜZ MÜZİK", canvas.width / 2, 340);

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EA$Y FM | LIVE</title>
+    <title>EA$Y FM | CANLI</title>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     
@@ -150,35 +150,123 @@
             padding: 20px 15px;
         }
 
-        /* LOGO & DÖNEN VINYL EFFECT */
+        /* LOGO & ÇOK KATMANLI BASS PATLAMALI YENİ HALKA SİSTEMİ */
         .logo-container {
             text-align: center;
-            margin-bottom: 15px;
-            margin-top: 10px;
+            margin-bottom: 25px;
+            margin-top: 15px;
             position: relative;
+            display: inline-block;
         }
 
         .vinyl-ring {
             position: absolute;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%) rotate(0deg);
-            width: 220px;
-            height: 220px;
-            border: 2px dashed rgba(255, 255, 255, 0.15);
+            transform: translate(-50%, -50%);
+            width: 230px;
+            height: 230px;
+            border: 2px dashed rgba(255, 255, 255, 0.25);
             border-radius: 50%;
             z-index: -1;
-            transition: border-color 0.5s;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
         }
 
+        /* Dış Wave (Patlama Dalgası) Halkası */
+        .vinyl-ring::before {
+            content: '';
+            position: absolute;
+            top: -15px;
+            left: -15px;
+            right: -15px;
+            bottom: -15px;
+            border: 1px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        /* İç Neonsal Döner Şerit */
+        .vinyl-ring::after {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            border: 2px solid transparent;
+            border-top-color: #ffffff;
+            border-bottom-color: #ffffff;
+            border-radius: 50%;
+            opacity: 0.4;
+        }
+
+        /* MÜZİK ÇALARKEN AKTİF OLAN ANİMASYONLAR */
         .is-playing .vinyl-ring {
-            animation: spinVinyl 8s linear infinite;
-            border-color: rgba(255, 255, 255, 0.6);
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+            animation: 
+                spinVinyl 10s linear infinite, 
+                bassPulse 0.75s ease-in-out infinite alternate;
+            border-color: rgba(255, 255, 255, 0.85);
         }
 
+        .is-playing .vinyl-ring::before {
+            animation: 
+                spinVinylReverse 14s linear infinite,
+                waveBlast 1.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+        }
+
+        .is-playing .vinyl-ring::after {
+            animation: spinVinyl 2.5s linear infinite;
+            opacity: 1;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.9);
+        }
+
+        /* DIAMOND MODE AKTİFKEN GÜÇLENDİRİLMİŞ PARLAMA */
+        body.diamond-mode-active .is-playing .vinyl-ring {
+            box-shadow: 
+                0 0 35px rgba(255, 255, 255, 0.7),
+                inset 0 0 25px rgba(255, 255, 255, 0.5);
+        }
+
+        /* HALKA ANİMASYONLARI */
         @keyframes spinVinyl {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
             100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        @keyframes spinVinylReverse {
+            0% { transform: rotate(360deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        /* Bas Vuruşu (Genişleme & Parlama) Efekti */
+        @keyframes bassPulse {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+                box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.05);
+                box-shadow: 0 0 35px rgba(255, 255, 255, 0.6);
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1.13);
+                box-shadow: 0 0 65px rgba(255, 255, 255, 0.95), inset 0 0 30px rgba(255, 255, 255, 0.6);
+            }
+        }
+
+        /* Dışa Doğru Şok Dalga Patlaması (Wave Blast) */
+        @keyframes waveBlast {
+            0% {
+                transform: scale(0.92);
+                opacity: 0.9;
+                border-color: rgba(255, 255, 255, 0.9);
+            }
+            100% {
+                transform: scale(1.42);
+                opacity: 0;
+                border-color: rgba(255, 255, 255, 0);
+            }
         }
 
         h1 {
@@ -670,22 +758,18 @@
         function checkLiveSync() {
             if (!player || typeof player.getPlayerState !== 'function') return;
 
-            // Sadece video aktif olarak oynatılıyorsa senkron kontrolü yap
             if (player.getPlayerState() === YT.PlayerState.PLAYING) {
                 const state = getCurrentStreamState();
                 const expectedSong = songList[state.songIndex];
 
-                // Şarkı değiştiyse doğrudan yeni şarkıya geç
                 if (currentLoadedVideoId !== expectedSong.id) {
                     syncAndPlay();
                     return;
                 }
 
-                // Aynı şarkıdaysa süreyi kontrol et
                 const currentTime = player.getCurrentTime();
                 const timeDiff = Math.abs(currentTime - state.seekTo);
 
-                // Eğer canlı yayından 1.5 saniyeden fazla sapma varsa süreyi düzelt
                 if (timeDiff > 1.5) {
                     player.seekTo(state.seekTo, true);
                 }
@@ -702,7 +786,6 @@
             if (checkAudioInterval) clearInterval(checkAudioInterval);
             checkAudioInterval = setInterval(checkAudioState, 400);
 
-            // 3 SANİYEDE BİR SENKRONİZASYON KONTROLÜ BAŞLAT
             if (autoSyncInterval) clearInterval(autoSyncInterval);
             autoSyncInterval = setInterval(checkLiveSync, 3000);
         }

@@ -150,7 +150,7 @@
             padding: 20px 15px;
         }
 
-        /* LOGO & DÖNEN VINYL BASS PATLAMALI EFFECT */
+        /* LOGO & DÖNEN VINYL EFFECT (GÜNCELLENEN COOL ÇEMBER) */
         .logo-container {
             text-align: center;
             margin-bottom: 15px;
@@ -165,7 +165,7 @@
             transform: translate(-50%, -50%) rotate(0deg);
             width: 220px;
             height: 220px;
-            border: 2px dashed rgba(255, 255, 255, 0.25);
+            border: 2px dashed rgba(255, 255, 255, 0.3);
             border-radius: 50%;
             z-index: -1;
             transition: all 0.5s ease;
@@ -180,21 +180,19 @@
             transform: translate(-50%, -50%);
             border-radius: 50%;
             pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.5s ease;
         }
 
         .vinyl-ring::before {
             width: 100%;
             height: 100%;
-            border: 1px solid rgba(255, 255, 255, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.15);
         }
 
         .vinyl-ring::after {
             width: 80%;
             height: 80%;
-            border: 3px double rgba(255, 255, 255, 0.6);
-            box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.2);
+            border: 2px double rgba(255, 255, 255, 0.4);
+            box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.15);
         }
 
         .is-playing .vinyl-ring {
@@ -203,12 +201,10 @@
         }
 
         .is-playing .vinyl-ring::before {
-            opacity: 1;
             animation: shockwavePulse 1.2s ease-out infinite;
         }
 
         .is-playing .vinyl-ring::after {
-            opacity: 1;
             animation: innerGlowPulse 0.6s ease-in-out infinite alternate;
         }
 
@@ -219,15 +215,15 @@
         @keyframes bassPulse {
             0% {
                 transform: translate(-50%, -50%) scale(0.98);
-                box-shadow: 0 0 15px rgba(255, 255, 255, 0.2), inset 0 0 10px rgba(255, 255, 255, 0.1);
+                box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
             }
             50% {
                 transform: translate(-50%, -50%) scale(1.08);
-                box-shadow: 0 0 45px rgba(255, 255, 255, 0.7), inset 0 0 25px rgba(255, 255, 255, 0.4);
+                box-shadow: 0 0 40px rgba(255, 255, 255, 0.7);
             }
             100% {
                 transform: translate(-50%, -50%) scale(1.02);
-                box-shadow: 0 0 25px rgba(255, 255, 255, 0.3), inset 0 0 15px rgba(255, 255, 255, 0.2);
+                box-shadow: 0 0 25px rgba(255, 255, 255, 0.3);
             }
         }
 
@@ -236,25 +232,17 @@
                 width: 100%;
                 height: 100%;
                 opacity: 0.8;
-                border-width: 2px;
             }
             100% {
-                width: 160%;
-                height: 160%;
+                width: 150%;
+                height: 150%;
                 opacity: 0;
-                border-width: 1px;
             }
         }
 
         @keyframes innerGlowPulse {
-            0% {
-                opacity: 0.3;
-                transform: translate(-50%, -50%) scale(0.95);
-            }
-            100% {
-                opacity: 1;
-                transform: translate(-50%, -50%) scale(1.05);
-            }
+            0% { opacity: 0.3; transform: translate(-50%, -50%) scale(0.95); }
+            100% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
         }
 
         h1 {
@@ -459,7 +447,7 @@
         }
     </style>
 
-    <!-- Firebase SDK -->
+    <!-- Firebase SDK (Anlık Sayaç İçin) -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
@@ -523,8 +511,6 @@
         let isPlayingState = false;
         let player = null;
         let checkAudioInterval = null;
-        let autoSyncInterval = null;
-        let currentLoadedVideoId = null;
 
         function toggleDiamondGlow(checkbox) {
             document.body.classList.toggle('diamond-mode-active', checkbox.checked);
@@ -602,7 +588,7 @@
             document.getElementById('listener-count').innerText = snap.numChildren();
         });
 
-        // SPEKTRUM VISUALIZER
+        // SPEKTRUM VISUALIZER (DYNAMIC BARS)
         const vCanvas = document.getElementById('visualizer-canvas');
         const vCtx = vCanvas.getContext('2d');
         const numBars = 32;
@@ -633,7 +619,7 @@
         }
         drawVisualizer();
 
-        // PLAYLIST & CANLI YAYIN SİSTEMİ
+        // PLAYLIST & CANLI YAYIN HESAPLAMA SİSTEMİ
         const songList = [
             { id: '1IEg_3x35go', duration: 120, title: 'FRANCHISE' },
             { id: 'qAlF70MdfwU', duration: 207, title: 'OUT WEST' }, 
@@ -675,12 +661,11 @@
         const initialState = getCurrentStreamState();
         updateTrackLabels(initialState.songIndex);
 
-        // YOUTUBE API OYNATICI KURULUMU
+        // YOUTUBE API PLAYER KURULUMU
         function onYouTubeIframeAPIReady() {
             const state = getCurrentStreamState();
-            currentLoadedVideoId = songList[state.songIndex].id;
             player = new YT.Player('player', {
-                videoId: currentLoadedVideoId,
+                videoId: songList[state.songIndex].id,
                 playerVars: {
                     'autoplay': 0,
                     'controls': 1,
@@ -734,34 +719,11 @@
             const state = getCurrentStreamState();
             const targetSong = songList[state.songIndex];
             updateTrackLabels(state.songIndex);
-            
-            currentLoadedVideoId = targetSong.id;
+
             player.loadVideoById({
                 videoId: targetSong.id,
                 startSeconds: Math.floor(state.seekTo)
             });
-            player.playVideo();
-        }
-
-        function checkLiveSync() {
-            if (!player || typeof player.getPlayerState !== 'function') return;
-
-            if (player.getPlayerState() === YT.PlayerState.PLAYING) {
-                const state = getCurrentStreamState();
-                const expectedSong = songList[state.songIndex];
-
-                if (currentLoadedVideoId !== expectedSong.id) {
-                    syncAndPlay();
-                    return;
-                }
-
-                const currentTime = player.getCurrentTime();
-                const timeDiff = Math.abs(currentTime - state.seekTo);
-
-                if (timeDiff > 1.5) {
-                    player.seekTo(state.seekTo, true);
-                }
-            }
         }
 
         function startRadio() {
@@ -773,16 +735,7 @@
 
             if (checkAudioInterval) clearInterval(checkAudioInterval);
             checkAudioInterval = setInterval(checkAudioState, 400);
-
-            if (autoSyncInterval) clearInterval(autoSyncInterval);
-            autoSyncInterval = setInterval(checkLiveSync, 3000);
         }
-
-        document.addEventListener("visibilitychange", () => {
-            if (!document.hidden && player && player.getPlayerState && player.getPlayerState() === YT.PlayerState.PLAYING) {
-                checkLiveSync();
-            }
-        });
     </script>
 </body>
 </html>

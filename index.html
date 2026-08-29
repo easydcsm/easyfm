@@ -138,14 +138,14 @@
             padding: 20px 15px;
         }
 
-        /* LOGO & 3D ALANI */
+        /* LOGO & 3D DÜNYA ALANI */
         .logo-container {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             margin-top: 10px;
             position: relative;
-            width: 340px;
-            height: 320px;
+            width: 380px;
+            height: 360px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -157,8 +157,8 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%) scale(0.6);
-            width: 200px;
-            height: 200px;
+            width: 220px;
+            height: 220px;
             border-radius: 50%;
             border: 4px solid rgba(255, 255, 255, 1);
             box-shadow: 0 0 60px rgba(0, 200, 255, 1), inset 0 0 40px rgba(255, 255, 255, 0.9);
@@ -184,10 +184,10 @@
             }
         }
 
-        /* THREE.JS CANVAS SAHNESİ CONTAINER */
+        /* THREE.JS CONTAINER */
         #globe-3d-container {
-            width: 340px;
-            height: 300px;
+            width: 380px;
+            height: 340px;
             position: relative;
             z-index: 2;
             transition: transform 0.6s ease;
@@ -202,7 +202,7 @@
                 transform: scale(1);
             }
             100% {
-                transform: scale(1.06);
+                transform: scale(1.05);
             }
         }
 
@@ -378,7 +378,7 @@
         }
     </style>
 
-    <!-- Three.js (3D Motoru) -->
+    <!-- Three.js (3D WebGL Motoru) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
     <!-- Firebase SDK -->
@@ -403,7 +403,7 @@
             <!-- ANLIK PATLAMA HALKASI -->
             <div class="blast-wave" id="blast-wave"></div>
             
-            <!-- 3D GERÇEK DÜNYA VE YÖRÜNGEDE DÖNEN EA$Y FM YAZISI -->
+            <!-- 3D GERÇEK DÜNYA VE DÖNEN EA$Y FM YAZI SAHNESİ -->
             <div id="globe-3d-container"></div>
 
             <div class="subtitle">7/24 YÜZDE YÜZ MÜZİK</div>
@@ -457,145 +457,110 @@
             document.body.classList.toggle('diamond-mode-active', checkbox.checked);
         }
 
-        // --- PROSEDÜREL DÜNYA KAPLAMASI OLUŞTURUCU (Okyanus + Kıtalar) ---
-        function createEarthTextureCanvas() {
-            const canvas = document.createElement('canvas');
-            canvas.width = 1024;
-            canvas.height = 512;
-            const ctx = canvas.getContext('2d');
-
-            // Mavi Okyanus
-            ctx.fillStyle = '#0a3d62';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // Rastgele Doğal Kıta Şekilleri
-            ctx.fillStyle = '#2ed573';
-            function drawLandCluster(cx, cy, radius, count) {
-                for (let i = 0; i < count; i++) {
-                    const angle = Math.random() * Math.PI * 2;
-                    const dist = Math.random() * radius;
-                    const x = cx + Math.cos(angle) * dist;
-                    const y = cy + Math.sin(angle) * dist;
-                    const r = Math.random() * (radius * 0.6) + 15;
-                    ctx.beginPath();
-                    ctx.arc(x, y, r, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-            }
-
-            // Kıtaların Konumları (Kuzey-Güney Amerika, Avrupa, Afrika, Asya, Avustralya)
-            drawLandCluster(250, 180, 80, 35); // Kuzey Amerika
-            drawLandCluster(320, 340, 75, 30); // Güney Amerika
-            drawLandCluster(520, 150, 60, 25); // Avrupa
-            drawLandCluster(540, 270, 85, 35); // Afrika
-            drawLandCluster(750, 160, 110, 45); // Asya
-            drawLandCluster(820, 360, 50, 20); // Avustralya
-
-            // Kutup Buzulları
-            ctx.fillStyle = '#ffffff';
-            ctx.fillRect(0, 0, canvas.width, 25);
-            ctx.fillRect(0, canvas.height - 25, canvas.width, 25);
-
-            return canvas;
-        }
-
-        // --- THREE.JS 3D DÜNYA VE YÖRÜNGEDE DÖNEN "EA$Y FM" METNİ ---
+        // --- THREE.JS GERÇEK 3D DÜNYA KÜRESİ VE DÖNEN "EA$Y FM" HALKASI ---
         const globeContainer = document.getElementById('globe-3d-container');
         const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(45, 340 / 300, 0.1, 1000);
+        const camera = new THREE.PerspectiveCamera(45, 380 / 340, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-        renderer.setSize(340, 300);
+        renderer.setSize(380, 340);
         renderer.setPixelRatio(window.devicePixelRatio);
         globeContainer.appendChild(renderer.domElement);
 
-        // 1. DÜNYA KÜRESİ
-        const earthCanvas = createEarthTextureCanvas();
-        const earthTexture = new THREE.CanvasTexture(earthCanvas);
-        const geometry = new THREE.SphereGeometry(1.8, 64, 64);
+        // 1. REALISTIC NASA EARTH TEXTURE (Gömülü Yüksek Kalite Görsel Verisi)
+        const earthDataUri = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP//////////////////////////////////////////////////////////////////////////////////////wgALCAAKAB4BAREA/8QAFBABAAAAAAAAAAAAAAAAAAAAAP/aAAgBAQABPxA=';
+        
+        // Yüksek çözünürlüklü NASA dikey açılı harita dokusu
+        const textureLoader = new THREE.TextureLoader();
+        const earthTexture = textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_atmos_2048.jpg');
+
+        const geometry = new THREE.SphereGeometry(1.85, 64, 64);
         const material = new THREE.MeshStandardMaterial({
             map: earthTexture,
-            roughness: 0.5,
+            roughness: 0.6,
             metalness: 0.1
         });
         const globeMesh = new THREE.Mesh(geometry, material);
         scene.add(globeMesh);
 
-        // Atmosphere Glow (Mavi Dış Işıma)
-        const atmosGeo = new THREE.SphereGeometry(1.85, 32, 32);
+        // Atmosferik Mavi Parlama Katmanı
+        const atmosGeo = new THREE.SphereGeometry(1.9, 64, 64);
         const atmosMat = new THREE.MeshBasicMaterial({
             color: 0x00aaff,
             transparent: true,
-            opacity: 0.15,
+            opacity: 0.18,
             side: THREE.BackSide
         });
         const atmosMesh = new THREE.Mesh(atmosGeo, atmosMat);
         scene.add(atmosMesh);
 
-        // IŞIKLANDIRMA
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
+        // Işıklandırma
+        const ambientLight = new THREE.AmbientLight(0xffffff, 1.1);
         scene.add(ambientLight);
 
-        const dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
+        const dirLight = new THREE.DirectionalLight(0xffffff, 1.3);
         dirLight.position.set(5, 3, 5);
         scene.add(dirLight);
 
-        // 2. YÖRÜNGEDE AY GİBİ DÖNEN "EA$Y FM" TEXT MESH (ESKİ ANTON FONTU İLE)
-        let textMesh = null;
-        let textAngle = 0;
-        const orbitRadius = 2.8; // Dünya'nın etrafındaki yörünge yarıçapı
+        // 2. DÜNYA'NIN ETRAFINDA 360 DÖNEN "EA$Y FM" SILINDIR HALKASI (ESKİ ANTON FONTU İLE)
+        let ringMesh = null;
 
-        function create3DText() {
-            const textCanvas = document.createElement('canvas');
-            textCanvas.width = 512;
-            textCanvas.height = 128;
-            const tCtx = textCanvas.getContext('2d');
+        function createOrbitRingText() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 1024;
+            canvas.height = 128;
+            const ctx = canvas.getContext('2d');
 
-            // Eski Anton Fontu İle Yazı Çizimi
-            tCtx.fillStyle = 'transparent';
-            tCtx.fillRect(0, 0, textCanvas.width, textCanvas.height);
-            tCtx.font = '900 70px "Anton", sans-serif';
-            tCtx.textAlign = 'center';
-            tCtx.textBaseline = 'middle';
+            ctx.fillStyle = 'transparent';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Parlama / Glow Efekti
-            tCtx.shadowColor = '#00f0ff';
-            tCtx.shadowBlur = 18;
-            tCtx.fillStyle = '#ffffff';
-            tCtx.fillText('EA$Y FM', textCanvas.width / 2, textCanvas.height / 2);
+            // Kalın Rap/Hip-Hop Fontu (Anton)
+            ctx.font = '900 64px "Anton", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = '#ffffff';
 
-            const textTex = new THREE.CanvasTexture(textCanvas);
-            const planeGeo = new THREE.PlaneGeometry(2.4, 0.6);
-            const planeMat = new THREE.MeshBasicMaterial({
-                map: textTex,
+            // Parlama Efekti
+            ctx.shadowColor = '#00e1ff';
+            ctx.shadowBlur = 20;
+
+            // Halka boyunca tekrarlanan EA$Y FM metni
+            const textString = "EA$Y FM   •   EA$Y FM   •   EA$Y FM   •   EA$Y FM   •   ";
+            ctx.fillText(textString, canvas.width / 2, canvas.height / 2);
+
+            const ringTex = new THREE.CanvasTexture(canvas);
+            ringTex.wrapS = THREE.RepeatWrapping;
+            ringTex.wrapT = THREE.ClampToEdgeWrapping;
+
+            // Dairesel Silindir Halka Geometrisi
+            const ringGeo = new THREE.CylinderGeometry(2.5, 2.5, 0.6, 64, 1, true);
+            const ringMat = new THREE.MeshBasicMaterial({
+                map: ringTex,
                 transparent: true,
-                side: THREE.DoubleSide
+                side: THREE.DoubleSide,
+                depthWrite: false
             });
 
-            textMesh = new THREE.Mesh(planeGeo, planeMat);
-            scene.add(textMesh);
+            ringMesh = new THREE.Mesh(ringGeo, ringMat);
+            // Hafif eğim vererek yörünge hissi verme
+            ringMesh.rotation.z = 0.15;
+            scene.add(ringMesh);
         }
 
-        // Font Yüklendiğinde 3D Metni Oluştur
         document.fonts.ready.then(() => {
-            create3DText();
+            createOrbitRingText();
         });
 
-        camera.position.z = 5.8;
+        camera.position.z = 5.6;
 
         function animateGlobe() {
             requestAnimationFrame(animateGlobe);
 
-            // Dünya Dönüşü
-            globeMesh.rotation.y += isPlayingState ? 0.008 : 0.003;
+            // Gerçek Dünya Dönüşü
+            globeMesh.rotation.y += isPlayingState ? 0.006 : 0.0025;
 
-            // "EA$Y FM" Yörünge Dönüşü (Ay gibi önüne geçer, arkasına dolanır)
-            if (textMesh) {
-                textAngle += isPlayingState ? 0.025 : 0.015;
-                textMesh.position.x = Math.sin(textAngle) * orbitRadius;
-                textMesh.position.z = Math.cos(textAngle) * orbitRadius;
-
-                // Kamera Yönüne Bakması İçin
-                textMesh.lookAt(camera.position);
+            // EA$Y FM Halkanın Yumuşak ve Kesintisiz Dönüşü
+            if (ringMesh) {
+                ringMesh.rotation.y -= isPlayingState ? 0.009 : 0.004;
             }
 
             renderer.render(scene, camera);

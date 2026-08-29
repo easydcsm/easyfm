@@ -237,12 +237,12 @@
             100% { opacity: 1; transform: scale(1); }
         }
 
-        /* TAM 16:9 DİKDÖRTGEN YOUTUBE ORANLI VİDEO ÇERÇEVESİ */
+        /* VİDEO ÇERÇEVESİ */
         .video-container {
             position: relative;
             width: 90%;
             max-width: 750px;
-            padding-bottom: 50.625%; /* (750 * 0.5625 = ~50.625% oranda siyah bantları kaldırır) */
+            padding-bottom: 50.625%;
             height: 0;
             border-radius: 16px;
             overflow: hidden;
@@ -252,13 +252,16 @@
             margin-bottom: 30px;
         }
 
+        /* VİDEOYU YAKINLAŞTIRIP GÖMÜLÜ SİYAH BANTLARI KIRPAN AYAR */
         .video-container iframe {
             position: absolute;
-            top: 0;
-            left: 0;
+            top: 50%;
+            left: 50%;
             width: 100%;
             height: 100%;
             border: none;
+            transform: translate(-50%, -50%) scale(1.35);
+            transform-origin: center center;
         }
 
         /* BAŞLATMA OVERLAY EKRANI */

@@ -237,12 +237,12 @@
             100% { opacity: 1; transform: scale(1); }
         }
 
-        /* REKLAMI ATLA BUTONUNU AÇIKTA BIRAKAN STANDART ORANLI VİDEO ÇERÇEVESİ */
+        /* TAM 16:9 DİKDÖRTGEN YOUTUBE ORANLI VİDEO ÇERÇEVESİ */
         .video-container {
             position: relative;
-            width: 80%;
-            max-width: 650px;
-            padding-bottom: 45%;
+            width: 90%;
+            max-width: 750px;
+            padding-bottom: 50.625%; /* (750 * 0.5625 = ~50.625% oranda siyah bantları kaldırır) */
             height: 0;
             border-radius: 16px;
             overflow: hidden;
@@ -318,8 +318,8 @@
                 letter-spacing: 3px;
             }
             .video-container {
-                width: 90%;
-                padding-bottom: 56.25%;
+                width: 92%;
+                padding-bottom: 51.75%;
                 margin-bottom: 20px;
             }
             .listener-badge {

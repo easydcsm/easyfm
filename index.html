@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EA$Y FM</title>
+    <title>EA$Y FM | LIVE</title>
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:wght@800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     
     <style>
         * {
             box-sizing: border-box;
+            user-select: none;
         }
 
         body {
@@ -122,7 +123,7 @@
         }
 
         body.diamond-mode-active .ambient-glow {
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.02) 50%, rgba(0, 0, 0, 0) 75%);
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.03) 50%, rgba(0, 0, 0, 0) 75%);
         }
 
         body.diamond-mode-active h1 {
@@ -133,15 +134,15 @@
         }
 
         body.diamond-mode-active .video-container {
-            box-shadow: 0 0 35px rgba(255, 255, 255, 0.25), 0 10px 40px rgba(0, 0, 0, 0.8);
-            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 40px rgba(255, 255, 255, 0.3), 0 10px 40px rgba(0, 0, 0, 0.8);
+            border-color: rgba(255, 255, 255, 0.6);
         }
 
         .main-wrapper {
             position: relative;
             z-index: 10;
             width: 100%;
-            max-width: 700px;
+            max-width: 720px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -149,17 +150,41 @@
             padding: 20px 15px;
         }
 
+        /* LOGO & DÖNEN VINYL EFFECT */
         .logo-container {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             margin-top: 10px;
+            position: relative;
+        }
+
+        .vinyl-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(0deg);
+            width: 220px;
+            height: 220px;
+            border: 2px dashed rgba(255, 255, 255, 0.15);
+            border-radius: 50%;
+            z-index: -1;
+            transition: border-color 0.5s;
+        }
+
+        .is-playing .vinyl-ring {
+            animation: spinVinyl 12s linear infinite;
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        @keyframes spinVinyl {
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
         }
 
         h1 {
             margin: 0;
             font-family: 'Anton', sans-serif;
-            font-size: 64px;
-            letter-spacing: 4px;
+            font-size: 72px;
+            letter-spacing: 5px;
             text-transform: uppercase;
             
             background: linear-gradient(
@@ -190,46 +215,53 @@
         }
 
         .subtitle {
-            font-family: 'Montserrat', sans-serif;
             font-weight: 900;
-            font-size: 13px;
+            font-size: 11px;
             color: #ffffff;
-            letter-spacing: 5px;
-            margin-top: 8px;
+            letter-spacing: 6px;
+            margin-top: 4px;
             text-transform: uppercase;
             text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
-            opacity: 0.9;
+            opacity: 0.8;
         }
 
-        .listener-badge {
+        /* BADGES BAR */
+        .status-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .badge {
             background: rgba(17, 17, 17, 0.7);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.15);
-            padding: 8px 22px;
+            padding: 6px 16px;
             border-radius: 30px;
-            font-size: 13px;
-            letter-spacing: 1px;
-            margin-bottom: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
             display: flex;
             align-items: center;
-            gap: 12px;
-            box-shadow: 0 4px 20px rgba(255, 255, 255, 0.05);
+            gap: 8px;
+            text-transform: uppercase;
         }
 
         .live-dot {
-            width: 9px;
-            height: 9px;
+            width: 8px;
+            height: 8px;
             background-color: #ffffff;
             border-radius: 50%;
-            display: inline-block;
-            box-shadow: 0 0 10px #ffffff, 0 0 15px #ffffff;
+            box-shadow: 0 0 10px #ffffff;
             animation: pulse 1.5s infinite;
         }
 
         @keyframes pulse {
             0% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.3; transform: scale(0.85); }
+            50% { opacity: 0.3; transform: scale(0.8); }
             100% { opacity: 1; transform: scale(1); }
         }
 
@@ -262,7 +294,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(5, 5, 5, 0.98);
+            background: rgba(5, 5, 5, 0.96);
             z-index: 30;
             display: flex;
             flex-direction: column;
@@ -277,8 +309,8 @@
             color: #000;
             font-family: 'Montserrat', sans-serif;
             font-weight: 900;
-            font-size: 16px;
-            padding: 14px 32px;
+            font-size: 15px;
+            padding: 14px 36px;
             border: none;
             border-radius: 50px;
             cursor: pointer;
@@ -289,13 +321,63 @@
 
         .start-btn:hover {
             transform: scale(1.05);
-            box-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 35px rgba(255, 255, 255, 0.9);
         }
 
-        #wave-canvas {
+        /* NOW PLAYING CARD */
+        .now-playing-card {
             width: 100%;
-            height: 40px;
-            margin-top: 10px;
+            background: rgba(15, 15, 15, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+
+        .track-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            overflow: hidden;
+        }
+
+        .track-label {
+            font-size: 9px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            color: #888;
+            text-transform: uppercase;
+        }
+
+        .track-title {
+            font-size: 14px;
+            font-weight: 800;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .next-track {
+            font-size: 10px;
+            color: #aaa;
+            text-align: right;
+            max-width: 40%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* CANLI EQ VISUALIZER CANVAS */
+        #visualizer-canvas {
+            width: 100%;
+            height: 35px;
         }
     </style>
 
@@ -316,15 +398,21 @@
     <canvas id="bg-canvas"></canvas>
     <div class="ambient-glow"></div>
 
-    <div class="main-wrapper">
+    <div class="main-wrapper" id="main-wrapper">
         <div class="logo-container">
+            <div class="vinyl-ring"></div>
             <h1>EA$Y FM</h1>
-            <div class="subtitle">7/24 YÜZDE YÜZ MÜZİK</div>
+            <div class="subtitle">7/24 HYPED TRAP & HIP-HOP RADIO</div>
         </div>
 
-        <div class="listener-badge">
-            <span class="live-dot"></span>
-            <span>Anlık Dinleyici: <strong id="listener-count" style="color: #ffffff;">0</strong></span>
+        <div class="status-bar">
+            <div class="badge">
+                <span class="live-dot"></span>
+                <span>CANLI YAYIN</span>
+            </div>
+            <div class="badge">
+                <span>🎧 DİNLEYİCİ: <strong id="listener-count" style="color: #ffffff;">0</strong></span>
+            </div>
         </div>
 
         <div class="video-container">
@@ -334,7 +422,20 @@
             <div id="player"></div>
         </div>
 
-        <canvas id="wave-canvas"></canvas>
+        <!-- ŞU AN ÇALAN SİSTEMİ -->
+        <div class="now-playing-card">
+            <div class="track-info">
+                <span class="track-label">ŞU AN YAYINDA</span>
+                <span class="track-title" id="current-track-name">Radyo Bağlanıyor...</span>
+            </div>
+            <div class="next-track">
+                <div class="track-label" style="text-align: right;">SIRADAKİ</div>
+                <span id="next-track-name">---</span>
+            </div>
+        </div>
+
+        <!-- SPEKTRUM BARS VISUALIZER -->
+        <canvas id="visualizer-canvas"></canvas>
     </div>
 
     <script>
@@ -414,37 +515,47 @@
             document.getElementById('listener-count').innerText = snap.numChildren();
         });
 
-        // FREKANS DALGASI ANİMASYONU
-        const wCanvas = document.getElementById('wave-canvas');
-        const wCtx = wCanvas.getContext('2d');
-        let step = 0;
-        function drawWave() {
-            wCanvas.width = wCanvas.offsetWidth;
-            wCanvas.height = wCanvas.offsetHeight;
-            wCtx.clearRect(0, 0, wCanvas.width, wCanvas.height);
-            wCtx.beginPath();
-            wCtx.lineWidth = 1.5;
-            wCtx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
-            for (let x = 0; x < wCanvas.width; x++) {
-                const y = Math.sin((x + step) * 0.04) * (wCanvas.height / 3) + (wCanvas.height / 2);
-                if (x === 0) wCtx.moveTo(x, y);
-                else wCtx.lineTo(x, y);
-            }
-            wCtx.stroke();
-            step += 1.5;
-            requestAnimationFrame(drawWave);
-        }
-        drawWave();
+        // SPEKTRUM VISUALIZER (DYNAMIC BARS)
+        const vCanvas = document.getElementById('visualizer-canvas');
+        const vCtx = vCanvas.getContext('2d');
+        const numBars = 32;
+        let barHeights = new Array(numBars).fill(4);
 
-        // OYNATICI VE PLAYLIST SİSTEMİ
+        function drawVisualizer() {
+            vCanvas.width = vCanvas.offsetWidth;
+            vCanvas.height = vCanvas.offsetHeight;
+            vCtx.clearRect(0, 0, vCanvas.width, vCanvas.height);
+
+            const barWidth = (vCanvas.width / numBars) - 4;
+
+            for (let i = 0; i < numBars; i++) {
+                if (isPlayingState) {
+                    // Dinamik ritmik zıplamalar
+                    const target = Math.random() * (vCanvas.height - 6) + 6;
+                    barHeights[i] += (target - barHeights[i]) * 0.25;
+                } else {
+                    barHeights[i] += (3 - barHeights[i]) * 0.1;
+                }
+
+                const x = i * (barWidth + 4);
+                const y = vCanvas.height - barHeights[i];
+
+                vCtx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+                vCtx.fillRect(x, y, barWidth, barHeights[i]);
+            }
+            requestAnimationFrame(drawVisualizer);
+        }
+        drawVisualizer();
+
+        // PLAYLIST & TRACK TITLE DATA
         const songList = [
-            { id: '1IEg_3x35go', duration: 120 },
-            { id: 'qAlF70MdfwU', duration: 207 }, 
-            { id: 'L_BpiSsIBFM', duration: 236 }, 
-            { id: 'cTGQrA5HHIU', duration: 204 }, 
-            { id: 'ftaXMKV3ffE', duration: 160 },
-            { id: 'LPTlvQ1Zet0', duration: 188 },
-            { id: 'EfHNIPXTxy0', duration: 276 }
+            { id: '1IEg_3x35go', duration: 120, title: 'Travis Scott - FE!N ft. Playboi Carti' },
+            { id: 'qAlF70MdfwU', duration: 207, title: 'Future, Metro Boomin - Like That' }, 
+            { id: 'L_BpiSsIBFM', duration: 236, title: 'Drake - Rich Baby Daddy ft. Sexyy Red' }, 
+            { id: 'cTGQrA5HHIU', duration: 204, title: 'Young Thug - Digits' }, 
+            { id: 'ftaXMKV3ffE', duration: 160, title: 'Kodak Black - Super Gremlin' },
+            { id: 'LPTlvQ1Zet0', duration: 188, title: 'NLE Choppa - Slut Me Out' },
+            { id: 'EfHNIPXTxy0', duration: 276, title: 'JackBoys - GANG GANG' }
         ];
 
         const STREAM_START_TIME = 1700000000; 
@@ -466,8 +577,17 @@
             return { songIndex: 0, seekTo: 0 };
         }
 
+        function updateTrackLabels(currentIndex) {
+            const currentSong = songList[currentIndex];
+            const nextIndex = (currentIndex + 1) % songList.length;
+            const nextSong = songList[nextIndex];
+
+            document.getElementById('current-track-name').innerText = currentSong.title;
+            document.getElementById('next-track-name').innerText = nextSong.title;
+        }
+
         let player;
-        let isStarted = false;
+        let isPlayingState = false;
 
         // YouTube API Yükleme
         const tag = document.createElement('script');
@@ -476,6 +596,8 @@
 
         function onYouTubeIframeAPIReady() {
             const state = getCurrentStreamState();
+            updateTrackLabels(state.songIndex);
+
             player = new YT.Player('player', {
                 videoId: songList[state.songIndex].id,
                 playerVars: {
@@ -483,8 +605,21 @@
                     'controls': 1,
                     'start': Math.floor(state.seekTo),
                     'rel': 0
+                },
+                events: {
+                    'onStateChange': onPlayerStateChange
                 }
             });
+        }
+
+        function onPlayerStateChange(event) {
+            if (event.data === YT.PlayerState.PLAYING) {
+                isPlayingState = true;
+                document.getElementById('main-wrapper').classList.add('is-playing');
+            } else {
+                isPlayingState = false;
+                document.getElementById('main-wrapper').classList.remove('is-playing');
+            }
         }
 
         function startRadio() {
@@ -494,10 +629,26 @@
 
             if (player && typeof player.playVideo === 'function') {
                 const state = getCurrentStreamState();
+                updateTrackLabels(state.songIndex);
                 player.seekTo(state.seekTo, true);
                 player.playVideo();
             }
         }
+
+        // KISAYOL: SPACE TUŞU İLE PLAY/PAUSE
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                if (player && typeof player.getPlayerState === 'function') {
+                    const state = player.getPlayerState();
+                    if (state === YT.PlayerState.PLAYING) {
+                        player.pauseVideo();
+                    } else {
+                        player.playVideo();
+                    }
+                }
+            }
+        });
     </script>
 </body>
 </html>

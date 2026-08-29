@@ -150,116 +150,119 @@
             padding: 20px 15px;
         }
 
-        /* LOGO & ÇOK KATMANLI BASS PATLAMALI HALKA SİSTEMİ */
+        /* LOGO & DÖNEN VINYL EFFECT + BASS BOOST EFEKTLERİ */
         .logo-container {
             text-align: center;
-            margin-bottom: 25px;
-            margin-top: 15px;
+            margin-bottom: 15px;
+            margin-top: 10px;
             position: relative;
-            display: inline-block;
         }
 
         .vinyl-ring {
             position: absolute;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%);
-            width: 230px;
-            height: 230px;
+            transform: translate(-50%, -50%) rotate(0deg);
+            width: 220px;
+            height: 220px;
             border: 2px dashed rgba(255, 255, 255, 0.25);
             border-radius: 50%;
             z-index: -1;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
+            transition: all 0.5s ease;
         }
 
-        .vinyl-ring::before {
-            content: '';
-            position: absolute;
-            top: -15px;
-            left: -15px;
-            right: -15px;
-            bottom: -15px;
-            border: 1px dashed rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            transition: all 0.3s ease;
-        }
-
+        /* Bass Patlaması Halkaları (Ön Tanımlı Arka Katmanlar) */
+        .vinyl-ring::before,
         .vinyl-ring::after {
             content: '';
             position: absolute;
-            top: 10px;
-            left: 10px;
-            right: 10px;
-            bottom: 10px;
-            border: 2px solid transparent;
-            border-top-color: #ffffff;
-            border-bottom-color: #ffffff;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             border-radius: 50%;
-            opacity: 0.4;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
         }
 
-        /* MÜZİK ÇALARKEN AKTİF OLAN ANİMASYONLAR */
+        /* Dış Şok Dalgası Halkası */
+        .vinyl-ring::before {
+            width: 100%;
+            height: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+
+        /* İç Parıltı Halkası */
+        .vinyl-ring::after {
+            width: 80%;
+            height: 80%;
+            border: 3px double rgba(255, 255, 255, 0.6);
+            box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.2);
+        }
+
+        /* MÜZİK ÇALARKEN AKTİF OLAN BASS PATLAMA VE DÖNME ANİMASYONLARI */
         .is-playing .vinyl-ring {
-            animation: 
-                spinVinyl 10s linear infinite, 
-                bassPulse 0.75s ease-in-out infinite alternate;
-            border-color: rgba(255, 255, 255, 0.85);
+            animation: spinVinyl 6s linear infinite, bassPulse 1.2s ease-in-out infinite alternate;
+            border-color: rgba(255, 255, 255, 0.8);
+            border-style: dashed;
         }
 
         .is-playing .vinyl-ring::before {
-            animation: 
-                spinVinylReverse 14s linear infinite,
-                waveBlast 1.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+            opacity: 1;
+            animation: shockwavePulse 1.2s ease-out infinite;
         }
 
         .is-playing .vinyl-ring::after {
-            animation: spinVinyl 2.5s linear infinite;
             opacity: 1;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.9);
+            animation: innerGlowPulse 0.6s ease-in-out infinite alternate;
         }
 
-        body.diamond-mode-active .is-playing .vinyl-ring {
-            box-shadow: 
-                0 0 35px rgba(255, 255, 255, 0.7),
-                inset 0 0 25px rgba(255, 255, 255, 0.5);
-        }
-
+        /* Ana Dönüş Anmasyonu */
         @keyframes spinVinyl {
-            0% { transform: translate(-50%, -50%) rotate(0deg); }
             100% { transform: translate(-50%, -50%) rotate(360deg); }
         }
 
-        @keyframes spinVinylReverse {
-            0% { transform: rotate(360deg); }
-            100% { transform: rotate(0deg); }
-        }
-
+        /* Ana Halka Bass Vuruş Animasyonu */
         @keyframes bassPulse {
             0% {
-                transform: translate(-50%, -50%) scale(1);
-                box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+                transform: translate(-50%, -50%) scale(0.98);
+                box-shadow: 0 0 15px rgba(255, 255, 255, 0.2), inset 0 0 10px rgba(255, 255, 255, 0.1);
             }
             50% {
-                transform: translate(-50%, -50%) scale(1.05);
-                box-shadow: 0 0 35px rgba(255, 255, 255, 0.6);
+                transform: translate(-50%, -50%) scale(1.08);
+                box-shadow: 0 0 45px rgba(255, 255, 255, 0.7), inset 0 0 25px rgba(255, 255, 255, 0.4);
             }
             100% {
-                transform: translate(-50%, -50%) scale(1.13);
-                box-shadow: 0 0 65px rgba(255, 255, 255, 0.95), inset 0 0 30px rgba(255, 255, 255, 0.6);
+                transform: translate(-50%, -50%) scale(1.02);
+                box-shadow: 0 0 25px rgba(255, 255, 255, 0.3), inset 0 0 15px rgba(255, 255, 255, 0.2);
             }
         }
 
-        @keyframes waveBlast {
+        /* Dışarıya Doğru Genişleyen Bass Şok Dalgası */
+        @keyframes shockwavePulse {
             0% {
-                transform: scale(0.92);
-                opacity: 0.9;
-                border-color: rgba(255, 255, 255, 0.9);
+                width: 100%;
+                height: 100%;
+                opacity: 0.8;
+                border-width: 2px;
             }
             100% {
-                transform: scale(1.42);
+                width: 160%;
+                height: 160%;
                 opacity: 0;
-                border-color: rgba(255, 255, 255, 0);
+                border-width: 1px;
+            }
+        }
+
+        /* İç Halka Hızlı Titreşim / Parıltı */
+        @keyframes innerGlowPulse {
+            0% {
+                opacity: 0.3;
+                transform: translate(-50%, -50%) scale(0.95);
+            }
+            100% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.05);
             }
         }
 
@@ -269,11 +272,24 @@
             font-size: 72px;
             letter-spacing: 5px;
             text-transform: uppercase;
-            background: linear-gradient(135deg, #ffffff 0%, #a6a6a6 25%, #ffffff 50%, #737373 75%, #ffffff 100%);
+            
+            background: linear-gradient(
+                135deg, 
+                #ffffff 0%, 
+                #a6a6a6 25%, 
+                #ffffff 50%, 
+                #737373 75%, 
+                #ffffff 100%
+            );
             background-size: 200% auto;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 255, 255, 0.4), 0 0 30px rgba(255, 255, 255, 0.2);
+            
+            text-shadow: 
+                0 0 10px rgba(255, 255, 255, 0.8),
+                0 0 20px rgba(255, 255, 255, 0.4),
+                0 0 30px rgba(255, 255, 255, 0.2);
+                
             transform: skew(-4deg);
             animation: diamondShine 4s linear infinite;
             transition: text-shadow 0.3s;
@@ -452,7 +468,7 @@
         }
     </style>
 
-    <!-- Firebase SDK -->
+    <!-- Firebase SDK (Anlık Sayaç İçin) -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
@@ -515,7 +531,6 @@
     <script>
         let isPlayingState = false;
         let player = null;
-        let isPlayerReady = false;
         let checkAudioInterval = null;
         let autoSyncInterval = null;
         let currentLoadedVideoId = null;
@@ -596,7 +611,7 @@
             document.getElementById('listener-count').innerText = snap.numChildren();
         });
 
-        // SPEKTRUM VISUALIZER
+        // SPEKTRUM VISUALIZER (DYNAMIC BARS)
         const vCanvas = document.getElementById('visualizer-canvas');
         const vCtx = vCanvas.getContext('2d');
         const numBars = 32;
@@ -627,7 +642,7 @@
         }
         drawVisualizer();
 
-        // PLAYLIST VE CANLI YAYIN HESAPLAMA SİSTEMİ
+        // PLAYLIST & CANLI YAYIN HESAPLAMA SİSTEMİ
         const songList = [
             { id: '1IEg_3x35go', duration: 120, title: 'FRANCHISE' },
             { id: 'qAlF70MdfwU', duration: 207, title: 'OUT WEST' }, 
@@ -669,29 +684,22 @@
         const initialState = getCurrentStreamState();
         updateTrackLabels(initialState.songIndex);
 
-        // YOUTUBE PLAYER KURULUMU VE EVENT HANDLER'LAR
+        // YOUTUBE API PLAYER KURULUMU
         function onYouTubeIframeAPIReady() {
             const state = getCurrentStreamState();
             currentLoadedVideoId = songList[state.songIndex].id;
-            
             player = new YT.Player('player', {
                 videoId: currentLoadedVideoId,
                 playerVars: {
                     'autoplay': 0,
                     'controls': 1,
                     'rel': 0,
-                    'playsinline': 1,
                     'start': Math.floor(state.seekTo)
                 },
                 events: {
-                    'onReady': onPlayerReady,
                     'onStateChange': onPlayerStateChange
                 }
             });
-        }
-
-        function onPlayerReady(event) {
-            isPlayerReady = true;
         }
 
         function setPlaybackVisualState(active) {
@@ -731,79 +739,61 @@
         }
 
         function syncAndPlay() {
-            if (!player || !isPlayerReady) return;
-            
+            if (!player) return;
             const state = getCurrentStreamState();
             const targetSong = songList[state.songIndex];
             updateTrackLabels(state.songIndex);
             
             currentLoadedVideoId = targetSong.id;
-            
-            player.unMute();
-            player.setVolume(100);
-            
             player.loadVideoById({
                 videoId: targetSong.id,
                 startSeconds: Math.floor(state.seekTo)
             });
         }
 
+        // HER 3 SANİYEDE BİR ÇALIŞAN CANLI YAYIN SENKRONİZASYON KONTROLÜ
         function checkLiveSync() {
-            if (!player || !isPlayerReady || typeof player.getPlayerState !== 'function') return;
+            if (!player || typeof player.getPlayerState !== 'function') return;
 
+            // Sadece video aktif olarak oynatılıyorsa senkron kontrolü yap
             if (player.getPlayerState() === YT.PlayerState.PLAYING) {
                 const state = getCurrentStreamState();
                 const expectedSong = songList[state.songIndex];
 
+                // Şarkı değiştiyse doğrudan yeni şarkıya geç
                 if (currentLoadedVideoId !== expectedSong.id) {
                     syncAndPlay();
                     return;
                 }
 
+                // Aynı şarkıdaysa süreyi kontrol et
                 const currentTime = player.getCurrentTime();
                 const timeDiff = Math.abs(currentTime - state.seekTo);
 
-                if (timeDiff > 2.5) {
+                // Eğer canlı yayından 1.5 saniyeden fazla sapma varsa süreyi düzelt
+                if (timeDiff > 1.5) {
                     player.seekTo(state.seekTo, true);
                 }
             }
         }
 
-        // BUTONA BASILDIĞINDA TETİKLENEN GARANTİ OYNATICI
         function startRadio() {
             const overlay = document.getElementById('start-overlay');
             overlay.style.opacity = '0';
             setTimeout(() => { overlay.style.display = 'none'; }, 500);
 
-            if (player && isPlayerReady) {
-                player.unMute();
-                player.setVolume(100);
-                
-                const state = getCurrentStreamState();
-                currentLoadedVideoId = songList[state.songIndex].id;
-                updateTrackLabels(state.songIndex);
-
-                // Kullanıcı tıklaması gerçekleştikten hemen sonra güvenli oynatma
-                player.loadVideoById({
-                    videoId: currentLoadedVideoId,
-                    startSeconds: Math.floor(state.seekTo)
-                });
-                player.playVideo();
-            } else {
-                // API henüz hazır değilse 300ms sonra tekrar dene
-                setTimeout(startRadio, 300);
-                return;
-            }
+            syncAndPlay();
 
             if (checkAudioInterval) clearInterval(checkAudioInterval);
             checkAudioInterval = setInterval(checkAudioState, 400);
 
+            // 3 SANİYEDE BİR SENKRONİZASYON KONTROLÜ BAŞLAT
             if (autoSyncInterval) clearInterval(autoSyncInterval);
-            autoSyncInterval = setInterval(checkLiveSync, 4000);
+            autoSyncInterval = setInterval(checkLiveSync, 3000);
         }
 
         document.addEventListener("visibilitychange", () => {
-            if (!document.hidden && player && isPlayerReady && player.getPlayerState && player.getPlayerState() === YT.PlayerState.PLAYING) {
+            if (!document.hidden && player && player.getPlayerState && player.getPlayerState() === YT.PlayerState.PLAYING) {
                 checkLiveSync();
             }
         });

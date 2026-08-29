@@ -193,20 +193,6 @@
             overflow: visible;
         }
 
-        .subtitle {
-            position: absolute;
-            bottom: -5px;
-            width: 100%;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 900;
-            font-size: 12px;
-            color: #ffffff;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
-            opacity: 0.9;
-        }
-
         /* BADGES BAR */
         .status-bar {
             display: flex;
@@ -390,7 +376,6 @@
         <div class="logo-container">
             <div class="blast-wave" id="blast-wave"></div>
             <div id="globe-3d-container"></div>
-            <div class="subtitle">7/24 YÜZDE YÜZ MÜZİK</div>
         </div>
 
         <div class="status-bar">
@@ -407,7 +392,7 @@
             <div id="start-overlay" onclick="startRadio()">
                 <button class="start-btn">CANLI YAYINA KATIL</button>
             </div>
-            <div id="player-iframe"></div>
+            <iframe id="player-iframe" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
         </div>
 
         <div class="now-playing-card">
@@ -427,7 +412,6 @@
     <script>
         let player = null;
         let isPlayingState = false;
-        let ytApiReady = false;
         let currentLoadedVideoId = null;
         let syncCheckInterval = null;
 
@@ -479,19 +463,7 @@
 
         // --- YOUTUBE API KURULUMU ---
         function onYouTubeIframeAPIReady() {
-            ytApiReady = true;
-            const state = getCurrentStreamState();
-            const targetSong = songList[state.songIndex];
-
             player = new YT.Player('player-iframe', {
-                videoId: targetSong.id,
-                playerVars: {
-                    'autoplay': 0,
-                    'controls': 1,
-                    'rel': 0,
-                    'start': Math.floor(state.seekTo),
-                    'enablejsapi': 1
-                },
                 events: {
                     'onStateChange': onPlayerStateChange
                 }
@@ -499,16 +471,13 @@
         }
 
         function onPlayerStateChange(event) {
-            // YouTube Oynatıcı Durumları: PLAYING (1), PAUSED (2), BUFFERING (3), CUED (5)
             if (event.data === YT.PlayerState.PLAYING) {
                 isPlayingState = true;
-                forceLiveSync(); // Oynatma başladığı an tam senkronize canlı saniyeye çek
             } else if (event.data === YT.PlayerState.PAUSED || event.data === YT.PlayerState.ENDED) {
-                isPlayingState = false; // Duraklatılınca dünyayı ve alt çizgileri durdur
+                isPlayingState = false;
             }
         }
 
-        // CANLI AKIŞ SENKRONİZASYON KONTROLÜ (GERİ/İLERİ SARMAYI CANLIYA CEKER)
         function forceLiveSync() {
             if (!player || typeof player.getCurrentTime !== 'function') return;
 
@@ -516,7 +485,6 @@
             const targetSong = songList[state.songIndex];
             const currentVideoData = player.getVideoData();
 
-            // Eğer şarkı değişmişse yeni şarkıyı yükle ve canlı saniyeden başlat
             if (!currentVideoData || currentVideoData.video_id !== targetSong.id) {
                 currentLoadedVideoId = targetSong.id;
                 player.loadVideoById({
@@ -527,16 +495,15 @@
                 return;
             }
 
-            // Şarkı aynıysa, oynatıcının saniyesini gerçek canlı saniye ile kıyasla
             const currentTime = player.getCurrentTime();
             const timeDiff = Math.abs(currentTime - state.seekTo);
 
-            // Eğer sapma 2 saniyeden fazlaysa (durdurup bekleme veya sarma durumu) canlı saniyeye fırlat
             if (timeDiff > 2) {
                 player.seekTo(state.seekTo, true);
             }
         }
 
+        // CANLI YAYINI ANINDA VE GARANTİ BAŞLATMA
         function startRadio() {
             const blast = document.getElementById('blast-wave');
             blast.classList.remove('blast-active');
@@ -549,19 +516,20 @@
                 overlay.style.visibility = 'hidden'; 
             }, 600);
 
-            if (player && typeof player.playVideo === 'function') {
-                const state = getCurrentStreamState();
-                const targetSong = songList[state.songIndex];
-                
-                player.loadVideoById({
-                    videoId: targetSong.id,
-                    startSeconds: Math.floor(state.seekTo)
-                });
-                player.playVideo();
-                isPlayingState = true;
+            const state = getCurrentStreamState();
+            const targetSong = songList[state.songIndex];
+            const startSec = Math.floor(state.seekTo);
+            const iframe = document.getElementById('player-iframe');
+
+            // Iframe URL'sini doğrudan set et (Autoplay ve JS API aktif)
+            iframe.src = `https://www.youtube.com/embed/${targetSong.id}?autoplay=1&start=${startSec}&enablejsapi=1&rel=0&controls=1`;
+            isPlayingState = true;
+
+            // YouTube API bağlama kontrolü
+            if (window.YT && window.YT.Player) {
+                onYouTubeIframeAPIReady();
             }
 
-            // Sürekli canlı akış kontrolü (Her 3 saniyede bir sapmayı denetle)
             if (syncCheckInterval) clearInterval(syncCheckInterval);
             syncCheckInterval = setInterval(() => {
                 if (isPlayingState) {
@@ -570,7 +538,7 @@
             }, 3000);
         }
 
-        // --- THREE.JS 3D KÜÇÜLTÜLMÜŞ DÜNYA VE BASS PATLAMA EFEKTİ ---
+        // --- THREE.JS 3D DÜNYA VE ÇİFT KATLI YÖRÜNGE METNİ ---
         const globeContainer = document.getElementById('globe-3d-container');
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(45, 440 / 280, 0.1, 1000);
@@ -582,7 +550,6 @@
         const textureLoader = new THREE.TextureLoader();
         const earthTexture = textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_atmos_2048.jpg');
 
-        // Yarıçap 1.85'ten 1.45'e küçültüldü (Dünya Küçültüldü)
         const baseRadius = 1.45;
         const geometry = new THREE.SphereGeometry(baseRadius, 64, 64);
         const material = new THREE.MeshStandardMaterial({
@@ -612,19 +579,18 @@
         dirLight.position.set(5, 3, 5);
         scene.add(dirLight);
 
-        // EA$Y FM YÖRÜNGE HALKASI (2048x256 Ultra HD)
+        // EA$Y FM & 7/24 YÜZDE YÜZ MÜZİK YÖRÜNGE HALKASI
         let ringMesh = null;
 
         function createOrbitRingText() {
             const canvas = document.createElement('canvas');
             canvas.width = 2048;
-            canvas.height = 256;
+            canvas.height = 512; // Çift katlı metin için yükseklik arttırıldı
             const ctx = canvas.getContext('2d');
 
             ctx.fillStyle = 'transparent';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            ctx.font = '900 130px "Anton", sans-serif';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillStyle = '#ffffff';
@@ -632,14 +598,21 @@
             ctx.shadowColor = '#ffffff';
             ctx.shadowBlur = 35;
 
-            ctx.fillText("EA$Y FM", canvas.width / 2, canvas.height / 2);
+            // ÜST KAT: EA$Y FM
+            ctx.font = '900 130px "Anton", sans-serif';
+            ctx.fillText("EA$Y FM", canvas.width / 2, 160);
+
+            // ALT KAT: 7/24 YÜZDE YÜZ MÜZİK
+            ctx.font = '900 65px "Montserrat", sans-serif';
+            ctx.letterSpacing = '6px';
+            ctx.fillText("7/24 YÜZDE YÜZ MÜZİK", canvas.width / 2, 340);
 
             const ringTex = new THREE.CanvasTexture(canvas);
             ringTex.minFilter = THREE.LinearFilter;
             ringTex.magFilter = THREE.LinearFilter;
             ringTex.anisotropy = renderer.capabilities.getMaxAnisotropy();
 
-            const ringGeo = new THREE.CylinderGeometry(baseRadius + 0.22, baseRadius + 0.22, 0.45, 64, 1, true);
+            const ringGeo = new THREE.CylinderGeometry(baseRadius + 0.24, baseRadius + 0.24, 0.7, 64, 1, true);
             const ringMat = new THREE.MeshBasicMaterial({
                 map: ringTex,
                 transparent: true,
@@ -648,7 +621,7 @@
             });
 
             ringMesh = new THREE.Mesh(ringGeo, ringMat);
-            ringMesh.rotation.z = 0.12;
+            ringMesh.rotation.z = 0.10;
             scene.add(ringMesh);
         }
 
@@ -663,18 +636,21 @@
         function animateGlobe() {
             requestAnimationFrame(animateGlobe);
 
-            if (isPlayingState) {
-                // Dünya ve Halkayı Döndür
-                globeMesh.rotation.y += 0.005;
-                if (ringMesh) ringMesh.rotation.y -= 0.008;
+            // DÜNYA SÜREKLİ DÖNER (Akış başlayınca hızı artar)
+            const globeSpeed = isPlayingState ? 0.006 : 0.002;
+            const ringSpeed = isPlayingState ? 0.009 : 0.003;
 
-                // BASS PATLAMA / RİTİM EFEKTİ (Dinamik Ölçekleme)
+            globeMesh.rotation.y += globeSpeed;
+            if (ringMesh) ringMesh.rotation.y -= ringSpeed;
+
+            if (isPlayingState) {
+                // SADECE AKIŞ BAŞLAYINCA BASS PATLAMALARI/VURUŞLARI
                 bassAngle += 0.08;
-                const bassScale = 1 + Math.pow(Math.sin(bassAngle), 6) * 0.06; // Ritimli bass vurma hareketi
+                const bassScale = 1 + Math.pow(Math.sin(bassAngle), 6) * 0.06;
                 globeMesh.scale.set(bassScale, bassScale, bassScale);
                 atmosMesh.scale.set(bassScale, bassScale, bassScale);
             } else {
-                // Video durduysa yumuşakça varsayılan boyuta dön ve dur
+                // Sakin modda sabit kalır
                 globeMesh.scale.lerp(new THREE.Vector3(1, 1, 1), 0.1);
                 atmosMesh.scale.lerp(new THREE.Vector3(1, 1, 1), 0.1);
             }
@@ -774,11 +750,9 @@
 
             for (let i = 0; i < numBars; i++) {
                 if (isPlayingState) {
-                    // Müzik çalarken hareketli spektrum
                     const target = Math.random() * (vCanvas.height - 4) + 4;
                     barHeights[i] += (target - barHeights[i]) * 0.12;
                 } else {
-                    // Müzik durunca çizgilerin tamamen sıfırlanıp düzleşmesi
                     barHeights[i] += (2 - barHeights[i]) * 0.1;
                 }
 

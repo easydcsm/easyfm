@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>EA$Y FM | CANLI</title>
     <!-- Google Fonts: Anton & Montserrat -->
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
@@ -11,6 +11,7 @@
         * {
             box-sizing: border-box;
             user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         html, body {
@@ -18,6 +19,7 @@
             padding: 0;
             width: 100%;
             height: 100%;
+            height: 100dvh; /* Dynamic Viewport Height: Mobil tarayıcı çubuklarını dinamik hesaplar */
             overflow: hidden;
             background-color: #000000;
             color: #fff;
@@ -60,13 +62,14 @@
             z-index: 10;
             width: 100%;
             max-width: 680px;
-            height: 100vh;
+            height: 100%;
+            max-height: 100dvh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            padding: 10px 15px;
-            gap: 8px;
+            justify-content: space-between; /* Mobilde öğeleri dengeli dağıtır */
+            padding: 15px 15px calc(15px + env(safe-area-inset-bottom)); /* iOS alt çizgi alanını korur */
+            gap: 6px;
         }
 
         /* LOGO & 3D DÜNYA ALANI */
@@ -74,13 +77,14 @@
             text-align: center;
             position: relative;
             width: 100%;
-            height: 230px;
+            height: 200px;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: visible;
             margin-top: 0px;
-            margin-bottom: 55px;
+            margin-bottom: 25px;
+            flex-shrink: 0;
         }
 
         /* ANLIK PIRLANTA PATLAMA HALKASI */
@@ -117,8 +121,9 @@
         }
 
         #globe-3d-container {
-            width: 480px;
-            height: 230px;
+            width: 100%;
+            max-width: 480px;
+            height: 200px;
             position: relative;
             z-index: 2;
             overflow: visible;
@@ -130,8 +135,9 @@
             gap: 10px;
             flex-wrap: wrap;
             justify-content: center;
-            margin-top: 15px;
+            margin-top: 5px;
             margin-bottom: 5px;
+            flex-shrink: 0;
         }
 
         .badge {
@@ -170,7 +176,7 @@
         .video-container {
             position: relative;
             width: 100%;
-            padding-bottom: 46%;
+            padding-bottom: 48%;
             height: 0;
             border-radius: 14px;
             overflow: hidden;
@@ -179,6 +185,7 @@
             transition: box-shadow 0.6s, border-color 0.6s;
             background: #000;
             margin: 0;
+            flex-shrink: 0;
         }
 
         #youtube-player {
@@ -211,8 +218,8 @@
             color: #000;
             font-family: 'Montserrat', sans-serif;
             font-weight: 900;
-            font-size: 14px;
-            padding: 12px 32px;
+            font-size: 13px;
+            padding: 12px 28px;
             border: none;
             border-radius: 50px;
             cursor: pointer;
@@ -240,6 +247,7 @@
             justify-content: space-between;
             box-shadow: 0 4px 20px rgba(0,0,0,0.6);
             margin: 0;
+            flex-shrink: 0;
         }
 
         .track-info {
@@ -281,6 +289,7 @@
             height: 20px;
             margin: 0;
             transition: opacity 1s ease;
+            flex-shrink: 0;
         }
     </style>
 
@@ -424,7 +433,6 @@
 
             updateTrackLabels(state.songIndex);
 
-            // Yanlış şarkı çalıyorsa canlıdaki şarkıya fırlat
             if (currentLoadedVideoId !== targetSong.id) {
                 currentLoadedVideoId = targetSong.id;
                 player.loadVideoById({
@@ -435,7 +443,6 @@
                 return;
             }
 
-            // Doğru şarkıdaysa ve saniye farkı 3 saniyeden fazlaysa canlı süresine zıplat
             if (typeof player.getCurrentTime === 'function') {
                 const currentTime = player.getCurrentTime();
                 const timeDiff = Math.abs(currentTime - state.seekTo);
@@ -477,7 +484,6 @@
                 player.playVideo();
                 isPlayingState = true;
 
-                // Her 3 saniyede bir akıştan sapma olup olmadığını kontrol et
                 if (syncCheckInterval) clearInterval(syncCheckInterval);
                 syncCheckInterval = setInterval(syncToLiveStream, 3000);
             };
@@ -503,9 +509,9 @@
         // THREE.JS 3D DÜNYA VE YÖRÜNGE METNİ
         const globeContainer = document.getElementById('globe-3d-container');
         const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(45, 480 / 230, 0.1, 1000);
+        const camera = new THREE.PerspectiveCamera(45, globeContainer.offsetWidth / globeContainer.offsetHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-        renderer.setSize(480, 230);
+        renderer.setSize(globeContainer.offsetWidth, globeContainer.offsetHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         globeContainer.appendChild(renderer.domElement);
 
@@ -621,6 +627,13 @@
         function resizeCanvas() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
+            
+            // 3D Dünya boyutunu resize esnasında güncelle
+            if (camera && renderer && globeContainer) {
+                camera.aspect = globeContainer.offsetWidth / globeContainer.offsetHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(globeContainer.offsetWidth, globeContainer.offsetHeight);
+            }
         }
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();

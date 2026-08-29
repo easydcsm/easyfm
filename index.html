@@ -286,8 +286,6 @@
 
     <!-- Three.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <!-- YouTube IFrame API -->
-    <script src="https://www.youtube.com/iframe_api"></script>
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -314,8 +312,8 @@
         </div>
 
         <div class="video-container">
-            <div id="start-overlay" onclick="startRadio()">
-                <button class="start-btn">CANLI YAYINA KATIL</button>
+            <div id="start-overlay">
+                <button class="start-btn" id="start-btn-el">CANLI YAYINA KATIL</button>
             </div>
             <div id="youtube-player"></div>
         </div>
@@ -340,7 +338,7 @@
         let isPlayingState = false;
         let currentLoadedVideoId = null;
         let syncCheckInterval = null;
-        let pendingPlay = false;
+        let hasUserStarted = false;
 
         // --- PLAYLIST VE ZAMAN HESAPLAMALARI ---
         const songList = [
@@ -384,7 +382,12 @@
         const initialState = getCurrentStreamState();
         updateTrackLabels(initialState.songIndex);
 
-        // --- YOUTUBE API VE GEÇİŞ MEKANİZMASI ---
+        // --- YOUTUBE API DİNAMİK YÜKLEME ---
+        const tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        const firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
         function onYouTubeIframeAPIReady() {
             const state = getCurrentStreamState();
             const targetSong = songList[state.songIndex];
@@ -397,6 +400,7 @@
                     'controls': 1,
                     'rel': 0,
                     'playsinline': 1,
+                    'enablejsapi': 1,
                     'start': Math.floor(state.seekTo)
                 },
                 events: {
@@ -408,8 +412,8 @@
 
         function onPlayerReady(event) {
             isPlayerReady = true;
-            if (pendingPlay) {
-                startRadio();
+            if (hasUserStarted) {
+                executeStart();
             }
         }
 
@@ -450,31 +454,13 @@
             }
         }
 
-        // CANLI YAYINI BAŞLATMA (BUTONA BASILDIĞINDA)
-        function startRadio() {
-            if (!isPlayerReady || !player) {
-                pendingPlay = true;
-                return;
-            }
-
-            const blast = document.getElementById('blast-wave');
-            blast.classList.remove('blast-active');
-            void blast.offsetWidth;
-            blast.classList.add('blast-active');
-
-            const overlay = document.getElementById('start-overlay');
-            overlay.style.opacity = '0';
-            setTimeout(() => { 
-                overlay.style.visibility = 'hidden'; 
-            }, 600);
-
+        function executeStart() {
             const state = getCurrentStreamState();
             const targetSong = songList[state.songIndex];
 
             updateTrackLabels(state.songIndex);
 
-            // Sesi aç ve oynat
-            if (typeof player.unMute === 'function') {
+            if (player && typeof player.unMute === 'function') {
                 player.unMute();
             }
 
@@ -496,6 +482,31 @@
                 forceLiveSync();
             }, 4000);
         }
+
+        function handleUserClick() {
+            hasUserStarted = true;
+
+            const blast = document.getElementById('blast-wave');
+            blast.classList.remove('blast-active');
+            void blast.offsetWidth;
+            blast.classList.add('blast-active');
+
+            const overlay = document.getElementById('start-overlay');
+            overlay.style.opacity = '0';
+            setTimeout(() => { 
+                overlay.style.visibility = 'hidden'; 
+            }, 600);
+
+            if (isPlayerReady && player) {
+                executeStart();
+            }
+        }
+
+        document.getElementById('start-overlay').addEventListener('click', handleUserClick);
+        document.getElementById('start-btn-el').addEventListener('click', (e) => {
+            e.stopPropagation();
+            handleUserClick();
+        });
 
         // --- THREE.JS 3D DÜNYA VE YÖRÜNGE METNİ ---
         const globeContainer = document.getElementById('globe-3d-container');

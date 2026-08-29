@@ -237,12 +237,12 @@
             100% { opacity: 1; transform: scale(1); }
         }
 
-        /* MİLİMETRİK OPTİMİZE EDİLMİŞ VİDEO ÇERÇEVESİ */
+        /* REKLAMI ATLA BUTONUNU AÇIKTA BIRAKAN STANDART ORANLI VİDEO ÇERÇEVESİ */
         .video-container {
             position: relative;
             width: 80%;
             max-width: 650px;
-            padding-bottom: 38%; /* Reklam butonunun görünmesi için yüksekliği bir miktar esnetir */
+            padding-bottom: 45%;
             height: 0;
             border-radius: 16px;
             overflow: hidden;
@@ -253,10 +253,10 @@
 
         .video-container iframe {
             position: absolute;
-            top: -10%; /* Süre barını altta tutar ancak reklamı atla butonunu ekranda tutar */
+            top: 0;
             left: 0;
             width: 100%;
-            height: 126%;
+            height: 100%;
             border: none;
         }
 
@@ -432,11 +432,7 @@
             }
             .video-container {
                 width: 90%;
-                padding-bottom: 50%;
-            }
-            .video-container iframe {
-                top: -12%;
-                height: 132%;
+                padding-bottom: 56.25%;
             }
             .listener-badge {
                 padding: 6px 16px;
@@ -695,7 +691,8 @@
                     'modestbranding': 1,
                     'rel': 0,
                     'disablekb': 1,
-                    'playsinline': 1
+                    'playsinline': 1,
+                    'origin': window.location.origin
                 },
                 events: {
                     'onStateChange': onPlayerStateChange

@@ -1,1209 +1,778 @@
 <!DOCTYPE html>
-
 <html lang="tr">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>EA$Y FM</title>
-
     <!-- Google Fonts üzerinden keskin ve güçlü hip-hop fontları -->
-
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:wght@800;900&display=swap" rel="stylesheet">
-
     
-
     <style>
-
         * {
-
             box-sizing: border-box;
-
         }
-
-
 
         body {
-
             margin: 0;
-
             background-color: #050505;
-
             color: #fff;
-
             font-family: 'Montserrat', sans-serif;
-
             display: flex;
-
             flex-direction: column;
-
             align-items: center;
-
             justify-content: center;
-
             min-height: 100vh;
-
             overflow-x: hidden;
-
             position: relative;
-
         }
-
-
 
         /* HAREKETLİ KRİSTAL PARÇACIKLI ARKA PLAN CANVAS */
-
         #bg-canvas {
-
             position: fixed;
-
             top: 0;
-
             left: 0;
-
             width: 100%;
-
             height: 100%;
-
             z-index: 1;
-
             pointer-events: none;
-
         }
-
-
 
         /* DİNAMİK ARKA PLAN RADİAL ISILTI */
-
         .ambient-glow {
-
             position: fixed;
-
             top: 50%;
-
             left: 50%;
-
             transform: translate(-50%, -50%);
-
             width: 80vw;
-
             height: 80vh;
-
             background: radial-gradient(circle, rgba(255, 255, 255, 0.04) 0%, rgba(0, 0, 0, 0) 70%);
-
             z-index: 2;
-
             pointer-events: none;
-
             transition: opacity 0.5s ease;
-
         }
-
-
 
         /* SAĞ ÜST: DIAMOND GLOW TOGGLE BUTONU */
-
         .glow-toggle-container {
-
             position: fixed;
-
             top: 20px;
-
             right: 20px;
-
             z-index: 100;
-
             display: flex;
-
             align-items: center;
-
             gap: 10px;
-
             background: rgba(17, 17, 17, 0.7);
-
             backdrop-filter: blur(10px);
-
             -webkit-backdrop-filter: blur(10px);
-
             border: 1px solid rgba(255, 255, 255, 0.2);
-
             padding: 8px 16px;
-
             border-radius: 30px;
-
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-
         }
-
-
 
         .glow-toggle-label {
-
             font-size: 10px;
-
             font-weight: 900;
-
             letter-spacing: 1.5px;
-
             color: #fff;
-
             text-transform: uppercase;
-
         }
-
-
 
         .switch {
-
             position: relative;
-
             display: inline-block;
-
             width: 36px;
-
             height: 20px;
-
         }
-
-
 
         .switch input {
-
             opacity: 0;
-
             width: 0;
-
             height: 0;
-
         }
-
-
 
         .slider-toggle {
-
             position: absolute;
-
             cursor: pointer;
-
             top: 0; left: 0; right: 0; bottom: 0;
-
             background-color: #333;
-
             transition: .4s;
-
             border-radius: 20px;
-
             border: 1px solid #555;
-
         }
-
-
 
         .slider-toggle:before {
-
             position: absolute;
-
             content: "";
-
             height: 12px;
-
             width: 12px;
-
             left: 3px;
-
             bottom: 3px;
-
             background-color: white;
-
             transition: .4s;
-
             border-radius: 50%;
-
             box-shadow: 0 0 5px #fff;
-
         }
-
-
 
         input:checked + .slider-toggle {
-
             background-color: #ffffff;
-
         }
-
-
 
         input:checked + .slider-toggle:before {
-
             transform: translateX(15px);
-
             background-color: #000;
-
         }
-
-
 
         /* EXTRA DIAMOND GLOW MODU AKTİFKEN UYGULANACAK STİLLER */
-
         body.diamond-mode-active .ambient-glow {
-
             background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.02) 50%, rgba(0, 0, 0, 0) 75%);
-
         }
-
-
 
         body.diamond-mode-active h1 {
-
             text-shadow: 
-
                 0 0 15px rgba(255, 255, 255, 1),
-
                 0 0 30px rgba(255, 255, 255, 0.8),
-
                 0 0 45px rgba(255, 255, 255, 0.5);
-
         }
-
-
 
         body.diamond-mode-active .video-container {
-
             box-shadow: 0 0 35px rgba(255, 255, 255, 0.25), 0 10px 40px rgba(0, 0, 0, 0.8);
-
             border-color: rgba(255, 255, 255, 0.5);
-
         }
-
-
 
         .main-wrapper {
-
             position: relative;
-
             z-index: 10;
-
             width: 100%;
-
             display: flex;
-
             flex-direction: column;
-
             align-items: center;
-
             justify-content: center;
-
             padding: 20px 10px;
-
         }
-
-
 
         /* Pırlanta / Kristal Işıltılı Siyah-Beyaz Logo */
-
         .logo-container {
-
             text-align: center;
-
             margin-bottom: 20px;
-
             margin-top: 10px;
-
         }
-
-
 
         h1 {
-
             margin: 0;
-
             font-family: 'Anton', sans-serif;
-
             font-size: 64px;
-
             letter-spacing: 4px;
-
             text-transform: uppercase;
-
             
-
             background: linear-gradient(
-
                 135deg, 
-
                 #ffffff 0%, 
-
                 #a6a6a6 25%, 
-
                 #ffffff 50%, 
-
                 #737373 75%, 
-
                 #ffffff 100%
-
             );
-
             background-size: 200% auto;
-
             -webkit-background-clip: text;
-
             -webkit-text-fill-color: transparent;
-
             
-
             text-shadow: 
-
                 0 0 10px rgba(255, 255, 255, 0.8),
-
                 0 0 20px rgba(255, 255, 255, 0.4),
-
                 0 0 30px rgba(255, 255, 255, 0.2);
-
                 
-
             transform: skew(-4deg);
-
             animation: diamondShine 4s linear infinite;
-
             transition: text-shadow 0.3s;
-
         }
-
-
 
         @keyframes diamondShine {
-
             0% { background-position: 0% center; }
-
             100% { background-position: 200% center; }
-
         }
-
-
 
         .subtitle {
-
             font-family: 'Montserrat', sans-serif;
-
             font-weight: 900;
-
             font-size: 13px;
-
             color: #ffffff;
-
             letter-spacing: 5px;
-
             margin-top: 8px;
-
             text-transform: uppercase;
-
             text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
-
             opacity: 0.9;
-
         }
 
-
-
-        /* Anlık İzleyici Rozeti */
-
-        .listener-badge {
-
-            background: rgba(17, 17, 17, 0.7);
-
-            backdrop-filter: blur(10px);
-
-            -webkit-backdrop-filter: blur(10px);
-
-            border: 1px solid rgba(255, 255, 255, 0.15);
-
-            padding: 8px 22px;
-
-            border-radius: 30px;
-
-            font-size: 13px;
-
-            letter-spacing: 1px;
-
-            margin-bottom: 25px;
-
+        /* Bilgi Rozetleri Grubu */
+        .badge-group {
             display: flex;
-
-            align-items: center;
-
             gap: 12px;
-
-            box-shadow: 0 4px 20px rgba(255, 255, 255, 0.05);
-
-            transition: border 0.3s;
-
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
+        .listener-badge, .hype-badge {
+            background: rgba(17, 17, 17, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 8px 22px;
+            border-radius: 30px;
+            font-size: 13px;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 20px rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
 
+        .hype-badge {
+            cursor: pointer;
+            user-select: none;
+        }
+        .hype-badge:hover {
+            border-color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px rgba(255,255,255,0.3);
+        }
+        .hype-badge:active {
+            transform: scale(0.95);
+        }
 
         .live-dot {
-
             width: 9px;
-
             height: 9px;
-
             background-color: #ffffff;
-
             border-radius: 50%;
-
             display: inline-block;
-
             box-shadow: 0 0 10px #ffffff, 0 0 15px #ffffff;
-
             animation: pulse 1.5s infinite;
-
         }
-
-
 
         @keyframes pulse {
-
             0% { opacity: 1; transform: scale(1); }
-
             50% { opacity: 0.3; transform: scale(0.85); }
-
             100% { opacity: 1; transform: scale(1); }
-
         }
-
-
 
         /* REKLAMI ATLA BUTONUNU AÇIKTA BIRAKAN STANDART ORANLI VİDEO ÇERÇEVESİ */
-
         .video-container {
-
             position: relative;
-
             width: 80%;
-
             max-width: 650px;
-
             padding-bottom: 45%;
-
             height: 0;
-
             border-radius: 16px;
-
             overflow: hidden;
-
             box-shadow: 0 10px 40px rgba(255, 255, 255, 0.08);
-
             border: 1px solid #222222;
-
             transition: box-shadow 0.4s, border-color 0.4s;
-
-            margin-bottom: 30px;
-
+            margin-bottom: 20px;
         }
-
-
 
         .video-container iframe {
-
             position: absolute;
-
             top: 0;
-
             left: 0;
-
             width: 100%;
-
             height: 100%;
-
             border: none;
-
         }
-
-
 
         /* BAŞLATMA OVERLAY EKRANI */
-
         #start-overlay {
-
             position: absolute;
-
             top: 0;
-
             left: 0;
-
             width: 100%;
-
             height: 100%;
-
             background: rgba(5, 5, 5, 0.98);
-
             z-index: 30;
-
             display: flex;
-
             flex-direction: column;
-
             align-items: center;
-
             justify-content: center;
-
             cursor: pointer;
-
             transition: opacity 0.5s ease;
-
         }
-
-
 
         .start-btn {
-
             background: #ffffff;
-
             color: #000;
-
             font-family: 'Montserrat', sans-serif;
-
             font-weight: 900;
-
             font-size: 16px;
-
             padding: 14px 32px;
-
             border: none;
-
             border-radius: 50px;
-
             cursor: pointer;
-
             letter-spacing: 2px;
-
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
-
             transition: transform 0.2s, box-shadow 0.2s;
-
             -webkit-tap-highlight-color: transparent;
-
         }
-
-
 
         .start-btn:hover {
-
             transform: scale(1.05);
-
             box-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
-
         }
 
+        /* YENİ: ÇALAN ŞARKI BİLGİ KARTI (NOW PLAYING) */
+        .now-playing-card {
+            width: 80%;
+            max-width: 650px;
+            background: rgba(17, 17, 17, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            padding: 15px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        }
+        .track-info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .track-label {
+            font-size: 10px;
+            letter-spacing: 2px;
+            color: #888;
+            font-weight: 900;
+        }
+        .track-title {
+            font-size: 15px;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: 1px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
 
+        /* YENİ: DİNAMİK SES GÖRSELLEŞTİRİCİ (VISUALIZER) */
+        .visualizer-container {
+            display: flex;
+            align-items: flex-end;
+            gap: 4px;
+            height: 24px;
+            margin-top: 10px;
+        }
+        .bar {
+            width: 4px;
+            background: #ffffff;
+            border-radius: 4px;
+            height: 5px;
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+            transition: height 0.1s ease;
+        }
+        body.diamond-mode-active .bar {
+            box-shadow: 0 0 12px rgba(255, 255, 255, 1);
+        }
 
         /* MOBİL UYUM OPTİMİZASYONLARI */
-
         @media (max-width: 768px) {
-
             .glow-toggle-container {
-
                 top: 12px;
-
                 right: 12px;
-
                 padding: 6px 12px;
-
             }
-
             .glow-toggle-label {
-
                 font-size: 8px;
-
             }
-
             h1 {
-
                 font-size: 40px;
-
                 letter-spacing: 2px;
-
             }
-
             .subtitle {
-
                 font-size: 10px;
-
                 letter-spacing: 3px;
-
             }
-
             .video-container {
-
                 width: 90%;
-
                 padding-bottom: 56.25%;
-
-                margin-bottom: 20px;
-
+                margin-bottom: 15px;
             }
-
-            .listener-badge {
-
+            .now-playing-card {
+                width: 90%;
+            }
+            .listener-badge, .hype-badge {
                 padding: 6px 16px;
-
                 font-size: 11px;
-
             }
-
         }
-
     </style>
 
-
-
     <!-- Firebase SDK (Anlık Sayaç İçin) -->
-
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-
 </head>
-
 <body>
 
-
-
     <!-- DIAMOND GLOW NEON TOGGLE BUTONU -->
-
     <div class="glow-toggle-container">
-
         <span class="glow-toggle-label">DIAMOND GLOW</span>
-
         <label class="switch">
-
             <input type="checkbox" id="glow-toggle" onchange="toggleDiamondGlow(this)">
-
             <span class="slider-toggle"></span>
-
         </label>
-
     </div>
-
-
 
     <!-- Arka Plan Hareketli Kristal Parçacık Tuvali -->
-
     <canvas id="bg-canvas"></canvas>
-
     <div class="ambient-glow"></div>
 
-
-
     <div class="main-wrapper">
-
         <!-- Pırlanta Işıltılı Siyah-Beyaz Logo Alanı -->
-
         <div class="logo-container">
-
             <h1>EA$Y FM</h1>
-
             <div class="subtitle">7/24 YÜZDE YÜZ MÜZİK</div>
-
         </div>
 
-
-
-        <!-- İzleyici Sayacı Rozeti -->
-
-        <div class="listener-badge">
-
-            <span class="live-dot"></span>
-
-            <span>Anlık Dinleyici: <strong id="listener-count" style="color: #ffffff;">0</strong></span>
-
-        </div>
-
-
-
-        <div class="video-container">
-
-            <!-- Başlatma Kaplaması -->
-
-            <div id="start-overlay" onclick="startRadio()">
-
-                <button class="start-btn">CANLI YAYINA KATIL</button>
-
+        <!-- Rozet Grubu -->
+        <div class="badge-group">
+            <!-- İzleyici Sayacı Rozeti -->
+            <div class="listener-badge">
+                <span class="live-dot"></span>
+                <span>Anlık Dinleyici: <strong id="listener-count" style="color: #ffffff;">0</strong></span>
             </div>
 
-
-
-            <div id="player"></div>
-
+            <!-- Saygı / Hype Butonu -->
+            <div class="hype-badge" onclick="giveRespect()">
+                <span>💎 SAYGI GÖSTER: <strong id="hype-count" style="color: #ffffff;">0</strong></span>
+            </div>
         </div>
 
+        <div class="video-container">
+            <!-- Başlatma Kaplaması -->
+            <div id="start-overlay" onclick="startRadio()">
+                <button class="start-btn">CANLI YAYINA KATIL</button>
+            </div>
+
+            <div id="player"></div>
+        </div>
+
+        <!-- ÇALAN ŞARKI BİLGİSİ & SES BARI -->
+        <div class="now-playing-card">
+            <div class="track-info-row">
+                <span class="track-label">ŞU AN ÇALAN</span>
+                <span class="track-label" id="next-track-label">SIRADAKİ: --</span>
+            </div>
+            <div class="track-title" id="current-track-name">Radyo Yükleniyor...</div>
+            
+            <div class="visualizer-container" id="visualizer">
+                <!-- Javascript ile barlar otomatik üretilecek -->
+            </div>
+        </div>
     </div>
 
-
-
     <script>
-
         // DIAMOND GLOW TOGGLE SİSTEMİ
-
         function toggleDiamondGlow(checkbox) {
-
-            if (checkbox.checked) {
-
-                document.body.classList.add('diamond-mode-active');
-
-            } else {
-
-                document.body.classList.remove('diamond-mode-active');
-
+            if (typeof checkbox === 'boolean') {
+                const el = document.getElementById('glow-toggle');
+                el.checked = checkbox;
+                checkbox = el;
             }
-
+            if (checkbox.checked) {
+                document.body.classList.add('diamond-mode-active');
+            } else {
+                document.body.classList.remove('diamond-mode-active');
+            }
         }
-
-
 
         // HAREKETLİ KRİSTAL PARÇACIK ANİMASYONU
-
         const canvas = document.getElementById('bg-canvas');
-
         const ctx = canvas.getContext('2d');
 
-
-
         let particlesArray = [];
-
         const numberOfParticles = 45;
 
-
-
         function resizeCanvas() {
-
             canvas.width = window.innerWidth;
-
             canvas.height = window.innerHeight;
-
         }
-
         window.addEventListener('resize', resizeCanvas);
-
         resizeCanvas();
 
-
-
         class Particle {
-
             constructor() {
-
                 this.x = Math.random() * canvas.width;
-
                 this.y = Math.random() * canvas.height;
-
                 this.size = Math.random() * 2.5 + 0.5;
-
                 this.speedX = (Math.random() - 0.5) * 0.4;
-
                 this.speedY = (Math.random() - 0.5) * 0.4;
-
                 this.opacity = Math.random() * 0.7 + 0.2;
-
                 this.pulseSpeed = Math.random() * 0.02 + 0.005;
-
             }
-
-
 
             update() {
-
                 this.x += this.speedX;
-
                 this.y += this.speedY;
 
-
-
                 if (this.x < 0) this.x = canvas.width;
-
                 if (this.x > canvas.width) this.x = 0;
-
                 if (this.y < 0) this.y = canvas.height;
-
                 if (this.y > canvas.height) this.y = 0;
 
-
-
                 this.opacity += Math.sin(Date.now() * this.pulseSpeed) * 0.01;
-
                 if (this.opacity < 0.1) this.opacity = 0.1;
-
                 if (this.opacity > 0.9) this.opacity = 0.9;
-
             }
-
-
 
             draw() {
-
                 ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
-
                 ctx.shadowBlur = 10;
-
                 ctx.shadowColor = "#ffffff";
-
                 ctx.beginPath();
-
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-
                 ctx.fill();
-
                 ctx.shadowBlur = 0;
-
             }
-
         }
-
-
 
         function initParticles() {
-
             particlesArray = [];
-
             for (let i = 0; i < numberOfParticles; i++) {
-
                 particlesArray.push(new Particle());
-
             }
-
         }
-
-
 
         function animateParticles() {
-
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-
             for (let i = 0; i < particlesArray.length; i++) {
-
                 particlesArray[i].update();
-
                 particlesArray[i].draw();
-
             }
-
             requestAnimationFrame(animateParticles);
-
         }
-
-
 
         initParticles();
-
         animateParticles();
 
-
-
         // FIREBASE KURULUMU VE ANLIK İZLEYİCİ TAKİP SİSTEMİ
-
         const firebaseConfig = {
-
             apiKey: "AIzaSyBaTlb6V6e4FMLTYNXAPBgdzsgiclL8Qw8",
-
             authDomain: "easyfm-37b9e.firebaseapp.com",
-
             databaseURL: "https://easyfm-37b9e-default-rtdb.firebaseio.com",
-
             projectId: "easyfm-37b9e",
-
             storageBucket: "easyfm-37b9e.firebasestorage.app",
-
             messagingSenderId: "869244564550",
-
             appId: "1:869244564550:web:f0824148dbcae6b7024647",
-
             measurementId: "G-7WEFWTKBC7"
-
         };
 
-
-
         firebase.initializeApp(firebaseConfig);
-
         const db = firebase.database();
 
-
-
         const myConnectionsRef = db.ref('online_listeners');
-
         const connectedRef = db.ref('.info/connected');
-
-
+        const hypeRef = db.ref('respect_count');
 
         connectedRef.on('value', (snap) => {
-
             if (snap.val() === true) {
-
                 const con = myConnectionsRef.push();
-
                 con.onDisconnect().remove();
-
                 con.set(true);
-
             }
-
         });
-
-
 
         myConnectionsRef.on('value', (snap) => {
-
             const count = snap.numChildren();
-
             document.getElementById('listener-count').innerText = count;
-
         });
 
+        // Saygı / Hype Butonu Canlı Veri Takibi
+        hypeRef.on('value', (snap) => {
+            const val = snap.val() || 0;
+            document.getElementById('hype-count').innerText = val;
+        });
+
+        function giveRespect() {
+            hypeRef.transaction((current) => (current || 0) + 1);
+        }
         
-
         // CANLI SENKRONİZASYON VE PLAYLIST SİSTEMİ
-
         const songList = [
-
-            { id: '1IEg_3x35go', duration: 120 },
-
-            { id: 'qAlF70MdfwU', duration: 207 }, 
-
-            { id: 'L_BpiSsIBFM', duration: 236 }, 
-
-            { id: 'cTGQrA5HHIU', duration: 204 }, 
-
-            { id: 'ftaXMKV3ffE', duration: 160 },
-
-            { id: 'LPTlvQ1Zet0', duration: 188 },
-
-            { id: 'EfHNIPXTxy0', duration: 276 }
-
+            { id: '1IEg_3x35go', duration: 120, name: 'EA$Y FM - Intro & Vibe' },
+            { id: 'qAlF70MdfwU', duration: 207, name: 'Hip-Hop Classic - Track #2' }, 
+            { id: 'L_BpiSsIBFM', duration: 236, name: 'Underground Beats - Track #3' }, 
+            { id: 'cTGQrA5HHIU', duration: 204, name: 'Chill Hop Chillout - Track #4' }, 
+            { id: 'ftaXMKV3ffE', duration: 160, name: 'Trap City Vibe - Track #5' },
+            { id: 'LPTlvQ1Zet0', duration: 188, name: 'Midnight Groove - Track #6' },
+            { id: 'EfHNIPXTxy0', duration: 276, name: 'Golden Era Flow - Track #7' }
         ];
 
-
-
         const STREAM_START_TIME = 1700000000; 
-
         const totalPlaylistDuration = songList.reduce((acc, song) => acc + song.duration, 0);
 
-
-
         let player;
-
         let currentLoadedVideoId = null;
-
         let isChangingSong = false;
-
         let isStarted = false;
 
-
-
         function getCurrentStreamState() {
-
             const nowInSeconds = Math.floor(Date.now() / 1000);
-
             const elapsedTime = (nowInSeconds - STREAM_START_TIME) % totalPlaylistDuration;
 
-
-
             let accumulatedTime = 0;
-
             for (let i = 0; i < songList.length; i++) {
-
                 if (elapsedTime < accumulatedTime + songList[i].duration) {
-
                     return {
-
                         songIndex: i,
-
                         seekTo: elapsedTime - accumulatedTime
-
                     };
-
                 }
-
                 accumulatedTime += songList[i].duration;
-
             }
-
             return { songIndex: 0, seekTo: 0 };
-
         }
 
-
+        function updateTrackUI(songIndex) {
+            const currentSong = songList[songIndex];
+            const nextSong = songList[(songIndex + 1) % songList.length];
+            
+            document.getElementById('current-track-name').innerText = currentSong.name;
+            document.getElementById('next-track-label').innerText = `SIRADAKİ: ${nextSong.name.substring(0, 18)}...`;
+        }
 
         const tag = document.createElement('script');
-
         tag.src = "https://www.youtube.com/iframe_api";
-
         const firstScriptTag = document.getElementsByTagName('script')[0];
-
         firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-
-
         function onYouTubeIframeAPIReady() {
-
             const state = getCurrentStreamState();
-
             currentLoadedVideoId = songList[state.songIndex].id;
-
-
+            updateTrackUI(state.songIndex);
 
             player = new YT.Player('player', {
-
                 videoId: currentLoadedVideoId,
-
                 playerVars: {
-
                     'autoplay': 0,
-
                     'controls': 1,
-
                     'cc_load_policy': 0,
-
                     'iv_load_policy': 3,
-
                     'fs': 0,
-
                     'modestbranding': 1,
-
                     'rel': 0,
-
                     'disablekb': 1,
-
                     'playsinline': 1,
-
                     'origin': window.location.origin
-
                 },
-
                 events: {
-
                     'onStateChange': onPlayerStateChange
-
                 }
-
             });
-
         }
-
-
 
         function startRadio() {
-
             if (!player) return;
-
             const state = getCurrentStreamState();
-
             
-
             player.seekTo(state.seekTo, true);
-
             player.playVideo();
-
             player.unMute();
-
             
-
             const overlay = document.getElementById('start-overlay');
-
             overlay.style.opacity = '0';
-
             setTimeout(() => { overlay.style.display = 'none'; }, 500);
-
             isStarted = true;
-
         }
-
-
 
         function syncToCurrentStream() {
-
             if (!player || isChangingSong || !isStarted) return;
 
-
-
             const state = getCurrentStreamState();
-
             const targetSong = songList[state.songIndex];
-
-
+            updateTrackUI(state.songIndex);
 
             if (currentLoadedVideoId !== targetSong.id) {
-
                 isChangingSong = true;
-
                 currentLoadedVideoId = targetSong.id;
-
                 
-
                 player.loadVideoById({
-
                     videoId: targetSong.id,
-
                     startSeconds: state.seekTo
-
                 });
-
                 
-
                 setTimeout(() => { 
-
                     isChangingSong = false; 
-
                 }, 2000);
-
             } else {
-
                 const currentTime = player.getCurrentTime ? player.getCurrentTime() : 0;
-
                 if (Math.abs(currentTime - state.seekTo) > 3) {
-
                     player.seekTo(state.seekTo, true);
-
                 }
-
             }
-
         }
-
-
 
         function onPlayerStateChange(event) {
-
             if (event.data === YT.PlayerState.ENDED) {
-
                 if (isStarted) {
-
                     syncToCurrentStream();
-
                     player.playVideo();
-
                 }
-
             }
-
         }
 
-
-
         setInterval(() => {
-
             if (player && player.getPlayerState() === YT.PlayerState.PLAYING) {
-
                 syncToCurrentStream();
-
             }
-
         }, 5000);
 
+        // SES GÖRSELLEŞTİRİCİ BAR OLUŞTURMA & ANİMASYONU
+        const visualizer = document.getElementById('visualizer');
+        const barCount = 32;
+        const bars = [];
+
+        for(let i = 0; i < barCount; i++) {
+            const bar = document.createElement('div');
+            bar.className = 'bar';
+            visualizer.appendChild(bar);
+            bars.push(bar);
+        }
+
+        function animateVisualizer() {
+            if (player && player.getPlayerState && player.getPlayerState() === YT.PlayerState.PLAYING) {
+                bars.forEach(bar => {
+                    const h = Math.floor(Math.random() * 20) + 4;
+                    bar.style.height = `${h}px`;
+                });
+            } else {
+                bars.forEach(bar => {
+                    bar.style.height = `4px`;
+                });
+            }
+        }
+        setInterval(animateVisualizer, 120);
+
+        // KLAVYE KISAYOL TAKİBİ
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                if(!isStarted) {
+                    startRadio();
+                } else if(player) {
+                    const state = player.getPlayerState();
+                    if(state === YT.PlayerState.PLAYING) player.pauseVideo();
+                    else player.playVideo();
+                }
+            } else if (e.code === 'KeyM' && player) {
+                if(player.isMuted()) player.unMute();
+                else player.mute();
+            } else if (e.code === 'KeyD') {
+                const toggle = document.getElementById('glow-toggle');
+                toggleDiamondGlow(!toggle.checked);
+            }
+        });
     </script>
-
 </body>
-
 </html>

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EA$Y FM</title>
-    <!-- Google Fonts üzerinden keskin ve güçlü hip-hop fontları -->
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:wght@800;900&display=swap" rel="stylesheet">
     
     <style>
@@ -139,15 +139,25 @@
             border-color: rgba(255, 255, 255, 0.5);
         }
 
-        .main-wrapper {
+        .main-container {
             position: relative;
             z-index: 10;
             width: 100%;
+            max-width: 1100px;
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 20px 15px;
+        }
+
+        .main-wrapper {
+            flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 20px 10px;
+            width: 100%;
         }
 
         /* Pırlanta / Kristal Işıltılı Siyah-Beyaz Logo */
@@ -182,8 +192,13 @@
                 0 0 30px rgba(255, 255, 255, 0.2);
                 
             transform: skew(-4deg);
-            animation: diamondShine 4s linear infinite;
+            animation: diamondShine 4s linear infinite, bassVibe 1.2s ease-in-out infinite alternate;
             transition: text-shadow 0.3s;
+        }
+
+        @keyframes bassVibe {
+            0% { transform: skew(-4deg) scale(1); }
+            100% { transform: skew(-4deg) scale(1.02); }
         }
 
         @keyframes diamondShine {
@@ -203,16 +218,8 @@
             opacity: 0.9;
         }
 
-        /* Bilgi Rozetleri Grubu */
-        .badge-group {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .listener-badge, .hype-badge {
+        /* Anlık İzleyici Rozeti */
+        .listener-badge {
             background: rgba(17, 17, 17, 0.7);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
@@ -221,24 +228,12 @@
             border-radius: 30px;
             font-size: 13px;
             letter-spacing: 1px;
+            margin-bottom: 20px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             box-shadow: 0 4px 20px rgba(255, 255, 255, 0.05);
-            transition: all 0.3s ease;
-        }
-
-        .hype-badge {
-            cursor: pointer;
-            user-select: none;
-        }
-        .hype-badge:hover {
-            border-color: #fff;
-            transform: translateY(-2px);
-            box-shadow: 0 0 15px rgba(255,255,255,0.3);
-        }
-        .hype-badge:active {
-            transform: scale(0.95);
+            transition: border 0.3s;
         }
 
         .live-dot {
@@ -257,10 +252,10 @@
             100% { opacity: 1; transform: scale(1); }
         }
 
-        /* REKLAMI ATLA BUTONUNU AÇIKTA BIRAKAN STANDART ORANLI VİDEO ÇERÇEVESİ */
+        /* VİDEO ÇERÇEVESİ */
         .video-container {
             position: relative;
-            width: 80%;
+            width: 100%;
             max-width: 650px;
             padding-bottom: 45%;
             height: 0;
@@ -269,7 +264,7 @@
             box-shadow: 0 10px 40px rgba(255, 255, 255, 0.08);
             border: 1px solid #222222;
             transition: box-shadow 0.4s, border-color 0.4s;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .video-container iframe {
@@ -319,64 +314,116 @@
             box-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
         }
 
-        /* YENİ: ÇALAN ŞARKI BİLGİ KARTI (NOW PLAYING) */
-        .now-playing-card {
-            width: 80%;
+        /* FREKANS DALGASI CANVAS (WAVE SPECTRUM) */
+        #wave-canvas {
+            width: 100%;
             max-width: 650px;
-            background: rgba(17, 17, 17, 0.6);
+            height: 40px;
+            margin-bottom: 20px;
+        }
+
+        /* TRAP HOUSE CHAT PANELİ */
+        .chat-container {
+            width: 320px;
+            height: 430px;
+            background: rgba(15, 15, 15, 0.7);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 14px;
-            padding: 15px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 16px;
             display: flex;
             flex-direction: column;
-            gap: 6px;
-            margin-bottom: 25px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+            margin-top: 10px;
         }
-        .track-info-row {
+
+        .chat-header {
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 11px;
+            font-weight: 900;
+            letter-spacing: 2px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        .track-label {
-            font-size: 10px;
-            letter-spacing: 2px;
-            color: #888;
-            font-weight: 900;
-        }
-        .track-title {
-            font-size: 15px;
-            font-weight: 800;
-            color: #fff;
-            letter-spacing: 1px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+
+        .chat-messages {
+            flex: 1;
+            padding: 12px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 12px;
         }
 
-        /* YENİ: DİNAMİK SES GÖRSELLEŞTİRİCİ (VISUALIZER) */
-        .visualizer-container {
+        .chat-msg {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 8px 10px;
+            line-height: 1.4;
+            word-break: break-word;
+        }
+
+        .chat-msg .user {
+            color: #aaa;
+            font-weight: 800;
+            font-size: 10px;
+            margin-bottom: 2px;
+            display: block;
+        }
+
+        .chat-input-row {
             display: flex;
-            align-items: flex-end;
-            gap: 4px;
-            height: 24px;
-            margin-top: 10px;
+            padding: 10px;
+            gap: 8px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.4);
         }
-        .bar {
-            width: 4px;
-            background: #ffffff;
-            border-radius: 4px;
-            height: 5px;
-            box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
-            transition: height 0.1s ease;
+
+        .chat-input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 8px 14px;
+            color: #fff;
+            font-size: 12px;
+            outline: none;
+            font-family: inherit;
         }
-        body.diamond-mode-active .bar {
-            box-shadow: 0 0 12px rgba(255, 255, 255, 1);
+
+        .chat-send-btn {
+            background: #fff;
+            color: #000;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            font-weight: 900;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
         }
 
         /* MOBİL UYUM OPTİMİZASYONLARI */
+        @media (max-width: 900px) {
+            .main-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            .chat-container {
+                width: 100%;
+                max-width: 650px;
+                height: 300px;
+            }
+        }
+
         @media (max-width: 768px) {
             .glow-toggle-container {
                 top: 12px;
@@ -394,22 +441,14 @@
                 font-size: 10px;
                 letter-spacing: 3px;
             }
-            .video-container {
-                width: 90%;
-                padding-bottom: 56.25%;
-                margin-bottom: 15px;
-            }
-            .now-playing-card {
-                width: 90%;
-            }
-            .listener-badge, .hype-badge {
+            .listener-badge {
                 padding: 6px 16px;
                 font-size: 11px;
             }
         }
     </style>
 
-    <!-- Firebase SDK (Anlık Sayaç İçin) -->
+    <!-- Firebase SDK (Anlık Sayaç ve Sohbet İçin) -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
@@ -428,46 +467,45 @@
     <canvas id="bg-canvas"></canvas>
     <div class="ambient-glow"></div>
 
-    <div class="main-wrapper">
-        <!-- Pırlanta Işıltılı Siyah-Beyaz Logo Alanı -->
-        <div class="logo-container">
-            <h1>EA$Y FM</h1>
-            <div class="subtitle">7/24 YÜZDE YÜZ MÜZİK</div>
-        </div>
+    <div class="main-container">
+        <div class="main-wrapper">
+            <!-- Pırlanta Işıltılı Siyah-Beyaz Logo Alanı -->
+            <div class="logo-container">
+                <h1>EA$Y FM</h1>
+                <div class="subtitle">7/24 YÜZDE YÜZ MÜZİK</div>
+            </div>
 
-        <!-- Rozet Grubu -->
-        <div class="badge-group">
             <!-- İzleyici Sayacı Rozeti -->
             <div class="listener-badge">
                 <span class="live-dot"></span>
                 <span>Anlık Dinleyici: <strong id="listener-count" style="color: #ffffff;">0</strong></span>
             </div>
 
-            <!-- Saygı / Hype Butonu -->
-            <div class="hype-badge" onclick="giveRespect()">
-                <span>💎 SAYGI GÖSTER: <strong id="hype-count" style="color: #ffffff;">0</strong></span>
+            <div class="video-container">
+                <!-- Başlatma Kaplaması -->
+                <div id="start-overlay" onclick="startRadio()">
+                    <button class="start-btn">CANLI YAYINA KATIL</button>
+                </div>
+
+                <div id="player"></div>
             </div>
+
+            <!-- RADYO FREKANS DALGASI (WAVE SPECTRUM) -->
+            <canvas id="wave-canvas"></canvas>
         </div>
 
-        <div class="video-container">
-            <!-- Başlatma Kaplaması -->
-            <div id="start-overlay" onclick="startRadio()">
-                <button class="start-btn">CANLI YAYINA KATIL</button>
+        <!-- TRAP HOUSE ANONİM CHAT -->
+        <div class="chat-container">
+            <div class="chat-header">
+                <span>TRAP HOUSE CHAT</span>
+                <span style="color:#666;">LIVE</span>
             </div>
-
-            <div id="player"></div>
-        </div>
-
-        <!-- ÇALAN ŞARKI BİLGİSİ & SES BARI -->
-        <div class="now-playing-card">
-            <div class="track-info-row">
-                <span class="track-label">ŞU AN ÇALAN</span>
-                <span class="track-label" id="next-track-label">SIRADAKİ: --</span>
+            <div class="chat-messages" id="chat-messages">
+                <!-- Mesajlar dinamik eklenecek -->
             </div>
-            <div class="track-title" id="current-track-name">Radyo Yükleniyor...</div>
-            
-            <div class="visualizer-container" id="visualizer">
-                <!-- Javascript ile barlar otomatik üretilecek -->
+            <div class="chat-input-row">
+                <input type="text" id="chat-input" class="chat-input" placeholder="Mesaj yaz..." maxlength="100" onkeydown="if(event.key==='Enter') sendChatMessage()">
+                <button class="chat-send-btn" onclick="sendChatMessage()">→</button>
             </div>
         </div>
     </div>
@@ -475,11 +513,6 @@
     <script>
         // DIAMOND GLOW TOGGLE SİSTEMİ
         function toggleDiamondGlow(checkbox) {
-            if (typeof checkbox === 'boolean') {
-                const el = document.getElementById('glow-toggle');
-                el.checked = checkbox;
-                checkbox = el;
-            }
             if (checkbox.checked) {
                 document.body.classList.add('diamond-mode-active');
             } else {
@@ -556,7 +589,7 @@
         initParticles();
         animateParticles();
 
-        // FIREBASE KURULUMU VE ANLIK İZLEYİCİ TAKİP SİSTEMİ
+        // FIREBASE KURULUMU, SAYAÇ VE SOHBET SİSTEMİ
         const firebaseConfig = {
             apiKey: "AIzaSyBaTlb6V6e4FMLTYNXAPBgdzsgiclL8Qw8",
             authDomain: "easyfm-37b9e.firebaseapp.com",
@@ -573,7 +606,7 @@
 
         const myConnectionsRef = db.ref('online_listeners');
         const connectedRef = db.ref('.info/connected');
-        const hypeRef = db.ref('respect_count');
+        const chatRef = db.ref('live_chat');
 
         connectedRef.on('value', (snap) => {
             if (snap.val() === true) {
@@ -588,25 +621,71 @@
             document.getElementById('listener-count').innerText = count;
         });
 
-        // Saygı / Hype Butonu Canlı Veri Takibi
-        hypeRef.on('value', (snap) => {
-            const val = snap.val() || 0;
-            document.getElementById('hype-count').innerText = val;
+        // Chat İşlemleri
+        function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if(!text) return;
+
+            const anonId = "User_" + Math.floor(1000 + Math.random() * 9000);
+            chatRef.push({
+                user: anonId,
+                msg: text,
+                time: Date.now()
+            });
+            input.value = '';
+        }
+
+        chatRef.limitToLast(20).on('child_added', (snap) => {
+            const data = snap.val();
+            const box = document.getElementById('chat-messages');
+            
+            const msgEl = document.createElement('div');
+            msgEl.className = 'chat-msg';
+            msgEl.innerHTML = `<span class="user">${data.user}</span>${data.msg}`;
+            
+            box.appendChild(msgEl);
+            box.scrollTop = box.scrollHeight;
         });
 
-        function giveRespect() {
-            hypeRef.transaction((current) => (current || 0) + 1);
+        // RADYO FREKANS DALGA ANİMASYONU (SPECTRUM WAVE)
+        const wCanvas = document.getElementById('wave-canvas');
+        const wCtx = wCanvas.getContext('2d');
+        let step = 0;
+
+        function drawWave() {
+            wCanvas.width = wCanvas.offsetWidth;
+            wCanvas.height = wCanvas.offsetHeight;
+            wCtx.clearRect(0, 0, wCanvas.width, wCanvas.height);
+
+            wCtx.beginPath();
+            wCtx.lineWidth = 1.5;
+            wCtx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+
+            const height = wCanvas.height;
+            const width = wCanvas.width;
+
+            for (let x = 0; x < width; x++) {
+                const y = Math.sin((x + step) * 0.04) * (height / 3) + (height / 2);
+                if (x === 0) wCtx.moveTo(x, y);
+                else wCtx.lineTo(x, y);
+            }
+            wCtx.stroke();
+
+            step += (player && player.getPlayerState && player.getPlayerState() === YT.PlayerState.PLAYING) ? 2 : 0.3;
+            requestAnimationFrame(drawWave);
         }
-        
+        drawWave();
+
         // CANLI SENKRONİZASYON VE PLAYLIST SİSTEMİ
         const songList = [
-            { id: '1IEg_3x35go', duration: 120, name: 'EA$Y FM - Intro & Vibe' },
-            { id: 'qAlF70MdfwU', duration: 207, name: 'Hip-Hop Classic - Track #2' }, 
-            { id: 'L_BpiSsIBFM', duration: 236, name: 'Underground Beats - Track #3' }, 
-            { id: 'cTGQrA5HHIU', duration: 204, name: 'Chill Hop Chillout - Track #4' }, 
-            { id: 'ftaXMKV3ffE', duration: 160, name: 'Trap City Vibe - Track #5' },
-            { id: 'LPTlvQ1Zet0', duration: 188, name: 'Midnight Groove - Track #6' },
-            { id: 'EfHNIPXTxy0', duration: 276, name: 'Golden Era Flow - Track #7' }
+            { id: '1IEg_3x35go', duration: 120 },
+            { id: 'qAlF70MdfwU', duration: 207 }, 
+            { id: 'L_BpiSsIBFM', duration: 236 }, 
+            { id: 'cTGQrA5HHIU', duration: 204 }, 
+            { id: 'ftaXMKV3ffE', duration: 160 },
+            { id: 'LPTlvQ1Zet0', duration: 188 },
+            { id: 'EfHNIPXTxy0', duration: 276 }
         ];
 
         const STREAM_START_TIME = 1700000000; 
@@ -634,14 +713,6 @@
             return { songIndex: 0, seekTo: 0 };
         }
 
-        function updateTrackUI(songIndex) {
-            const currentSong = songList[songIndex];
-            const nextSong = songList[(songIndex + 1) % songList.length];
-            
-            document.getElementById('current-track-name').innerText = currentSong.name;
-            document.getElementById('next-track-label').innerText = `SIRADAKİ: ${nextSong.name.substring(0, 18)}...`;
-        }
-
         const tag = document.createElement('script');
         tag.src = "https://www.youtube.com/iframe_api";
         const firstScriptTag = document.getElementsByTagName('script')[0];
@@ -650,7 +721,6 @@
         function onYouTubeIframeAPIReady() {
             const state = getCurrentStreamState();
             currentLoadedVideoId = songList[state.songIndex].id;
-            updateTrackUI(state.songIndex);
 
             player = new YT.Player('player', {
                 videoId: currentLoadedVideoId,
@@ -691,7 +761,6 @@
 
             const state = getCurrentStreamState();
             const targetSong = songList[state.songIndex];
-            updateTrackUI(state.songIndex);
 
             if (currentLoadedVideoId !== targetSong.id) {
                 isChangingSong = true;
@@ -727,52 +796,6 @@
                 syncToCurrentStream();
             }
         }, 5000);
-
-        // SES GÖRSELLEŞTİRİCİ BAR OLUŞTURMA & ANİMASYONU
-        const visualizer = document.getElementById('visualizer');
-        const barCount = 32;
-        const bars = [];
-
-        for(let i = 0; i < barCount; i++) {
-            const bar = document.createElement('div');
-            bar.className = 'bar';
-            visualizer.appendChild(bar);
-            bars.push(bar);
-        }
-
-        function animateVisualizer() {
-            if (player && player.getPlayerState && player.getPlayerState() === YT.PlayerState.PLAYING) {
-                bars.forEach(bar => {
-                    const h = Math.floor(Math.random() * 20) + 4;
-                    bar.style.height = `${h}px`;
-                });
-            } else {
-                bars.forEach(bar => {
-                    bar.style.height = `4px`;
-                });
-            }
-        }
-        setInterval(animateVisualizer, 120);
-
-        // KLAVYE KISAYOL TAKİBİ
-        document.addEventListener('keydown', (e) => {
-            if (e.code === 'Space') {
-                e.preventDefault();
-                if(!isStarted) {
-                    startRadio();
-                } else if(player) {
-                    const state = player.getPlayerState();
-                    if(state === YT.PlayerState.PLAYING) player.pauseVideo();
-                    else player.playVideo();
-                }
-            } else if (e.code === 'KeyM' && player) {
-                if(player.isMuted()) player.unMute();
-                else player.mute();
-            } else if (e.code === 'KeyD') {
-                const toggle = document.getElementById('glow-toggle');
-                toggleDiamondGlow(!toggle.checked);
-            }
-        });
     </script>
 </body>
 </html>

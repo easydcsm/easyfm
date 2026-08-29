@@ -185,7 +185,6 @@
             }
         }
 
-        /* THREE.JS CONTAINER (Genişletildi, Kırpılma Engellendi) */
         #globe-3d-container {
             width: 480px;
             height: 340px;
@@ -369,7 +368,6 @@
             text-overflow: ellipsis;
         }
 
-        /* CANLI EQ VISUALIZER CANVAS */
         #visualizer-canvas {
             width: 100%;
             height: 35px;
@@ -399,12 +397,8 @@
 
     <div class="main-wrapper" id="main-wrapper">
         <div class="logo-container">
-            <!-- ANLIK PIRLANTA PATLAMA HALKASI -->
             <div class="blast-wave" id="blast-wave"></div>
-            
-            <!-- 3D SİYAH-BEYAZ DÜNYA VE DÖNEN "EA$Y FM" YAZI SAHNESİ -->
             <div id="globe-3d-container"></div>
-
             <div class="subtitle">7/24 YÜZDE YÜZ MÜZİK</div>
         </div>
 
@@ -425,7 +419,6 @@
             <div id="player"></div>
         </div>
 
-        <!-- ŞU AN ÇALAN SİSTEMİ -->
         <div class="now-playing-card">
             <div class="track-info">
                 <span class="track-label">ŞU AN YAYINDA</span>
@@ -437,7 +430,6 @@
             </div>
         </div>
 
-        <!-- SPEKTRUM BARS VISUALIZER -->
         <canvas id="visualizer-canvas"></canvas>
     </div>
 
@@ -456,7 +448,7 @@
             document.body.classList.toggle('diamond-mode-active', checkbox.checked);
         }
 
-        // --- THREE.JS GERÇEK 3D SİYAH-BEYAZ DÜNYA VE KESİNTİSİZ EA$Y FM HALKASI ---
+        // --- THREE.JS GERÇEK 3D SİYAH-BEYAZ DÜNYA VE TEK "EA$Y FM" YAZISI ---
         const globeContainer = document.getElementById('globe-3d-container');
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(45, 480 / 340, 0.1, 1000);
@@ -477,7 +469,7 @@
         const globeMesh = new THREE.Mesh(geometry, material);
         scene.add(globeMesh);
 
-        // Beyaz/Pırlanta Parlama Katmanı
+        // Atmosfer Katmanı
         const atmosGeo = new THREE.SphereGeometry(1.88, 64, 64);
         const atmosMat = new THREE.MeshBasicMaterial({
             color: 0xffffff,
@@ -488,7 +480,7 @@
         const atmosMesh = new THREE.Mesh(atmosGeo, atmosMat);
         scene.add(atmosMesh);
 
-        // Aydınlatma
+        // Işıklandırma
         const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
         scene.add(ambientLight);
 
@@ -496,7 +488,7 @@
         dirLight.position.set(5, 3, 5);
         scene.add(dirLight);
 
-        // TAM VE KESİNTİSİZ DÖNEN "EA$Y FM" SILINDIR HALKASI
+        // SADECE BİR TANE "EA$Y FM" YAZISININ BULUNDUĞU SILINDIR HALKA
         let ringMesh = null;
 
         function createOrbitRingText() {
@@ -508,7 +500,7 @@
             ctx.fillStyle = 'transparent';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            ctx.font = '900 60px "Anton", sans-serif';
+            ctx.font = '900 65px "Anton", sans-serif';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillStyle = '#ffffff';
@@ -516,15 +508,11 @@
             ctx.shadowColor = '#ffffff';
             ctx.shadowBlur = 25;
 
-            // Halka boyunca kesintisiz dönen EA$Y FM metni
-            const textString = "EA$Y FM   •   EA$Y FM   •   EA$Y FM   •   EA$Y FM";
-            ctx.fillText(textString, canvas.width / 2, canvas.height / 2);
+            // TEK YAZI (Tekrarlanma tamamen kaldırıldı)
+            ctx.fillText("EA$Y FM", canvas.width / 2, canvas.height / 2);
 
             const ringTex = new THREE.CanvasTexture(canvas);
-            ringTex.wrapS = THREE.RepeatWrapping;
-            ringTex.wrapT = THREE.ClampToEdgeWrapping;
 
-            // Yörünge çapı (radius) optimize edildi (2.5 -> 2.1)
             const ringGeo = new THREE.CylinderGeometry(2.1, 2.1, 0.5, 64, 1, true);
             const ringMat = new THREE.MeshBasicMaterial({
                 map: ringTex,
@@ -706,14 +694,15 @@
         const initialState = getCurrentStreamState();
         updateTrackLabels(initialState.songIndex);
 
-        // YOUTUBE PLAYER KESİNTİSİZ OYNATMA SİSTEMİ
+        // YOUTUBE OYNATICI KURULUMU
         function onYouTubeIframeAPIReady() {
             const state = getCurrentStreamState();
             currentLoadedVideoId = songList[state.songIndex].id;
+
             player = new YT.Player('player', {
                 videoId: currentLoadedVideoId,
                 playerVars: {
-                    'autoplay': 0,
+                    'autoplay': 1,
                     'controls': 1,
                     'rel': 0,
                     'playsinline': 1,
@@ -726,11 +715,10 @@
             });
         }
 
-        function onPlayerReady() {
+        function onPlayerReady(event) {
             isPlayerReady = true;
-            // Tarayıcı otomatik engellemesine takılmamak için iframe'e autoplay izni tanımlanır
             const iframe = document.querySelector('#player');
-            if(iframe) iframe.setAttribute('allow', 'autoplay; encrypted-media');
+            if (iframe) iframe.setAttribute('allow', 'autoplay; encrypted-media');
         }
 
         function setPlaybackVisualState(active) {
@@ -755,8 +743,7 @@
 
         function checkAudioState() {
             if (!player || typeof player.getPlayerState !== 'function') return;
-            const playerState = player.getPlayerState();
-            setPlaybackVisualState(playerState === YT.PlayerState.PLAYING);
+            setPlaybackVisualState(player.getPlayerState() === YT.PlayerState.PLAYING);
         }
 
         function syncAndPlay() {
@@ -766,6 +753,7 @@
             updateTrackLabels(state.songIndex);
             
             currentLoadedVideoId = targetSong.id;
+            
             player.loadVideoById({
                 videoId: targetSong.id,
                 startSeconds: Math.floor(state.seekTo)
@@ -794,23 +782,35 @@
             }
         }
 
+        // KULLANICI TIKLAMASIYLA YAYINI ANINDA BAŞLATMA
         function startRadio() {
-            // ANLIK BEYAZ/PIRLANTA PATLAMA
             const blast = document.getElementById('blast-wave');
             blast.classList.remove('blast-active');
             void blast.offsetWidth;
             blast.classList.add('blast-active');
 
-            // OVERLAY KALDIRILIR
             const overlay = document.getElementById('start-overlay');
             overlay.style.opacity = '0';
             setTimeout(() => { 
                 overlay.style.visibility = 'hidden'; 
             }, 600);
 
-            // Doğrudan kullanıcı etkileşimiyle videoyu başlat
-            if (player) {
-                syncAndPlay();
+            // Doğrudan tıklama olayı esnasında YouTube API play çağrısı
+            if (player && typeof player.playVideo === 'function') {
+                const state = getCurrentStreamState();
+                const targetSong = songList[state.songIndex];
+                updateTrackLabels(state.songIndex);
+
+                if (currentLoadedVideoId !== targetSong.id) {
+                    currentLoadedVideoId = targetSong.id;
+                    player.loadVideoById({
+                        videoId: targetSong.id,
+                        startSeconds: Math.floor(state.seekTo)
+                    });
+                } else {
+                    player.seekTo(Math.floor(state.seekTo), true);
+                    player.playVideo();
+                }
             }
 
             if (checkAudioInterval) clearInterval(checkAudioInterval);

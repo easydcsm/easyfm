@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EA$Y FM | LIVE</title>
+    <title>EA$Y FM | CANLI</title>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     
@@ -281,7 +281,7 @@
             margin-bottom: 15px;
         }
 
-        .video-container iframe {
+        .video-container iframe, .video-container #player {
             position: absolute;
             top: 0;
             left: 0;
@@ -421,7 +421,7 @@
             <div id="start-overlay" onclick="startRadio()">
                 <button class="start-btn">CANLI YAYINA KATIL</button>
             </div>
-            <div id="player-frame"></div>
+            <div id="player"></div>
         </div>
 
         <!-- ŞU AN ÇALAN SİSTEMİ -->
@@ -440,8 +440,15 @@
         <canvas id="visualizer-canvas"></canvas>
     </div>
 
+    <!-- YouTube IFrame API -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+
     <script>
         let isPlayingState = false;
+        let player = null;
+        let checkAudioInterval = null;
+        let autoSyncInterval = null;
+        let currentLoadedVideoId = null;
 
         function toggleDiamondGlow(checkbox) {
             document.body.classList.toggle('diamond-mode-active', checkbox.checked);
@@ -589,28 +596,122 @@
             document.getElementById('next-track-name').innerText = nextSong.title;
         }
 
-        // Sayfa açıldığında isimleri hesapla ve yazdır
         const initialState = getCurrentStreamState();
         updateTrackLabels(initialState.songIndex);
 
-        function startRadio() {
+        // YOUTUBE API PLAYER KURULUMU
+        function onYouTubeIframeAPIReady() {
             const state = getCurrentStreamState();
-            const currentSong = songList[state.songIndex];
+            currentLoadedVideoId = songList[state.songIndex].id;
+            player = new YT.Player('player', {
+                videoId: currentLoadedVideoId,
+                playerVars: {
+                    'autoplay': 0,
+                    'controls': 1,
+                    'rel': 0,
+                    'start': Math.floor(state.seekTo)
+                },
+                events: {
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+        }
+
+        function setPlaybackVisualState(active) {
+            isPlayingState = active;
+            const wrapper = document.getElementById('main-wrapper');
+            if (active) {
+                wrapper.classList.add('is-playing');
+            } else {
+                wrapper.classList.remove('is-playing');
+            }
+        }
+
+        function onPlayerStateChange(event) {
+            if (event.data === YT.PlayerState.PLAYING) {
+                checkAudioState();
+            } else {
+                setPlaybackVisualState(false);
+            }
+
+            if (event.data === YT.PlayerState.ENDED) {
+                syncAndPlay();
+            }
+        }
+
+        function checkAudioState() {
+            if (!player || typeof player.isMuted !== 'function') return;
             
-            // Overlay Gizle
+            const isMuted = player.isMuted();
+            const volume = player.getVolume();
+            const playerState = player.getPlayerState();
+
+            if (playerState === YT.PlayerState.PLAYING && !isMuted && volume > 0) {
+                setPlaybackVisualState(true);
+            } else {
+                setPlaybackVisualState(false);
+            }
+        }
+
+        function syncAndPlay() {
+            if (!player) return;
+            const state = getCurrentStreamState();
+            const targetSong = songList[state.songIndex];
+            updateTrackLabels(state.songIndex);
+            
+            currentLoadedVideoId = targetSong.id;
+            player.loadVideoById({
+                videoId: targetSong.id,
+                startSeconds: Math.floor(state.seekTo)
+            });
+        }
+
+        // HER 3 SANİYEDE BİR ÇALIŞAN CANLI YAYIN SENKRONİZASYON KONTROLÜ
+        function checkLiveSync() {
+            if (!player || typeof player.getPlayerState !== 'function') return;
+
+            // Sadece video aktif olarak oynatılıyorsa senkron kontrolü yap
+            if (player.getPlayerState() === YT.PlayerState.PLAYING) {
+                const state = getCurrentStreamState();
+                const expectedSong = songList[state.songIndex];
+
+                // Şarkı değiştiyse doğrudan yeni şarkıya geç
+                if (currentLoadedVideoId !== expectedSong.id) {
+                    syncAndPlay();
+                    return;
+                }
+
+                // Aynı şarkıdaysa süreyi kontrol et
+                const currentTime = player.getCurrentTime();
+                const timeDiff = Math.abs(currentTime - state.seekTo);
+
+                // Eğer canlı yayından 1.5 saniyeden fazla sapma varsa süreyi düzelt
+                if (timeDiff > 1.5) {
+                    player.seekTo(state.seekTo, true);
+                }
+            }
+        }
+
+        function startRadio() {
             const overlay = document.getElementById('start-overlay');
             overlay.style.opacity = '0';
             setTimeout(() => { overlay.style.display = 'none'; }, 500);
 
-            // Bilgileri Güncelle & Animasyonu Başlat
-            updateTrackLabels(state.songIndex);
-            isPlayingState = true;
-            document.getElementById('main-wrapper').classList.add('is-playing');
+            syncAndPlay();
 
-            // İframe'i Doğrudan Çalma Parametreleriyle Yükle
-            const playerFrame = document.getElementById('player-frame');
-            playerFrame.innerHTML = `<iframe src="https://www.youtube.com/embed/${currentSong.id}?autoplay=1&start=${Math.floor(state.seekTo)}&rel=0" allow="autoplay"></iframe>`;
+            if (checkAudioInterval) clearInterval(checkAudioInterval);
+            checkAudioInterval = setInterval(checkAudioState, 400);
+
+            // 3 SANİYEDE BİR SENKRONİZASYON KONTROLÜ BAŞLAT
+            if (autoSyncInterval) clearInterval(autoSyncInterval);
+            autoSyncInterval = setInterval(checkLiveSync, 3000);
         }
+
+        document.addEventListener("visibilitychange", () => {
+            if (!document.hidden && player && player.getPlayerState && player.getPlayerState() === YT.PlayerState.PLAYING) {
+                checkLiveSync();
+            }
+        });
     </script>
 </body>
 </html>

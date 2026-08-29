@@ -1,741 +1,1433 @@
 <!DOCTYPE html>
+
 <html lang="tr">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>EA$Y FM | CANLI</title>
+
     <!-- Google Fonts -->
+
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+
     
+
     <style>
+
         * {
+
             box-sizing: border-box;
+
             user-select: none;
+
         }
+
+
 
         body {
+
             margin: 0;
+
             background-color: #050505;
+
             color: #fff;
+
             font-family: 'Montserrat', sans-serif;
+
             display: flex;
+
             flex-direction: column;
+
             align-items: center;
+
             justify-content: center;
+
             min-height: 100vh;
+
             overflow-x: hidden;
+
             position: relative;
+
         }
+
+
 
         /* KRİSTAL PARÇACIKLI ARKA PLAN */
+
         #bg-canvas {
+
             position: fixed;
+
             top: 0;
+
             left: 0;
+
             width: 100%;
+
             height: 100%;
+
             z-index: 1;
+
             pointer-events: none;
+
         }
+
+
 
         .ambient-glow {
+
             position: fixed;
+
             top: 50%;
+
             left: 50%;
+
             transform: translate(-50%, -50%);
+
             width: 80vw;
+
             height: 80vh;
+
             background: radial-gradient(circle, rgba(255, 255, 255, 0.04) 0%, rgba(0, 0, 0, 0) 70%);
+
             z-index: 2;
+
             pointer-events: none;
+
             transition: opacity 0.5s ease;
+
         }
+
+
 
         /* SAĞ ÜST: DIAMOND GLOW TOGGLE */
+
         .glow-toggle-container {
+
             position: fixed;
+
             top: 20px;
+
             right: 20px;
+
             z-index: 100;
+
             display: flex;
+
             align-items: center;
+
             gap: 10px;
+
             background: rgba(17, 17, 17, 0.7);
+
             backdrop-filter: blur(10px);
+
             -webkit-backdrop-filter: blur(10px);
+
             border: 1px solid rgba(255, 255, 255, 0.2);
+
             padding: 8px 16px;
+
             border-radius: 30px;
+
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+
         }
+
+
 
         .glow-toggle-label {
+
             font-size: 10px;
+
             font-weight: 900;
+
             letter-spacing: 1.5px;
+
             color: #fff;
+
             text-transform: uppercase;
+
         }
+
+
 
         .switch {
+
             position: relative;
+
             display: inline-block;
+
             width: 36px;
+
             height: 20px;
+
         }
+
+
 
         .switch input {
+
             opacity: 0;
+
             width: 0;
+
             height: 0;
+
         }
+
+
 
         .slider-toggle {
+
             position: absolute;
+
             cursor: pointer;
+
             top: 0; left: 0; right: 0; bottom: 0;
+
             background-color: #333;
+
             transition: .4s;
+
             border-radius: 20px;
+
             border: 1px solid #555;
+
         }
+
+
 
         .slider-toggle:before {
+
             position: absolute;
+
             content: "";
+
             height: 12px;
+
             width: 12px;
+
             left: 3px;
+
             bottom: 3px;
+
             background-color: white;
+
             transition: .4s;
+
             border-radius: 50%;
+
             box-shadow: 0 0 5px #fff;
+
         }
+
+
 
         input:checked + .slider-toggle {
+
             background-color: #ffffff;
+
         }
+
+
 
         input:checked + .slider-toggle:before {
+
             transform: translateX(15px);
+
             background-color: #000;
+
         }
+
+
 
         body.diamond-mode-active .ambient-glow {
+
             background: radial-gradient(circle, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.03) 50%, rgba(0, 0, 0, 0) 75%);
+
         }
+
+
 
         body.diamond-mode-active h1 {
+
             text-shadow: 
+
                 0 0 15px rgba(255, 255, 255, 1),
+
                 0 0 30px rgba(255, 255, 255, 0.8),
+
                 0 0 45px rgba(255, 255, 255, 0.5);
+
         }
+
+
 
         body.diamond-mode-active .video-container {
+
             box-shadow: 0 0 40px rgba(255, 255, 255, 0.3), 0 10px 40px rgba(0, 0, 0, 0.8);
+
             border-color: rgba(255, 255, 255, 0.6);
+
         }
+
+
 
         .main-wrapper {
+
             position: relative;
+
             z-index: 10;
+
             width: 100%;
+
             max-width: 720px;
+
             display: flex;
+
             flex-direction: column;
+
             align-items: center;
+
             justify-content: center;
+
             padding: 20px 15px;
+
         }
 
-        /* LOGO & DÖNEN VINYL EFFECT (GÜNCELLENEN COOL ÇEMBER) */
+
+
+        /* LOGO & DÖNEN VINYL EFFECT */
+
         .logo-container {
+
             text-align: center;
+
             margin-bottom: 15px;
+
             margin-top: 10px;
+
             position: relative;
+
         }
+
+
 
         .vinyl-ring {
+
             position: absolute;
+
             top: 50%;
+
             left: 50%;
+
             transform: translate(-50%, -50%) rotate(0deg);
+
             width: 220px;
+
             height: 220px;
-            border: 2px dashed rgba(255, 255, 255, 0.3);
+
+            border: 2px dashed rgba(255, 255, 255, 0.15);
+
             border-radius: 50%;
+
             z-index: -1;
-            transition: all 0.5s ease;
+
+            transition: border-color 0.5s;
+
         }
 
-        .vinyl-ring::before,
-        .vinyl-ring::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            border-radius: 50%;
-            pointer-events: none;
-        }
 
-        .vinyl-ring::before {
-            width: 100%;
-            height: 100%;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-        }
-
-        .vinyl-ring::after {
-            width: 80%;
-            height: 80%;
-            border: 2px double rgba(255, 255, 255, 0.4);
-            box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.15);
-        }
 
         .is-playing .vinyl-ring {
-            animation: spinVinyl 6s linear infinite, bassPulse 1.2s ease-in-out infinite alternate;
-            border-color: rgba(255, 255, 255, 0.8);
+
+            animation: spinVinyl 8s linear infinite;
+
+            border-color: rgba(255, 255, 255, 0.6);
+
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+
         }
 
-        .is-playing .vinyl-ring::before {
-            animation: shockwavePulse 1.2s ease-out infinite;
-        }
 
-        .is-playing .vinyl-ring::after {
-            animation: innerGlowPulse 0.6s ease-in-out infinite alternate;
-        }
 
         @keyframes spinVinyl {
+
             100% { transform: translate(-50%, -50%) rotate(360deg); }
+
         }
 
-        @keyframes bassPulse {
-            0% {
-                transform: translate(-50%, -50%) scale(0.98);
-                box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
-            }
-            50% {
-                transform: translate(-50%, -50%) scale(1.08);
-                box-shadow: 0 0 40px rgba(255, 255, 255, 0.7);
-            }
-            100% {
-                transform: translate(-50%, -50%) scale(1.02);
-                box-shadow: 0 0 25px rgba(255, 255, 255, 0.3);
-            }
-        }
 
-        @keyframes shockwavePulse {
-            0% {
-                width: 100%;
-                height: 100%;
-                opacity: 0.8;
-            }
-            100% {
-                width: 150%;
-                height: 150%;
-                opacity: 0;
-            }
-        }
-
-        @keyframes innerGlowPulse {
-            0% { opacity: 0.3; transform: translate(-50%, -50%) scale(0.95); }
-            100% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
-        }
 
         h1 {
+
             margin: 0;
+
             font-family: 'Anton', sans-serif;
+
             font-size: 72px;
+
             letter-spacing: 5px;
+
             text-transform: uppercase;
+
             
+
             background: linear-gradient(
+
                 135deg, 
+
                 #ffffff 0%, 
+
                 #a6a6a6 25%, 
+
                 #ffffff 50%, 
+
                 #737373 75%, 
+
                 #ffffff 100%
+
             );
+
             background-size: 200% auto;
+
             -webkit-background-clip: text;
+
             -webkit-text-fill-color: transparent;
+
             
+
             text-shadow: 
+
                 0 0 10px rgba(255, 255, 255, 0.8),
+
                 0 0 20px rgba(255, 255, 255, 0.4),
+
                 0 0 30px rgba(255, 255, 255, 0.2);
+
                 
+
             transform: skew(-4deg);
+
             animation: diamondShine 4s linear infinite;
+
             transition: text-shadow 0.3s;
+
         }
+
+
 
         @keyframes diamondShine {
+
             0% { background-position: 0% center; }
+
             100% { background-position: 200% center; }
+
         }
+
+
 
         .subtitle {
+
             font-family: 'Montserrat', sans-serif;
+
             font-weight: 900;
+
             font-size: 13px;
+
             color: #ffffff;
+
             letter-spacing: 5px;
+
             margin-top: 8px;
+
             text-transform: uppercase;
+
             text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+
             opacity: 0.9;
+
         }
+
+
 
         /* BADGES BAR */
+
         .status-bar {
+
             display: flex;
+
             gap: 12px;
+
             margin-bottom: 15px;
+
             flex-wrap: wrap;
+
             justify-content: center;
+
         }
+
+
 
         .badge {
+
             background: rgba(17, 17, 17, 0.7);
+
             backdrop-filter: blur(10px);
+
             -webkit-backdrop-filter: blur(10px);
+
             border: 1px solid rgba(255, 255, 255, 0.15);
+
             padding: 6px 16px;
+
             border-radius: 30px;
+
             font-size: 11px;
+
             font-weight: 700;
+
             letter-spacing: 1.5px;
+
             display: flex;
+
             align-items: center;
+
             gap: 8px;
+
             text-transform: uppercase;
+
         }
+
+
 
         .live-dot {
+
             width: 8px;
+
             height: 8px;
+
             background-color: #ffffff;
+
             border-radius: 50%;
+
             box-shadow: 0 0 10px #ffffff;
+
             animation: pulse 1.5s infinite;
+
         }
+
+
 
         @keyframes pulse {
+
             0% { opacity: 1; transform: scale(1); }
+
             50% { opacity: 0.3; transform: scale(0.8); }
+
             100% { opacity: 1; transform: scale(1); }
+
         }
+
+
 
         /* VİDEO ÇERÇEVESİ VE OVERLAY */
+
         .video-container {
+
             position: relative;
+
             width: 100%;
+
             padding-bottom: 56.25%;
+
             height: 0;
+
             border-radius: 16px;
+
             overflow: hidden;
+
             box-shadow: 0 10px 40px rgba(255, 255, 255, 0.08);
+
             border: 1px solid #222222;
+
             transition: box-shadow 0.4s, border-color 0.4s;
+
             margin-bottom: 15px;
+
         }
+
+
 
         .video-container iframe, .video-container #player {
+
             position: absolute;
+
             top: 0;
+
             left: 0;
+
             width: 100%;
+
             height: 100%;
+
             border: none;
+
         }
+
+
 
         #start-overlay {
+
             position: absolute;
+
             top: 0;
+
             left: 0;
+
             width: 100%;
+
             height: 100%;
+
             background: rgba(5, 5, 5, 0.96);
+
             z-index: 30;
+
             display: flex;
+
             flex-direction: column;
+
             align-items: center;
+
             justify-content: center;
+
             cursor: pointer;
+
             transition: opacity 0.5s ease;
+
         }
+
+
 
         .start-btn {
+
             background: #ffffff;
+
             color: #000;
+
             font-family: 'Montserrat', sans-serif;
+
             font-weight: 900;
+
             font-size: 15px;
+
             padding: 14px 36px;
+
             border: none;
+
             border-radius: 50px;
+
             cursor: pointer;
+
             letter-spacing: 2px;
+
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+
             transition: transform 0.2s, box-shadow 0.2s;
+
         }
+
+
 
         .start-btn:hover {
+
             transform: scale(1.05);
+
             box-shadow: 0 0 35px rgba(255, 255, 255, 0.9);
+
         }
+
+
 
         /* NOW PLAYING CARD */
+
         .now-playing-card {
+
             width: 100%;
+
             background: rgba(15, 15, 15, 0.85);
+
             backdrop-filter: blur(12px);
+
             -webkit-backdrop-filter: blur(12px);
+
             border: 1px solid rgba(255, 255, 255, 0.12);
+
             border-radius: 12px;
+
             padding: 12px 20px;
+
             display: flex;
+
             align-items: center;
+
             justify-content: space-between;
+
             margin-bottom: 15px;
+
             box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+
         }
+
+
 
         .track-info {
+
             display: flex;
+
             flex-direction: column;
+
             gap: 4px;
+
             overflow: hidden;
+
         }
+
+
 
         .track-label {
+
             font-size: 9px;
+
             font-weight: 900;
+
             letter-spacing: 2px;
+
             color: #888;
+
             text-transform: uppercase;
+
         }
+
+
 
         .track-title {
+
             font-size: 14px;
+
             font-weight: 800;
+
             color: #fff;
+
             white-space: nowrap;
+
             overflow: hidden;
+
             text-overflow: ellipsis;
+
         }
+
+
 
         .next-track {
+
             font-size: 10px;
+
             color: #aaa;
+
             text-align: right;
+
             max-width: 40%;
+
             white-space: nowrap;
+
             overflow: hidden;
+
             text-overflow: ellipsis;
+
         }
+
+
 
         /* CANLI EQ VISUALIZER CANVAS */
+
         #visualizer-canvas {
+
             width: 100%;
+
             height: 35px;
+
         }
+
     </style>
 
+
+
     <!-- Firebase SDK (Anlık Sayaç İçin) -->
+
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
 </head>
+
 <body>
 
+
+
     <div class="glow-toggle-container">
+
         <span class="glow-toggle-label">DIAMOND GLOW</span>
+
         <label class="switch">
+
             <input type="checkbox" id="glow-toggle" onchange="toggleDiamondGlow(this)">
+
             <span class="slider-toggle"></span>
+
         </label>
+
     </div>
+
+
 
     <canvas id="bg-canvas"></canvas>
+
     <div class="ambient-glow"></div>
 
+
+
     <div class="main-wrapper" id="main-wrapper">
+
         <div class="logo-container">
+
             <div class="vinyl-ring"></div>
+
             <h1>EA$Y FM</h1>
+
             <div class="subtitle">7/24 YÜZDE YÜZ MÜZİK</div>
+
         </div>
+
+
 
         <div class="status-bar">
+
             <div class="badge">
+
                 <span class="live-dot"></span>
+
                 <span>CANLI YAYIN</span>
+
             </div>
+
             <div class="badge">
+
                 <span>🎧 DİNLEYİCİ: <strong id="listener-count" style="color: #ffffff;">0</strong></span>
+
             </div>
+
         </div>
+
+
 
         <div class="video-container">
+
             <div id="start-overlay" onclick="startRadio()">
+
                 <button class="start-btn">CANLI YAYINA KATIL</button>
+
             </div>
+
             <div id="player"></div>
+
         </div>
+
+
 
         <!-- ŞU AN ÇALAN SİSTEMİ -->
+
         <div class="now-playing-card">
+
             <div class="track-info">
+
                 <span class="track-label">ŞU AN YAYINDA</span>
+
                 <span class="track-title" id="current-track-name">Canlı Yayın Bekleniyor...</span>
+
             </div>
+
             <div class="next-track">
+
                 <div class="track-label" style="text-align: right;">SIRADAKİ</div>
+
                 <span id="next-track-name">---</span>
+
             </div>
+
         </div>
 
+
+
         <!-- SPEKTRUM BARS VISUALIZER -->
+
         <canvas id="visualizer-canvas"></canvas>
+
     </div>
 
+
+
     <!-- YouTube IFrame API -->
+
     <script src="https://www.youtube.com/iframe_api"></script>
 
+
+
     <script>
+
         let isPlayingState = false;
+
         let player = null;
+
         let checkAudioInterval = null;
 
+        let autoSyncInterval = null;
+
+        let currentLoadedVideoId = null;
+
+
+
         function toggleDiamondGlow(checkbox) {
+
             document.body.classList.toggle('diamond-mode-active', checkbox.checked);
+
         }
+
+
 
         // KRİSTAL PARÇACIK ANİMASYONU
+
         const canvas = document.getElementById('bg-canvas');
+
         const ctx = canvas.getContext('2d');
+
         let particlesArray = [];
 
+
+
         function resizeCanvas() {
+
             canvas.width = window.innerWidth;
+
             canvas.height = window.innerHeight;
+
         }
+
         window.addEventListener('resize', resizeCanvas);
+
         resizeCanvas();
 
+
+
         class Particle {
+
             constructor() {
+
                 this.x = Math.random() * canvas.width;
+
                 this.y = Math.random() * canvas.height;
+
                 this.size = Math.random() * 2.5 + 0.5;
+
                 this.speedX = (Math.random() - 0.5) * 0.4;
+
                 this.speedY = (Math.random() - 0.5) * 0.4;
+
                 this.opacity = Math.random() * 0.7 + 0.2;
+
             }
+
+
 
             update() {
+
                 this.x += this.speedX;
+
                 this.y += this.speedY;
+
                 if (this.x < 0) this.x = canvas.width;
+
                 if (this.x > canvas.width) this.x = 0;
+
                 if (this.y < 0) this.y = canvas.height;
+
                 if (this.y > canvas.height) this.y = 0;
+
             }
 
+
+
             draw() {
+
                 ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+
                 ctx.beginPath();
+
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+
                 ctx.fill();
+
             }
+
         }
+
+
 
         for (let i = 0; i < 45; i++) particlesArray.push(new Particle());
 
+
+
         function animateParticles() {
+
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+
             particlesArray.forEach(p => { p.update(); p.draw(); });
+
             requestAnimationFrame(animateParticles);
+
         }
+
         animateParticles();
 
+
+
         // FIREBASE SAYAÇ
+
         const firebaseConfig = {
+
             apiKey: "AIzaSyBaTlb6V6e4FMLTYNXAPBgdzsgiclL8Qw8",
+
             authDomain: "easyfm-37b9e.firebaseapp.com",
+
             databaseURL: "https://easyfm-37b9e-default-rtdb.firebaseio.com",
+
             projectId: "easyfm-37b9e",
+
             storageBucket: "easyfm-37b9e.firebasestorage.app",
+
             messagingSenderId: "869244564550",
+
             appId: "1:869244564550:web:f0824148dbcae6b7024647"
+
         };
+
         firebase.initializeApp(firebaseConfig);
+
         const db = firebase.database();
+
         const myConnectionsRef = db.ref('online_listeners');
+
         db.ref('.info/connected').on('value', (snap) => {
+
             if (snap.val() === true) {
+
                 const con = myConnectionsRef.push();
+
                 con.onDisconnect().remove();
+
                 con.set(true);
+
             }
+
         });
+
         myConnectionsRef.on('value', (snap) => {
+
             document.getElementById('listener-count').innerText = snap.numChildren();
+
         });
+
+
 
         // SPEKTRUM VISUALIZER (DYNAMIC BARS)
+
         const vCanvas = document.getElementById('visualizer-canvas');
+
         const vCtx = vCanvas.getContext('2d');
+
         const numBars = 32;
+
         let barHeights = new Array(numBars).fill(4);
 
+
+
         function drawVisualizer() {
+
             vCanvas.width = vCanvas.offsetWidth;
+
             vCanvas.height = vCanvas.offsetHeight;
+
             vCtx.clearRect(0, 0, vCanvas.width, vCanvas.height);
+
+
 
             const barWidth = (vCanvas.width / numBars) - 4;
 
+
+
             for (let i = 0; i < numBars; i++) {
+
                 if (isPlayingState) {
+
                     const target = Math.random() * (vCanvas.height - 6) + 6;
+
                     barHeights[i] += (target - barHeights[i]) * 0.25;
+
                 } else {
+
                     barHeights[i] += (3 - barHeights[i]) * 0.1;
+
                 }
+
+
 
                 const x = i * (barWidth + 4);
+
                 const y = vCanvas.height - barHeights[i];
 
+
+
                 vCtx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+
                 vCtx.fillRect(x, y, barWidth, barHeights[i]);
+
             }
+
             requestAnimationFrame(drawVisualizer);
+
         }
+
         drawVisualizer();
 
+
+
         // PLAYLIST & CANLI YAYIN HESAPLAMA SİSTEMİ
+
         const songList = [
+
             { id: '1IEg_3x35go', duration: 120, title: 'FRANCHISE' },
+
             { id: 'qAlF70MdfwU', duration: 207, title: 'OUT WEST' }, 
+
             { id: 'L_BpiSsIBFM', duration: 236, title: 'BROTHER STONE' }, 
+
             { id: 'cTGQrA5HHIU', duration: 204, title: 'WITH THAT' }, 
+
             { id: 'ftaXMKV3ffE', duration: 160, title: 'BACKR00MS' },
+
             { id: 'LPTlvQ1Zet0', duration: 188, title: 'RIC FLAIR DRIP' },
+
             { id: 'EfHNIPXTxy0', duration: 276, title: 'ZEZE' }
+
         ];
 
+
+
         const STREAM_START_TIME = 1700000000; 
+
         const totalPlaylistDuration = songList.reduce((acc, song) => acc + song.duration, 0);
 
+
+
         function getCurrentStreamState() {
+
             const nowInSeconds = Math.floor(Date.now() / 1000);
+
             const elapsedTime = (nowInSeconds - STREAM_START_TIME) % totalPlaylistDuration;
+
             let accumulatedTime = 0;
+
             for (let i = 0; i < songList.length; i++) {
+
                 if (elapsedTime < accumulatedTime + songList[i].duration) {
+
                     return {
+
                         songIndex: i,
+
                         seekTo: elapsedTime - accumulatedTime
+
                     };
+
                 }
+
                 accumulatedTime += songList[i].duration;
+
             }
+
             return { songIndex: 0, seekTo: 0 };
+
         }
+
+
 
         function updateTrackLabels(currentIndex) {
+
             const currentSong = songList[currentIndex];
+
             const nextIndex = (currentIndex + 1) % songList.length;
+
             const nextSong = songList[nextIndex];
 
+
+
             document.getElementById('current-track-name').innerText = currentSong.title;
+
             document.getElementById('next-track-name').innerText = nextSong.title;
+
         }
+
+
 
         const initialState = getCurrentStreamState();
+
         updateTrackLabels(initialState.songIndex);
 
+
+
         // YOUTUBE API PLAYER KURULUMU
+
         function onYouTubeIframeAPIReady() {
+
             const state = getCurrentStreamState();
+
+            currentLoadedVideoId = songList[state.songIndex].id;
+
             player = new YT.Player('player', {
-                videoId: songList[state.songIndex].id,
+
+                videoId: currentLoadedVideoId,
+
                 playerVars: {
+
                     'autoplay': 0,
+
                     'controls': 1,
+
                     'rel': 0,
+
                     'start': Math.floor(state.seekTo)
+
                 },
+
                 events: {
+
                     'onStateChange': onPlayerStateChange
+
                 }
+
             });
+
         }
+
+
 
         function setPlaybackVisualState(active) {
+
             isPlayingState = active;
+
             const wrapper = document.getElementById('main-wrapper');
+
             if (active) {
+
                 wrapper.classList.add('is-playing');
+
             } else {
+
                 wrapper.classList.remove('is-playing');
+
             }
+
         }
+
+
 
         function onPlayerStateChange(event) {
+
             if (event.data === YT.PlayerState.PLAYING) {
+
                 checkAudioState();
+
             } else {
+
                 setPlaybackVisualState(false);
+
             }
+
+
 
             if (event.data === YT.PlayerState.ENDED) {
+
                 syncAndPlay();
+
             }
+
         }
+
+
 
         function checkAudioState() {
+
             if (!player || typeof player.isMuted !== 'function') return;
+
             
+
             const isMuted = player.isMuted();
+
             const volume = player.getVolume();
+
             const playerState = player.getPlayerState();
 
+
+
             if (playerState === YT.PlayerState.PLAYING && !isMuted && volume > 0) {
+
                 setPlaybackVisualState(true);
+
             } else {
+
                 setPlaybackVisualState(false);
+
             }
+
         }
+
+
 
         function syncAndPlay() {
+
             if (!player) return;
+
             const state = getCurrentStreamState();
+
             const targetSong = songList[state.songIndex];
+
             updateTrackLabels(state.songIndex);
 
+            
+
+            currentLoadedVideoId = targetSong.id;
+
             player.loadVideoById({
+
                 videoId: targetSong.id,
+
                 startSeconds: Math.floor(state.seekTo)
+
             });
+
         }
 
+
+
+        // HER 3 SANİYEDE BİR ÇALIŞAN CANLI YAYIN SENKRONİZASYON KONTROLÜ
+
+        function checkLiveSync() {
+
+            if (!player || typeof player.getPlayerState !== 'function') return;
+
+
+
+            // Sadece video aktif olarak oynatılıyorsa senkron kontrolü yap
+
+            if (player.getPlayerState() === YT.PlayerState.PLAYING) {
+
+                const state = getCurrentStreamState();
+
+                const expectedSong = songList[state.songIndex];
+
+
+
+                // Şarkı değiştiyse doğrudan yeni şarkıya geç
+
+                if (currentLoadedVideoId !== expectedSong.id) {
+
+                    syncAndPlay();
+
+                    return;
+
+                }
+
+
+
+                // Aynı şarkıdaysa süreyi kontrol et
+
+                const currentTime = player.getCurrentTime();
+
+                const timeDiff = Math.abs(currentTime - state.seekTo);
+
+
+
+                // Eğer canlı yayından 1.5 saniyeden fazla sapma varsa süreyi düzelt
+
+                if (timeDiff > 1.5) {
+
+                    player.seekTo(state.seekTo, true);
+
+                }
+
+            }
+
+        }
+
+
+
         function startRadio() {
+
             const overlay = document.getElementById('start-overlay');
+
             overlay.style.opacity = '0';
+
             setTimeout(() => { overlay.style.display = 'none'; }, 500);
+
+
 
             syncAndPlay();
 
+
+
             if (checkAudioInterval) clearInterval(checkAudioInterval);
+
             checkAudioInterval = setInterval(checkAudioState, 400);
+
+
+
+            // 3 SANİYEDE BİR SENKRONİZASYON KONTROLÜ BAŞLAT
+
+            if (autoSyncInterval) clearInterval(autoSyncInterval);
+
+            autoSyncInterval = setInterval(checkLiveSync, 3000);
+
         }
+
+
+
+        document.addEventListener("visibilitychange", () => {
+
+            if (!document.hidden && player && player.getPlayerState && player.getPlayerState() === YT.PlayerState.PLAYING) {
+
+                checkLiveSync();
+
+            }
+
+        });
+
     </script>
+
 </body>
+
 </html>

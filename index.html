@@ -59,7 +59,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 10px 15px 20px 15px; /* Üst padding azaltılarak ortalama sağlandı */
+            padding: 10px 15px 20px 15px;
         }
 
         /* LOGO & 3D DÜNYA ALANI */
@@ -69,7 +69,7 @@
             margin-top: 0;
             position: relative;
             width: 100%;
-            height: 250px; /* Video yukarı çekilmesi için yükseklik optimize edildi */
+            height: 250px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -373,7 +373,7 @@
         const initialState = getCurrentStreamState();
         updateTrackLabels(initialState.songIndex);
 
-        // --- YOUTUBE API KURULUMU ---
+        // --- YOUTUBE API KURULUMU VE OTOMATİK GEÇİŞ ---
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('player-iframe', {
                 events: {
@@ -385,8 +385,11 @@
         function onPlayerStateChange(event) {
             if (event.data === YT.PlayerState.PLAYING) {
                 isPlayingState = true;
-            } else if (event.data === YT.PlayerState.PAUSED || event.data === YT.PlayerState.ENDED) {
+            } else if (event.data === YT.PlayerState.PAUSED) {
                 isPlayingState = false;
+            } else if (event.data === YT.PlayerState.ENDED) {
+                // Şarkı bittiğinde anında sıradakine geçip senkronize et
+                forceLiveSync();
             }
         }
 
@@ -395,27 +398,29 @@
 
             const state = getCurrentStreamState();
             const targetSong = songList[state.songIndex];
-            const currentVideoData = player.getVideoData();
 
-            if (!currentVideoData || currentVideoData.video_id !== targetSong.id) {
+            // Şarkı değiştiyse yeni video yükle
+            if (currentLoadedVideoId !== targetSong.id) {
                 currentLoadedVideoId = targetSong.id;
                 player.loadVideoById({
                     videoId: targetSong.id,
                     startSeconds: Math.floor(state.seekTo)
                 });
                 updateTrackLabels(state.songIndex);
+                isPlayingState = true;
                 return;
             }
 
+            // Aynı şarkıdaysa zaman sapmasını düzelt
             const currentTime = player.getCurrentTime();
             const timeDiff = Math.abs(currentTime - state.seekTo);
 
-            if (timeDiff > 2) {
+            if (timeDiff > 2.5) {
                 player.seekTo(state.seekTo, true);
             }
         }
 
-        // CANLI YAYINI ANINDA VE GARANTİ BAŞLATMA
+        // CANLI YAYINI BAŞLATMA
         function startRadio() {
             const blast = document.getElementById('blast-wave');
             blast.classList.remove('blast-active');
@@ -430,6 +435,7 @@
 
             const state = getCurrentStreamState();
             const targetSong = songList[state.songIndex];
+            currentLoadedVideoId = targetSong.id;
             const startSec = Math.floor(state.seekTo);
             const iframe = document.getElementById('player-iframe');
 
@@ -441,14 +447,13 @@
             }
 
             if (syncCheckInterval) clearInterval(syncCheckInterval);
+            // 2 saniyede bir otomatik yayın kontrolü yap
             syncCheckInterval = setInterval(() => {
-                if (isPlayingState) {
-                    forceLiveSync();
-                }
-            }, 3000);
+                forceLiveSync();
+            }, 2000);
         }
 
-        // --- THREE.JS 3D DÜNYA VE ÇİFT KATLI YÖRÜNGE METNİ ---
+        // --- THREE.JS 3D DÜNYA VE YÖRÜNGE METNİ ---
         const globeContainer = document.getElementById('globe-3d-container');
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(45, 440 / 250, 0.1, 1000);
@@ -489,7 +494,7 @@
         dirLight.position.set(5, 3, 5);
         scene.add(dirLight);
 
-        // EA$Y FM & 7/24 YÜZDE YÜZ MÜZİK YÖRÜNGE HALKASI
+        // YÖRÜNGE HALKASI METNİ
         let ringMesh = null;
 
         function createOrbitRingText() {
@@ -508,7 +513,7 @@
             ctx.shadowColor = '#ffffff';
             ctx.shadowBlur = 35;
 
-            // ÜST KAT: EA$Y FM (Büyütüldü: 160px)
+            // ÜST KAT: EA$Y FM
             ctx.font = '900 160px "Anton", sans-serif';
             ctx.fillText("EA$Y FM", canvas.width / 2, 160);
 

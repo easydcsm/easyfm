@@ -1,754 +1,1447 @@
 <!DOCTYPE html>
+
 <html lang="tr">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
     <title>EA$Y FM | CANLI</title>
+
     <!-- Google Fonts: Anton & Montserrat -->
+
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+
     
+
     <style>
+
         * {
+
             box-sizing: border-box;
+
             user-select: none;
-            -webkit-tap-highlight-color: transparent;
+
         }
 
-        html {
-            background-color: #000000 !important;
-            height: 100%;
+
+
+        html, body {
+
+            margin: 0;
+
+            padding: 0;
+
             width: 100%;
+
+            height: 100%;
+
             overflow: hidden;
-            /* Mobilde dokunarak esnetme / kaydırma efektini kilitler */
-            overscroll-behavior: none;
-            overscroll-behavior-y: none;
+
+            background-color: #000000;
+
+            color: #fff;
+
+            font-family: 'Montserrat', sans-serif;
+
         }
+
+
 
         body {
-            margin: 0;
-            padding: 0;
-            width: 100vw;
-            height: 100%;
-            height: 100dvh;
-            overflow: hidden;
-            background-color: #000000 !important;
-            color: #fff;
-            font-family: 'Montserrat', sans-serif;
+
             display: flex;
+
             flex-direction: column;
+
             align-items: center;
-            justify-content: space-between;
-            /* Sayfayı mobil ekrana sabitleyerek alt çubuk beyazlığını yok eder */
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            overscroll-behavior: none;
+
+            justify-content: center;
+
+            position: relative;
+
         }
+
+
 
         /* ARKA PLAN CANVAS */
+
         #bg-canvas {
+
             position: fixed;
+
             top: 0;
+
             left: 0;
+
             width: 100%;
+
             height: 100%;
+
             z-index: 1;
+
             pointer-events: none;
+
         }
+
+
 
         .ambient-glow {
+
             position: fixed;
+
             top: 50%;
+
             left: 50%;
+
             transform: translate(-50%, -50%);
+
             width: 80vw;
+
             height: 80vh;
+
             background: radial-gradient(circle, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.02) 50%, rgba(0, 0, 0, 0) 75%);
+
             z-index: 2;
+
             pointer-events: none;
+
         }
+
+
 
         .main-wrapper {
+
             position: relative;
+
             z-index: 10;
+
             width: 100%;
+
             max-width: 680px;
-            height: 100%;
+
+            height: 100vh;
+
             display: flex;
+
             flex-direction: column;
+
             align-items: center;
-            justify-content: space-between;
-            padding: 10px 15px calc(10px + env(safe-area-inset-bottom, 0px));
-            gap: 4px;
-            overflow: hidden;
+
+            justify-content: center;
+
+            padding: 10px 15px;
+
+            gap: 8px;
+
         }
+
+
 
         /* LOGO & 3D DÜNYA ALANI */
+
         .logo-container {
+
             text-align: center;
+
             position: relative;
+
             width: 100%;
-            height: 180px;
+
+            height: 230px;
+
             display: flex;
+
             align-items: center;
+
             justify-content: center;
+
             overflow: visible;
+
             margin-top: 0px;
-            margin-bottom: 10px;
-            flex-shrink: 0;
+
+            margin-bottom: 55px;
+
         }
+
+
 
         /* ANLIK PIRLANTA PATLAMA HALKASI */
+
         .blast-wave {
+
             position: absolute;
+
             top: 50%;
+
             left: 50%;
+
             transform: translate(-50%, -50%) scale(0.6);
+
             width: 220px;
+
             height: 220px;
+
             border-radius: 50%;
+
             border: 4px solid rgba(255, 255, 255, 1);
+
             box-shadow: 0 0 80px rgba(255, 255, 255, 1), inset 0 0 50px rgba(255, 255, 255, 0.9);
+
             opacity: 0;
+
             pointer-events: none;
+
             z-index: 5;
+
         }
+
+
 
         .blast-active {
+
             animation: fastExplode 0.4s cubic-bezier(0.0, 0.9, 0.2, 1) forwards;
+
         }
+
+
 
         @keyframes fastExplode {
+
             0% {
+
                 transform: translate(-50%, -50%) scale(0.6);
+
                 opacity: 1;
+
                 border-width: 10px;
+
             }
+
             100% {
+
                 transform: translate(-50%, -50%) scale(2.6);
+
                 opacity: 0;
+
                 border-width: 1px;
+
             }
+
         }
+
+
 
         #globe-3d-container {
-            width: 100%;
-            max-width: 480px;
-            height: 180px;
+
+            width: 480px;
+
+            height: 230px;
+
             position: relative;
+
             z-index: 2;
+
             overflow: visible;
+
         }
+
+
 
         /* BADGES BAR */
+
         .status-bar {
+
             display: flex;
+
             gap: 10px;
+
             flex-wrap: wrap;
+
             justify-content: center;
-            margin-top: 2px;
-            margin-bottom: 2px;
-            flex-shrink: 0;
+
+            margin-top: 15px;
+
+            margin-bottom: 5px;
+
         }
+
+
 
         .badge {
+
             background: rgba(18, 18, 18, 0.8);
+
             backdrop-filter: blur(10px);
+
             -webkit-backdrop-filter: blur(10px);
+
             border: 1px solid rgba(255, 255, 255, 0.2);
+
             padding: 5px 14px;
+
             border-radius: 30px;
+
             font-size: 10px;
+
             font-weight: 700;
+
             letter-spacing: 1.5px;
+
             display: flex;
+
             align-items: center;
+
             gap: 8px;
+
             text-transform: uppercase;
+
             box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
+
         }
+
+
 
         .live-dot {
+
             width: 7px;
+
             height: 7px;
+
             background-color: #ffffff;
+
             border-radius: 50%;
+
             box-shadow: 0 0 10px #ffffff;
+
             animation: pulse 1.5s infinite;
+
         }
+
+
 
         @keyframes pulse {
+
             0% { opacity: 1; transform: scale(1); }
+
             50% { opacity: 0.3; transform: scale(0.8); }
+
             100% { opacity: 1; transform: scale(1); }
+
         }
+
+
 
         /* VİDEO ÇERÇEVESİ VE OVERLAY */
+
         .video-container {
+
             position: relative;
+
             width: 100%;
-            padding-bottom: 48%;
+
+            padding-bottom: 46%;
+
             height: 0;
+
             border-radius: 14px;
+
             overflow: hidden;
+
             box-shadow: 0 10px 40px rgba(255, 255, 255, 0.08);
+
             border: 1px solid rgba(255, 255, 255, 0.2);
+
             transition: box-shadow 0.6s, border-color 0.6s;
+
             background: #000;
+
             margin: 0;
-            flex-shrink: 0;
+
         }
+
+
 
         #youtube-player {
+
             position: absolute;
+
             top: 0;
+
             left: 0;
+
             width: 100%;
+
             height: 100%;
+
             border: none;
+
         }
+
+
 
         #start-overlay {
+
             position: absolute;
+
             top: 0;
+
             left: 0;
+
             width: 100%;
+
             height: 100%;
+
             background: rgba(0, 0, 0, 0.92);
+
             z-index: 30;
+
             display: flex;
+
             flex-direction: column;
+
             align-items: center;
+
             justify-content: center;
+
             cursor: pointer;
+
             transition: opacity 0.6s ease, visibility 0.6s;
+
         }
+
+
 
         .start-btn {
+
             background: #ffffff;
+
             color: #000;
+
             font-family: 'Montserrat', sans-serif;
+
             font-weight: 900;
-            font-size: 13px;
-            padding: 12px 28px;
+
+            font-size: 14px;
+
+            padding: 12px 32px;
+
             border: none;
+
             border-radius: 50px;
+
             cursor: pointer;
+
             letter-spacing: 2px;
+
             box-shadow: 0 0 25px rgba(255, 255, 255, 0.6);
+
             transition: transform 0.3s, box-shadow 0.3s;
+
         }
+
+
 
         .start-btn:hover {
+
             transform: scale(1.05);
+
             box-shadow: 0 0 45px rgba(255, 255, 255, 1);
+
         }
+
+
 
         /* NOW PLAYING CARD */
+
         .now-playing-card {
+
             width: 100%;
+
             background: rgba(18, 18, 18, 0.85);
+
             backdrop-filter: blur(12px);
+
             -webkit-backdrop-filter: blur(12px);
+
             border: 1px solid rgba(255, 255, 255, 0.15);
+
             border-radius: 10px;
+
             padding: 10px 16px;
+
             display: flex;
+
             align-items: center;
+
             justify-content: space-between;
+
             box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+
             margin: 0;
-            flex-shrink: 0;
+
         }
+
+
 
         .track-info {
+
             display: flex;
+
             flex-direction: column;
+
             gap: 2px;
+
             overflow: hidden;
+
         }
+
+
 
         .track-label {
+
             font-size: 8px;
+
             font-weight: 900;
+
             letter-spacing: 2px;
+
             color: #888;
+
             text-transform: uppercase;
+
         }
+
+
 
         .track-title {
+
             font-size: 13px;
+
             font-weight: 800;
+
             color: #fff;
+
             white-space: nowrap;
+
             overflow: hidden;
+
             text-overflow: ellipsis;
+
         }
+
+
 
         .next-track {
+
             font-size: 9px;
+
             color: #aaa;
+
             text-align: right;
+
             max-width: 40%;
+
             white-space: nowrap;
+
             overflow: hidden;
+
             text-overflow: ellipsis;
+
         }
+
+
 
         #visualizer-canvas {
+
             width: 100%;
+
             height: 20px;
+
             margin: 0;
+
             transition: opacity 1s ease;
-            flex-shrink: 0;
+
         }
+
     </style>
 
+
+
     <!-- Three.js -->
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
     <!-- Firebase SDK -->
+
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
 </head>
+
 <body>
 
+
+
     <canvas id="bg-canvas"></canvas>
+
     <div class="ambient-glow"></div>
 
+
+
     <div class="main-wrapper" id="main-wrapper">
+
         <div class="logo-container">
+
             <div class="blast-wave" id="blast-wave"></div>
+
             <div id="globe-3d-container"></div>
+
         </div>
+
+
 
         <div class="status-bar">
+
             <div class="badge">
+
                 <span class="live-dot"></span>
+
                 <span>CANLI YAYIN</span>
+
             </div>
+
             <div class="badge">
+
                 <span>🎧 DİNLEYİCİ: <strong id="listener-count" style="color: #ffffff;">0</strong></span>
+
             </div>
+
         </div>
+
+
 
         <div class="video-container">
+
             <div id="start-overlay">
+
                 <button class="start-btn" id="start-btn-el">CANLI YAYINA KATIL</button>
+
             </div>
+
             <div id="youtube-player"></div>
+
         </div>
+
+
 
         <div class="now-playing-card">
+
             <div class="track-info">
+
                 <span class="track-label">ŞU AN YAYINDA</span>
+
                 <span class="track-title" id="current-track-name">Canlı Yayın Bekleniyor...</span>
+
             </div>
+
             <div class="next-track">
+
                 <div class="track-label" style="text-align: right;">SIRADAKİ</div>
+
                 <span id="next-track-name">---</span>
+
             </div>
+
         </div>
 
+
+
         <canvas id="visualizer-canvas"></canvas>
+
     </div>
 
+
+
     <script>
-        // Mobilde dokunarak sayfayı aşağı/yukarı kaydırmayı (rubber-banding / bounce) engeller
-        document.addEventListener('touchmove', function(e) {
-            e.preventDefault();
-        }, { passive: false });
 
         let player = null;
+
         let isPlayerReady = false;
+
         let isPlayingState = false;
+
         let currentLoadedVideoId = null;
+
         let syncCheckInterval = null;
 
+
+
         const songList = [
+
             { id: '1IEg_3x35go', duration: 120, title: 'FRANCHISE' },
+
             { id: 'qAlF70MdfwU', duration: 207, title: 'OUT WEST' }, 
+
             { id: 'L_BpiSsIBFM', duration: 236, title: 'BROTHER STONE' }, 
+
             { id: 'cTGQrA5HHIU', duration: 204, title: 'WITH THAT' }, 
+
             { id: 'ftaXMKV3ffE', duration: 160, title: 'BACKR00MS' },
+
             { id: 'LPTlvQ1Zet0', duration: 188, title: 'RIC FLAIR DRIP' },
+
             { id: 'EfHNIPXTxy0', duration: 276, title: 'ZEZE' }
+
         ];
 
+
+
         const STREAM_START_TIME = 1700000000; 
+
         const totalPlaylistDuration = songList.reduce((acc, song) => acc + song.duration, 0);
 
+
+
         function getCurrentStreamState() {
+
             const nowInSeconds = Math.floor(Date.now() / 1000);
+
             const elapsedTime = (nowInSeconds - STREAM_START_TIME) % totalPlaylistDuration;
+
             let accumulatedTime = 0;
+
             for (let i = 0; i < songList.length; i++) {
+
                 if (elapsedTime < accumulatedTime + songList[i].duration) {
+
                     return {
+
                         songIndex: i,
+
                         seekTo: elapsedTime - accumulatedTime
+
                     };
+
                 }
+
                 accumulatedTime += songList[i].duration;
+
             }
+
             return { songIndex: 0, seekTo: 0 };
+
         }
+
+
 
         function updateTrackLabels(currentIndex) {
+
             const currentSong = songList[currentIndex];
+
             const nextIndex = (currentIndex + 1) % songList.length;
+
             const nextSong = songList[nextIndex];
 
+
+
             document.getElementById('current-track-name').innerText = currentSong.title;
+
             document.getElementById('next-track-name').innerText = nextSong.title;
+
         }
+
+
 
         const initialState = getCurrentStreamState();
+
         updateTrackLabels(initialState.songIndex);
 
+
+
         // YOUTUBE API YÜKLEME VE KURULUM
+
         const tag = document.createElement('script');
+
         tag.src = "https://www.youtube.com/iframe_api";
+
         document.head.appendChild(tag);
 
+
+
         function onYouTubeIframeAPIReady() {
+
             const state = getCurrentStreamState();
+
             const targetSong = songList[state.songIndex];
+
             currentLoadedVideoId = targetSong.id;
 
+
+
             player = new YT.Player('youtube-player', {
+
                 videoId: targetSong.id,
+
                 playerVars: {
+
                     'autoplay': 0,
+
                     'controls': 1,
+
                     'rel': 0,
+
                     'playsinline': 1,
+
                     'enablejsapi': 1,
+
                     'start': Math.floor(state.seekTo)
+
                 },
+
                 events: {
+
                     'onReady': () => { isPlayerReady = true; },
+
                     'onStateChange': onPlayerStateChange
+
                 }
+
             });
+
         }
+
+
 
         function onPlayerStateChange(event) {
+
             if (event.data === YT.PlayerState.PLAYING) {
+
                 isPlayingState = true;
+
             } else {
+
                 isPlayingState = false;
+
             }
+
         }
 
+
+
         // OTOMATİK CANLI SENKRONİZASYON VE GERİ ATMA
+
         function syncToLiveStream() {
+
             if (!isPlayerReady || !player) return;
 
+
+
             const state = getCurrentStreamState();
+
             const targetSong = songList[state.songIndex];
+
+
 
             updateTrackLabels(state.songIndex);
 
+
+
+            // Yanlış şarkı çalıyorsa canlıdaki şarkıya fırlat
+
             if (currentLoadedVideoId !== targetSong.id) {
+
                 currentLoadedVideoId = targetSong.id;
+
                 player.loadVideoById({
+
                     videoId: targetSong.id,
+
                     startSeconds: Math.floor(state.seekTo)
+
                 });
+
                 player.playVideo();
+
                 return;
+
             }
+
+
+
+            // Doğru şarkıdaysa ve saniye farkı 3 saniyeden fazlaysa canlı süresine zıplat
 
             if (typeof player.getCurrentTime === 'function') {
+
                 const currentTime = player.getCurrentTime();
+
                 const timeDiff = Math.abs(currentTime - state.seekTo);
+
                 if (timeDiff > 3) {
+
                     player.seekTo(state.seekTo, true);
+
                     player.playVideo();
+
                 }
+
             }
+
         }
+
+
 
         // BUTONA BASILDIĞINDA TETİKLENEN CANLI BAŞLATMA
+
         function handleUserClick() {
+
             const blast = document.getElementById('blast-wave');
+
             blast.classList.remove('blast-active');
+
             void blast.offsetWidth;
+
             blast.classList.add('blast-active');
 
+
+
             const overlay = document.getElementById('start-overlay');
+
             overlay.style.opacity = '0';
+
             setTimeout(() => { 
+
                 overlay.style.visibility = 'hidden'; 
+
             }, 600);
 
+
+
             const startPlaying = () => {
+
                 const state = getCurrentStreamState();
+
                 const targetSong = songList[state.songIndex];
 
+
+
                 updateTrackLabels(state.songIndex);
+
                 currentLoadedVideoId = targetSong.id;
 
+
+
                 if (typeof player.unMute === 'function') {
+
                     player.unMute();
+
                 }
 
+
+
                 player.loadVideoById({
+
                     videoId: targetSong.id,
+
                     startSeconds: Math.floor(state.seekTo)
+
                 });
+
                 player.playVideo();
+
                 isPlayingState = true;
 
+
+
+                // Her 3 saniyede bir akıştan sapma olup olmadığını kontrol et
+
                 if (syncCheckInterval) clearInterval(syncCheckInterval);
+
                 syncCheckInterval = setInterval(syncToLiveStream, 3000);
+
             };
 
+
+
             if (isPlayerReady && player) {
+
                 startPlaying();
+
             } else {
+
                 const checkReady = setInterval(() => {
+
                     if (isPlayerReady && player) {
+
                         clearInterval(checkReady);
+
                         startPlaying();
+
                     }
+
                 }, 100);
+
             }
+
         }
 
+
+
         document.getElementById('start-overlay').addEventListener('click', handleUserClick);
+
         document.getElementById('start-btn-el').addEventListener('click', (e) => {
+
             e.stopPropagation();
+
             handleUserClick();
+
         });
+
+
 
         // THREE.JS 3D DÜNYA VE YÖRÜNGE METNİ
+
         const globeContainer = document.getElementById('globe-3d-container');
+
         const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(45, globeContainer.offsetWidth / globeContainer.offsetHeight, 0.1, 1000);
+
+        const camera = new THREE.PerspectiveCamera(45, 480 / 230, 0.1, 1000);
+
         const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-        renderer.setSize(globeContainer.offsetWidth, globeContainer.offsetHeight);
+
+        renderer.setSize(480, 230);
+
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
         globeContainer.appendChild(renderer.domElement);
 
+
+
         const textureLoader = new THREE.TextureLoader();
+
         const earthTexture = textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_atmos_2048.jpg');
 
+
+
         const baseRadius = 1.85;
+
         const geometry = new THREE.SphereGeometry(baseRadius, 64, 64);
+
         const material = new THREE.MeshStandardMaterial({
+
             map: earthTexture,
+
             roughness: 0.4,
+
             metalness: 0.3
+
         });
+
         const globeMesh = new THREE.Mesh(geometry, material);
+
         scene.add(globeMesh);
 
+
+
         const atmosGeo = new THREE.SphereGeometry(baseRadius + 0.04, 64, 64);
+
         const atmosMat = new THREE.MeshBasicMaterial({
+
             color: 0xffffff,
+
             transparent: true,
+
             opacity: 0.12,
+
             side: THREE.BackSide
+
         });
+
         const atmosMesh = new THREE.Mesh(atmosGeo, atmosMat);
+
         scene.add(atmosMesh);
 
+
+
         const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
+
         scene.add(ambientLight);
 
+
+
         const dirLight = new THREE.DirectionalLight(0xffffff, 1.5);
+
         dirLight.position.set(5, 3, 5);
+
         scene.add(dirLight);
+
+
 
         let ringMesh = null;
 
+
+
         function createOrbitRingText() {
+
             const canvas = document.createElement('canvas');
+
             canvas.width = 2048;
+
             canvas.height = 512;
+
             const ctx = canvas.getContext('2d');
 
+
+
             ctx.fillStyle = 'transparent';
+
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+
+
             ctx.textAlign = 'center';
+
             ctx.textBaseline = 'middle';
+
             ctx.fillStyle = '#ffffff';
 
+
+
             ctx.shadowColor = '#ffffff';
+
             ctx.shadowBlur = 35;
 
+
+
             ctx.font = '900 160px "Anton", sans-serif';
+
             ctx.fillText("EA$Y FM", canvas.width / 2, 160);
 
+
+
             ctx.font = '900 65px "Montserrat", sans-serif';
+
             ctx.letterSpacing = '6px';
+
             ctx.fillText("7/24 YÜZDE YÜZ MÜZİK", canvas.width / 2, 340);
 
+
+
             const ringTex = new THREE.CanvasTexture(canvas);
+
             ringTex.minFilter = THREE.LinearFilter;
+
             ringTex.magFilter = THREE.LinearFilter;
+
             ringTex.anisotropy = renderer.capabilities.getMaxAnisotropy();
 
+
+
             const ringGeo = new THREE.CylinderGeometry(baseRadius + 0.30, baseRadius + 0.30, 1.0, 64, 1, true);
+
             const ringMat = new THREE.MeshBasicMaterial({
+
                 map: ringTex,
+
                 transparent: true,
+
                 side: THREE.DoubleSide,
+
                 depthWrite: false
+
             });
 
+
+
             ringMesh = new THREE.Mesh(ringGeo, ringMat);
+
             ringMesh.rotation.z = 0.10;
+
             scene.add(ringMesh);
+
         }
 
+
+
         document.fonts.ready.then(() => {
+
             createOrbitRingText();
+
         });
+
+
 
         camera.position.z = 5.2;
 
+
+
         let bassAngle = 0;
 
+
+
         function animateGlobe() {
+
             requestAnimationFrame(animateGlobe);
 
+
+
             const globeSpeed = isPlayingState ? 0.006 : 0.002;
+
             const ringSpeed = isPlayingState ? 0.009 : 0.003;
 
+
+
             globeMesh.rotation.y += globeSpeed;
+
             if (ringMesh) ringMesh.rotation.y -= ringSpeed;
 
+
+
             if (isPlayingState) {
+
                 bassAngle += 0.08;
+
                 const bassScale = 1 + Math.pow(Math.sin(bassAngle), 6) * 0.05;
+
                 globeMesh.scale.set(bassScale, bassScale, bassScale);
+
                 atmosMesh.scale.set(bassScale, bassScale, bassScale);
+
             } else {
+
                 globeMesh.scale.lerp(new THREE.Vector3(1, 1, 1), 0.1);
+
                 atmosMesh.scale.lerp(new THREE.Vector3(1, 1, 1), 0.1);
+
             }
+
+
 
             renderer.render(scene, camera);
+
         }
+
         animateGlobe();
 
+
+
         // PARÇACIK ANİMASYONU
+
         const canvas = document.getElementById('bg-canvas');
+
         const ctx = canvas.getContext('2d');
+
         let particlesArray = [];
 
+
+
         function resizeCanvas() {
+
             canvas.width = window.innerWidth;
+
             canvas.height = window.innerHeight;
-            
-            if (camera && renderer && globeContainer) {
-                camera.aspect = globeContainer.offsetWidth / globeContainer.offsetHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize(globeContainer.offsetWidth, globeContainer.offsetHeight);
-            }
+
         }
+
         window.addEventListener('resize', resizeCanvas);
+
         resizeCanvas();
 
+
+
         class DiamondParticle {
+
             constructor() {
+
                 this.x = Math.random() * canvas.width;
+
                 this.y = Math.random() * canvas.height;
+
                 this.size = Math.random() * 2.8 + 0.8;
+
                 this.speedX = (Math.random() - 0.5) * 0.3;
+
                 this.speedY = (Math.random() - 0.5) * 0.3;
+
                 this.opacity = Math.random() * 0.8 + 0.2;
+
             }
+
+
 
             update() {
+
                 this.x += this.speedX;
+
                 this.y += this.speedY;
+
                 if (this.x < 0) this.x = canvas.width;
+
                 if (this.x > canvas.width) this.x = 0;
+
                 if (this.y < 0) this.y = canvas.height;
+
                 if (this.y > canvas.height) this.y = 0;
+
             }
 
+
+
             draw() {
+
                 ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+
                 ctx.beginPath();
+
                 ctx.moveTo(this.x, this.y - this.size);
+
                 ctx.lineTo(this.x + this.size, this.y);
+
                 ctx.lineTo(this.x, this.y + this.size);
+
                 ctx.lineTo(this.x - this.size, this.y);
+
                 ctx.closePath();
+
                 ctx.fill();
+
             }
+
         }
+
+
 
         for (let i = 0; i < 50; i++) particlesArray.push(new DiamondParticle());
 
+
+
         function animateParticles() {
+
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+
             particlesArray.forEach(p => { p.update(); p.draw(); });
+
             requestAnimationFrame(animateParticles);
+
         }
+
         animateParticles();
 
+
+
         // FIREBASE SAYAÇ
+
         const firebaseConfig = {
+
             apiKey: "AIzaSyBaTlb6V6e4FMLTYNXAPBgdzsgiclL8Qw8",
+
             authDomain: "easyfm-37b9e.firebaseapp.com",
+
             databaseURL: "https://easyfm-37b9e-default-rtdb.firebaseio.com",
+
             projectId: "easyfm-37b9e",
+
             storageBucket: "easyfm-37b9e.firebasestorage.app",
+
             messagingSenderId: "869244564550",
+
             appId: "1:869244564550:web:f0824148dbcae6b7024647"
+
         };
+
         firebase.initializeApp(firebaseConfig);
+
         const db = firebase.database();
+
         const myConnectionsRef = db.ref('online_listeners');
+
         db.ref('.info/connected').on('value', (snap) => {
+
             if (snap.val() === true) {
+
                 const con = myConnectionsRef.push();
+
                 con.onDisconnect().remove();
+
                 con.set(true);
+
             }
+
         });
+
         myConnectionsRef.on('value', (snap) => {
+
             document.getElementById('listener-count').innerText = snap.numChildren();
+
         });
+
+
 
         // SPEKTRUM VISUALIZER
+
         const vCanvas = document.getElementById('visualizer-canvas');
+
         const vCtx = vCanvas.getContext('2d');
+
         const numBars = 36;
+
         let barHeights = new Array(numBars).fill(2);
 
+
+
         function drawVisualizer() {
+
             vCanvas.width = vCanvas.offsetWidth;
+
             vCanvas.height = vCanvas.offsetHeight;
+
             vCtx.clearRect(0, 0, vCanvas.width, vCanvas.height);
+
+
 
             const barWidth = (vCanvas.width / numBars) - 4;
 
+
+
             for (let i = 0; i < numBars; i++) {
+
                 if (isPlayingState) {
+
                     const target = Math.random() * (vCanvas.height - 4) + 4;
+
                     barHeights[i] += (target - barHeights[i]) * 0.12;
+
                 } else {
+
                     barHeights[i] += (2 - barHeights[i]) * 0.1;
+
                 }
 
+
+
                 const x = i * (barWidth + 4);
+
                 const y = vCanvas.height - barHeights[i];
 
+
+
                 vCtx.fillStyle = '#ffffff';
+
                 vCtx.fillRect(x, y, barWidth, barHeights[i]);
+
             }
+
             requestAnimationFrame(drawVisualizer);
+
         }
+
         drawVisualizer();
+
     </script>
+
 </body>
+
 </html>

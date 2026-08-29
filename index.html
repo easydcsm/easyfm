@@ -237,7 +237,7 @@
             100% { opacity: 1; transform: scale(1); }
         }
 
-        /* UFAKTILMIŞ VİDEO KONTEYNERİ */
+        /* ALT KONTROL BARI KIRPILMIŞ DÜZENLEME */
         .video-container {
             position: relative;
             width: 80%;
@@ -245,7 +245,7 @@
             padding-bottom: 36.56%;
             height: 0;
             border-radius: 16px;
-            overflow: hidden;
+            overflow: hidden; /* Kontrol barının taşan alt kısmını gizler */
             box-shadow: 0 10px 40px rgba(255, 255, 255, 0.08);
             border: 1px solid #222222;
             transition: box-shadow 0.4s, border-color 0.4s;
@@ -256,7 +256,7 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
+            height: 120%; /* İframe boyutu büyütülerek alttaki butonlar çerçeve dışına itilir */
             border: none;
         }
 
@@ -684,13 +684,13 @@
                 videoId: currentLoadedVideoId,
                 playerVars: {
                     'autoplay': 0,
-                    'controls': 1,            // Reklam atlama ve tıklama için açık kalmalı
-                    'cc_load_policy': 0,      // Altyazıları varsayılan olarak KAPATIR
-                    'iv_load_policy': 3,      // Video içi kartları/notları GİZLER
-                    'fs': 0,                  // Tam ekran butonunu GİZLER
-                    'modestbranding': 1,      // YouTube logosunu küçültür
-                    'rel': 0,                  // İlgili videoları kısıtlar
-                    'disablekb': 1,           // Klavye kısayollarını devre dışı bırakır
+                    'controls': 1,
+                    'cc_load_policy': 0,
+                    'iv_load_policy': 3,
+                    'fs': 0,
+                    'modestbranding': 1,
+                    'rel': 0,
+                    'disablekb': 1,
                     'playsinline': 1
                 },
                 events: {

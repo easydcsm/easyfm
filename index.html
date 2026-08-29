@@ -117,7 +117,8 @@
         }
 
         #globe-3d-container {
-            width: 480px;
+            width: 100%;
+            max-width: 480px;
             height: 230px;
             position: relative;
             z-index: 2;
@@ -282,6 +283,36 @@
             margin: 0;
             transition: opacity 1s ease;
         }
+
+        /* MOBİL UYUMLULUK DÜZELTMELERİ */
+        @media (max-width: 600px) {
+            .main-wrapper {
+                padding: 10px 12px;
+                justify-content: space-evenly;
+            }
+
+            .logo-container {
+                height: 180px;
+                margin-bottom: 20px;
+            }
+
+            #globe-3d-container {
+                height: 180px;
+            }
+
+            .status-bar {
+                margin-top: 5px;
+            }
+
+            .now-playing-card {
+                padding: 8px 12px;
+            }
+
+            .start-btn {
+                font-size: 12px;
+                padding: 10px 24px;
+            }
+        }
     </style>
 
     <!-- Three.js -->
@@ -424,7 +455,6 @@
 
             updateTrackLabels(state.songIndex);
 
-            // Yanlış şarkı çalıyorsa canlıdaki şarkıya fırlat
             if (currentLoadedVideoId !== targetSong.id) {
                 currentLoadedVideoId = targetSong.id;
                 player.loadVideoById({
@@ -435,7 +465,6 @@
                 return;
             }
 
-            // Doğru şarkıdaysa ve saniye farkı 3 saniyeden fazlaysa canlı süresine zıplat
             if (typeof player.getCurrentTime === 'function') {
                 const currentTime = player.getCurrentTime();
                 const timeDiff = Math.abs(currentTime - state.seekTo);
@@ -477,7 +506,6 @@
                 player.playVideo();
                 isPlayingState = true;
 
-                // Her 3 saniyede bir akıştan sapma olup olmadığını kontrol et
                 if (syncCheckInterval) clearInterval(syncCheckInterval);
                 syncCheckInterval = setInterval(syncToLiveStream, 3000);
             };
@@ -500,14 +528,28 @@
             handleUserClick();
         });
 
-        // THREE.JS 3D DÜNYA VE YÖRÜNGE METNİ
+        // THREE.JS 3D DÜNYA VE YÖRÜNGE METNİ (RESPONSIVE)
         const globeContainer = document.getElementById('globe-3d-container');
+        let containerW = globeContainer.clientWidth || 340;
+        let containerH = globeContainer.clientHeight || 230;
+
         const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(45, 480 / 230, 0.1, 1000);
+        const camera = new THREE.PerspectiveCamera(45, containerW / containerH, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-        renderer.setSize(480, 230);
+        renderer.setSize(containerW, containerH);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         globeContainer.appendChild(renderer.domElement);
+
+        function updateCameraDistance() {
+            if (window.innerWidth <= 400) {
+                camera.position.z = 7.0;
+            } else if (window.innerWidth <= 600) {
+                camera.position.z = 6.2;
+            } else {
+                camera.position.z = 5.2;
+            }
+        }
+        updateCameraDistance();
 
         const textureLoader = new THREE.TextureLoader();
         const earthTexture = textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_atmos_2048.jpg');
@@ -586,8 +628,6 @@
             createOrbitRingText();
         });
 
-        camera.position.z = 5.2;
-
         let bassAngle = 0;
 
         function animateGlobe() {
@@ -613,17 +653,26 @@
         }
         animateGlobe();
 
-        // PARÇACIK ANİMASYONU
+        // PARÇACIK ANİMASYONU VE RESIZE
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
         let particlesArray = [];
 
-        function resizeCanvas() {
+        function handleResize() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
+
+            const w = globeContainer.clientWidth;
+            const h = globeContainer.clientHeight;
+            if (w && h) {
+                camera.aspect = w / h;
+                updateCameraDistance();
+                camera.updateProjectionMatrix();
+                renderer.setSize(w, h);
+            }
         }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
+        window.addEventListener('resize', handleResize);
+        handleResize();
 
         class DiamondParticle {
             constructor() {

@@ -141,11 +141,11 @@
         /* LOGO & 3D DÜNYA ALANI */
         .logo-container {
             text-align: center;
-            margin-bottom: 25px;
-            margin-top: 10px;
+            margin-bottom: 15px;
+            margin-top: 5px;
             position: relative;
             width: 100%;
-            height: 360px;
+            height: 300px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -158,8 +158,8 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%) scale(0.6);
-            width: 220px;
-            height: 220px;
+            width: 200px;
+            height: 200px;
             border-radius: 50%;
             border: 4px solid rgba(255, 255, 255, 1);
             box-shadow: 0 0 80px rgba(255, 255, 255, 1), inset 0 0 50px rgba(255, 255, 255, 0.9);
@@ -186,21 +186,11 @@
         }
 
         #globe-3d-container {
-            width: 480px;
-            height: 340px;
+            width: 440px;
+            height: 280px;
             position: relative;
             z-index: 2;
             overflow: visible;
-            transition: transform 0.6s ease;
-        }
-
-        .is-playing #globe-3d-container {
-            animation: smoothGlobePulse 2s ease-in-out infinite alternate;
-        }
-
-        @keyframes smoothGlobePulse {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.04); }
         }
 
         .subtitle {
@@ -273,7 +263,7 @@
             background: #000;
         }
 
-        .video-container iframe {
+        #player-iframe {
             position: absolute;
             top: 0;
             left: 0;
@@ -375,9 +365,10 @@
         }
     </style>
 
-    <!-- Three.js (3D WebGL Motoru) -->
+    <!-- Three.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-
+    <!-- YouTube IFrame API -->
+    <script src="https://www.youtube.com/iframe_api"></script>
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -416,7 +407,7 @@
             <div id="start-overlay" onclick="startRadio()">
                 <button class="start-btn">CANLI YAYINA KATIL</button>
             </div>
-            <iframe id="player-iframe" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+            <div id="player-iframe"></div>
         </div>
 
         <div class="now-playing-card">
@@ -434,28 +425,166 @@
     </div>
 
     <script>
+        let player = null;
         let isPlayingState = false;
-        let checkAudioInterval = null;
-        let autoSyncInterval = null;
+        let ytApiReady = false;
         let currentLoadedVideoId = null;
+        let syncCheckInterval = null;
 
         function toggleDiamondGlow(checkbox) {
             document.body.classList.toggle('diamond-mode-active', checkbox.checked);
         }
 
-        // --- THREE.JS HD BANT/YAZI ÇÖZÜNÜRLÜĞÜ ---
+        // --- PLAYLIST VE ZAMAN HESAPLAMALARI ---
+        const songList = [
+            { id: '1IEg_3x35go', duration: 120, title: 'FRANCHISE' },
+            { id: 'qAlF70MdfwU', duration: 207, title: 'OUT WEST' }, 
+            { id: 'L_BpiSsIBFM', duration: 236, title: 'BROTHER STONE' }, 
+            { id: 'cTGQrA5HHIU', duration: 204, title: 'WITH THAT' }, 
+            { id: 'ftaXMKV3ffE', duration: 160, title: 'BACKR00MS' },
+            { id: 'LPTlvQ1Zet0', duration: 188, title: 'RIC FLAIR DRIP' },
+            { id: 'EfHNIPXTxy0', duration: 276, title: 'ZEZE' }
+        ];
+
+        const STREAM_START_TIME = 1700000000; 
+        const totalPlaylistDuration = songList.reduce((acc, song) => acc + song.duration, 0);
+
+        function getCurrentStreamState() {
+            const nowInSeconds = Math.floor(Date.now() / 1000);
+            const elapsedTime = (nowInSeconds - STREAM_START_TIME) % totalPlaylistDuration;
+            let accumulatedTime = 0;
+            for (let i = 0; i < songList.length; i++) {
+                if (elapsedTime < accumulatedTime + songList[i].duration) {
+                    return {
+                        songIndex: i,
+                        seekTo: elapsedTime - accumulatedTime
+                    };
+                }
+                accumulatedTime += songList[i].duration;
+            }
+            return { songIndex: 0, seekTo: 0 };
+        }
+
+        function updateTrackLabels(currentIndex) {
+            const currentSong = songList[currentIndex];
+            const nextIndex = (currentIndex + 1) % songList.length;
+            const nextSong = songList[nextIndex];
+
+            document.getElementById('current-track-name').innerText = currentSong.title;
+            document.getElementById('next-track-name').innerText = nextSong.title;
+        }
+
+        const initialState = getCurrentStreamState();
+        updateTrackLabels(initialState.songIndex);
+
+        // --- YOUTUBE API KURULUMU ---
+        function onYouTubeIframeAPIReady() {
+            ytApiReady = true;
+            const state = getCurrentStreamState();
+            const targetSong = songList[state.songIndex];
+
+            player = new YT.Player('player-iframe', {
+                videoId: targetSong.id,
+                playerVars: {
+                    'autoplay': 0,
+                    'controls': 1,
+                    'rel': 0,
+                    'start': Math.floor(state.seekTo),
+                    'enablejsapi': 1
+                },
+                events: {
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+        }
+
+        function onPlayerStateChange(event) {
+            // YouTube Oynatıcı Durumları: PLAYING (1), PAUSED (2), BUFFERING (3), CUED (5)
+            if (event.data === YT.PlayerState.PLAYING) {
+                isPlayingState = true;
+                forceLiveSync(); // Oynatma başladığı an tam senkronize canlı saniyeye çek
+            } else if (event.data === YT.PlayerState.PAUSED || event.data === YT.PlayerState.ENDED) {
+                isPlayingState = false; // Duraklatılınca dünyayı ve alt çizgileri durdur
+            }
+        }
+
+        // CANLI AKIŞ SENKRONİZASYON KONTROLÜ (GERİ/İLERİ SARMAYI CANLIYA CEKER)
+        function forceLiveSync() {
+            if (!player || typeof player.getCurrentTime !== 'function') return;
+
+            const state = getCurrentStreamState();
+            const targetSong = songList[state.songIndex];
+            const currentVideoData = player.getVideoData();
+
+            // Eğer şarkı değişmişse yeni şarkıyı yükle ve canlı saniyeden başlat
+            if (!currentVideoData || currentVideoData.video_id !== targetSong.id) {
+                currentLoadedVideoId = targetSong.id;
+                player.loadVideoById({
+                    videoId: targetSong.id,
+                    startSeconds: Math.floor(state.seekTo)
+                });
+                updateTrackLabels(state.songIndex);
+                return;
+            }
+
+            // Şarkı aynıysa, oynatıcının saniyesini gerçek canlı saniye ile kıyasla
+            const currentTime = player.getCurrentTime();
+            const timeDiff = Math.abs(currentTime - state.seekTo);
+
+            // Eğer sapma 2 saniyeden fazlaysa (durdurup bekleme veya sarma durumu) canlı saniyeye fırlat
+            if (timeDiff > 2) {
+                player.seekTo(state.seekTo, true);
+            }
+        }
+
+        function startRadio() {
+            const blast = document.getElementById('blast-wave');
+            blast.classList.remove('blast-active');
+            void blast.offsetWidth;
+            blast.classList.add('blast-active');
+
+            const overlay = document.getElementById('start-overlay');
+            overlay.style.opacity = '0';
+            setTimeout(() => { 
+                overlay.style.visibility = 'hidden'; 
+            }, 600);
+
+            if (player && typeof player.playVideo === 'function') {
+                const state = getCurrentStreamState();
+                const targetSong = songList[state.songIndex];
+                
+                player.loadVideoById({
+                    videoId: targetSong.id,
+                    startSeconds: Math.floor(state.seekTo)
+                });
+                player.playVideo();
+                isPlayingState = true;
+            }
+
+            // Sürekli canlı akış kontrolü (Her 3 saniyede bir sapmayı denetle)
+            if (syncCheckInterval) clearInterval(syncCheckInterval);
+            syncCheckInterval = setInterval(() => {
+                if (isPlayingState) {
+                    forceLiveSync();
+                }
+            }, 3000);
+        }
+
+        // --- THREE.JS 3D KÜÇÜLTÜLMÜŞ DÜNYA VE BASS PATLAMA EFEKTİ ---
         const globeContainer = document.getElementById('globe-3d-container');
         const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(45, 480 / 340, 0.1, 1000);
+        const camera = new THREE.PerspectiveCamera(45, 440 / 280, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-        renderer.setSize(480, 340);
+        renderer.setSize(440, 280);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         globeContainer.appendChild(renderer.domElement);
 
         const textureLoader = new THREE.TextureLoader();
         const earthTexture = textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_atmos_2048.jpg');
 
-        const geometry = new THREE.SphereGeometry(1.85, 64, 64);
+        // Yarıçap 1.85'ten 1.45'e küçültüldü (Dünya Küçültüldü)
+        const baseRadius = 1.45;
+        const geometry = new THREE.SphereGeometry(baseRadius, 64, 64);
         const material = new THREE.MeshStandardMaterial({
             map: earthTexture,
             roughness: 0.4,
@@ -465,7 +594,7 @@
         scene.add(globeMesh);
 
         // Atmosfer Katmanı
-        const atmosGeo = new THREE.SphereGeometry(1.88, 64, 64);
+        const atmosGeo = new THREE.SphereGeometry(baseRadius + 0.03, 64, 64);
         const atmosMat = new THREE.MeshBasicMaterial({
             color: 0xffffff,
             transparent: true,
@@ -483,7 +612,7 @@
         dirLight.position.set(5, 3, 5);
         scene.add(dirLight);
 
-        // ULTRA HD HD "EA$Y FM" TEK YAZI SILINDIR HALKASI (2048x256 Yüksek Çözünürlük)
+        // EA$Y FM YÖRÜNGE HALKASI (2048x256 Ultra HD)
         let ringMesh = null;
 
         function createOrbitRingText() {
@@ -503,7 +632,6 @@
             ctx.shadowColor = '#ffffff';
             ctx.shadowBlur = 35;
 
-            // ULTRA HD TEK EA$Y FM YAZISI
             ctx.fillText("EA$Y FM", canvas.width / 2, canvas.height / 2);
 
             const ringTex = new THREE.CanvasTexture(canvas);
@@ -511,7 +639,7 @@
             ringTex.magFilter = THREE.LinearFilter;
             ringTex.anisotropy = renderer.capabilities.getMaxAnisotropy();
 
-            const ringGeo = new THREE.CylinderGeometry(2.1, 2.1, 0.5, 64, 1, true);
+            const ringGeo = new THREE.CylinderGeometry(baseRadius + 0.22, baseRadius + 0.22, 0.45, 64, 1, true);
             const ringMat = new THREE.MeshBasicMaterial({
                 map: ringTex,
                 transparent: true,
@@ -528,22 +656,34 @@
             createOrbitRingText();
         });
 
-        camera.position.z = 5.6;
+        camera.position.z = 5.2;
+
+        let bassAngle = 0;
 
         function animateGlobe() {
             requestAnimationFrame(animateGlobe);
 
-            globeMesh.rotation.y += isPlayingState ? 0.005 : 0.002;
+            if (isPlayingState) {
+                // Dünya ve Halkayı Döndür
+                globeMesh.rotation.y += 0.005;
+                if (ringMesh) ringMesh.rotation.y -= 0.008;
 
-            if (ringMesh) {
-                ringMesh.rotation.y -= isPlayingState ? 0.008 : 0.0035;
+                // BASS PATLAMA / RİTİM EFEKTİ (Dinamik Ölçekleme)
+                bassAngle += 0.08;
+                const bassScale = 1 + Math.pow(Math.sin(bassAngle), 6) * 0.06; // Ritimli bass vurma hareketi
+                globeMesh.scale.set(bassScale, bassScale, bassScale);
+                atmosMesh.scale.set(bassScale, bassScale, bassScale);
+            } else {
+                // Video durduysa yumuşakça varsayılan boyuta dön ve dur
+                globeMesh.scale.lerp(new THREE.Vector3(1, 1, 1), 0.1);
+                atmosMesh.scale.lerp(new THREE.Vector3(1, 1, 1), 0.1);
             }
 
             renderer.render(scene, camera);
         }
         animateGlobe();
 
-        // PIRLANTA PARÇACIK ANİMASYONU
+        // PARÇACIK ANİMASYONU
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
         let particlesArray = [];
@@ -634,10 +774,12 @@
 
             for (let i = 0; i < numBars; i++) {
                 if (isPlayingState) {
+                    // Müzik çalarken hareketli spektrum
                     const target = Math.random() * (vCanvas.height - 4) + 4;
                     barHeights[i] += (target - barHeights[i]) * 0.12;
                 } else {
-                    barHeights[i] += (2 - barHeights[i]) * 0.08;
+                    // Müzik durunca çizgilerin tamamen sıfırlanıp düzleşmesi
+                    barHeights[i] += (2 - barHeights[i]) * 0.1;
                 }
 
                 const x = i * (barWidth + 4);
@@ -649,102 +791,6 @@
             requestAnimationFrame(drawVisualizer);
         }
         drawVisualizer();
-
-        // PLAYLIST & YAYIN HESAPLAMASI
-        const songList = [
-            { id: '1IEg_3x35go', duration: 120, title: 'FRANCHISE' },
-            { id: 'qAlF70MdfwU', duration: 207, title: 'OUT WEST' }, 
-            { id: 'L_BpiSsIBFM', duration: 236, title: 'BROTHER STONE' }, 
-            { id: 'cTGQrA5HHIU', duration: 204, title: 'WITH THAT' }, 
-            { id: 'ftaXMKV3ffE', duration: 160, title: 'BACKR00MS' },
-            { id: 'LPTlvQ1Zet0', duration: 188, title: 'RIC FLAIR DRIP' },
-            { id: 'EfHNIPXTxy0', duration: 276, title: 'ZEZE' }
-        ];
-
-        const STREAM_START_TIME = 1700000000; 
-        const totalPlaylistDuration = songList.reduce((acc, song) => acc + song.duration, 0);
-
-        function getCurrentStreamState() {
-            const nowInSeconds = Math.floor(Date.now() / 1000);
-            const elapsedTime = (nowInSeconds - STREAM_START_TIME) % totalPlaylistDuration;
-            let accumulatedTime = 0;
-            for (let i = 0; i < songList.length; i++) {
-                if (elapsedTime < accumulatedTime + songList[i].duration) {
-                    return {
-                        songIndex: i,
-                        seekTo: elapsedTime - accumulatedTime
-                    };
-                }
-                accumulatedTime += songList[i].duration;
-            }
-            return { songIndex: 0, seekTo: 0 };
-        }
-
-        function updateTrackLabels(currentIndex) {
-            const currentSong = songList[currentIndex];
-            const nextIndex = (currentIndex + 1) % songList.length;
-            const nextSong = songList[nextIndex];
-
-            document.getElementById('current-track-name').innerText = currentSong.title;
-            document.getElementById('next-track-name').innerText = nextSong.title;
-        }
-
-        const initialState = getCurrentStreamState();
-        updateTrackLabels(initialState.songIndex);
-
-        function setPlaybackVisualState(active) {
-            isPlayingState = active;
-            const wrapper = document.getElementById('main-wrapper');
-            if (active) {
-                wrapper.classList.add('is-playing');
-            } else {
-                wrapper.classList.remove('is-playing');
-            }
-        }
-
-        function playStreamNow() {
-            const state = getCurrentStreamState();
-            const targetSong = songList[state.songIndex];
-            updateTrackLabels(state.songIndex);
-
-            const iframe = document.getElementById('player-iframe');
-            const startSec = Math.floor(state.seekTo);
-            
-            // Doğrudan YouTube Embed URL'si ile güvenli otomatik oynatma
-            iframe.src = `https://www.youtube.com/embed/${targetSong.id}?autoplay=1&start=${startSec}&enablejsapi=1&rel=0&controls=1`;
-            
-            currentLoadedVideoId = targetSong.id;
-            setPlaybackVisualState(true);
-        }
-
-        function checkLiveSync() {
-            const state = getCurrentStreamState();
-            const expectedSong = songList[state.songIndex];
-
-            if (currentLoadedVideoId !== expectedSong.id) {
-                playStreamNow();
-            }
-        }
-
-        // KULLANICI TIKLAMASIYLA CANLI YAYINI GARANTİ BAŞLATMA
-        function startRadio() {
-            const blast = document.getElementById('blast-wave');
-            blast.classList.remove('blast-active');
-            void blast.offsetWidth;
-            blast.classList.add('blast-active');
-
-            const overlay = document.getElementById('start-overlay');
-            overlay.style.opacity = '0';
-            setTimeout(() => { 
-                overlay.style.visibility = 'hidden'; 
-            }, 600);
-
-            // Anında akışı başlat
-            playStreamNow();
-
-            if (autoSyncInterval) clearInterval(autoSyncInterval);
-            autoSyncInterval = setInterval(checkLiveSync, 5000);
-        }
     </script>
 </body>
 </html>

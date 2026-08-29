@@ -172,8 +172,9 @@
         }
 
         .is-playing .vinyl-ring {
-            animation: spinVinyl 12s linear infinite;
-            border-color: rgba(255, 255, 255, 0.4);
+            animation: spinVinyl 8s linear infinite;
+            border-color: rgba(255, 255, 255, 0.6);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
         }
 
         @keyframes spinVinyl {
@@ -215,14 +216,15 @@
         }
 
         .subtitle {
+            font-family: 'Montserrat', sans-serif;
             font-weight: 900;
-            font-size: 11px;
+            font-size: 13px;
             color: #ffffff;
-            letter-spacing: 6px;
-            margin-top: 4px;
+            letter-spacing: 5px;
+            margin-top: 8px;
             text-transform: uppercase;
             text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
-            opacity: 0.8;
+            opacity: 0.9;
         }
 
         /* BADGES BAR */
@@ -402,7 +404,7 @@
         <div class="logo-container">
             <div class="vinyl-ring"></div>
             <h1>EA$Y FM</h1>
-            <div class="subtitle">7/24 HYPED TRAP & HIP-HOP RADIO</div>
+            <div class="subtitle">7/24 YÜZDE YÜZ MÜZİK</div>
         </div>
 
         <div class="status-bar">
@@ -419,14 +421,14 @@
             <div id="start-overlay" onclick="startRadio()">
                 <button class="start-btn">CANLI YAYINA KATIL</button>
             </div>
-            <div id="player"></div>
+            <div id="player-frame"></div>
         </div>
 
         <!-- ŞU AN ÇALAN SİSTEMİ -->
         <div class="now-playing-card">
             <div class="track-info">
                 <span class="track-label">ŞU AN YAYINDA</span>
-                <span class="track-title" id="current-track-name">Radyo Bağlanıyor...</span>
+                <span class="track-title" id="current-track-name">Canlı Yayın Bekleniyor...</span>
             </div>
             <div class="next-track">
                 <div class="track-label" style="text-align: right;">SIRADAKİ</div>
@@ -439,6 +441,8 @@
     </div>
 
     <script>
+        let isPlayingState = false;
+
         function toggleDiamondGlow(checkbox) {
             document.body.classList.toggle('diamond-mode-active', checkbox.checked);
         }
@@ -530,7 +534,6 @@
 
             for (let i = 0; i < numBars; i++) {
                 if (isPlayingState) {
-                    // Dinamik ritmik zıplamalar
                     const target = Math.random() * (vCanvas.height - 6) + 6;
                     barHeights[i] += (target - barHeights[i]) * 0.25;
                 } else {
@@ -547,7 +550,7 @@
         }
         drawVisualizer();
 
-        // PLAYLIST & TRACK TITLE DATA
+        // PLAYLIST & CANLI YAYIN HESAPLAMA SİSTEMİ
         const songList = [
             { id: '1IEg_3x35go', duration: 120, title: 'Travis Scott - FE!N ft. Playboi Carti' },
             { id: 'qAlF70MdfwU', duration: 207, title: 'Future, Metro Boomin - Like That' }, 
@@ -586,69 +589,28 @@
             document.getElementById('next-track-name').innerText = nextSong.title;
         }
 
-        let player;
-        let isPlayingState = false;
-
-        // YouTube API Yükleme
-        const tag = document.createElement('script');
-        tag.src = "https://www.youtube.com/iframe_api";
-        document.head.appendChild(tag);
-
-        function onYouTubeIframeAPIReady() {
-            const state = getCurrentStreamState();
-            updateTrackLabels(state.songIndex);
-
-            player = new YT.Player('player', {
-                videoId: songList[state.songIndex].id,
-                playerVars: {
-                    'autoplay': 0,
-                    'controls': 1,
-                    'start': Math.floor(state.seekTo),
-                    'rel': 0
-                },
-                events: {
-                    'onStateChange': onPlayerStateChange
-                }
-            });
-        }
-
-        function onPlayerStateChange(event) {
-            if (event.data === YT.PlayerState.PLAYING) {
-                isPlayingState = true;
-                document.getElementById('main-wrapper').classList.add('is-playing');
-            } else {
-                isPlayingState = false;
-                document.getElementById('main-wrapper').classList.remove('is-playing');
-            }
-        }
+        // Sayfa açıldığında isimleri hesapla ve yazdır
+        const initialState = getCurrentStreamState();
+        updateTrackLabels(initialState.songIndex);
 
         function startRadio() {
+            const state = getCurrentStreamState();
+            const currentSong = songList[state.songIndex];
+            
+            // Overlay Gizle
             const overlay = document.getElementById('start-overlay');
             overlay.style.opacity = '0';
             setTimeout(() => { overlay.style.display = 'none'; }, 500);
 
-            if (player && typeof player.playVideo === 'function') {
-                const state = getCurrentStreamState();
-                updateTrackLabels(state.songIndex);
-                player.seekTo(state.seekTo, true);
-                player.playVideo();
-            }
-        }
+            // Bilgileri Güncelle & Animasyonu Başlat
+            updateTrackLabels(state.songIndex);
+            isPlayingState = true;
+            document.getElementById('main-wrapper').classList.add('is-playing');
 
-        // KISAYOL: SPACE TUŞU İLE PLAY/PAUSE
-        window.addEventListener('keydown', (e) => {
-            if (e.code === 'Space') {
-                e.preventDefault();
-                if (player && typeof player.getPlayerState === 'function') {
-                    const state = player.getPlayerState();
-                    if (state === YT.PlayerState.PLAYING) {
-                        player.pauseVideo();
-                    } else {
-                        player.playVideo();
-                    }
-                }
-            }
-        });
+            // İframe'i Doğrudan Çalma Parametreleriyle Yükle
+            const playerFrame = document.getElementById('player-frame');
+            playerFrame.innerHTML = `<iframe src="https://www.youtube.com/embed/${currentSong.id}?autoplay=1&start=${Math.floor(state.seekTo)}&rel=0" allow="autoplay"></iframe>`;
+        }
     </script>
 </body>
 </html>

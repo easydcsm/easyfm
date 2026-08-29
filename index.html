@@ -150,7 +150,7 @@
             padding: 20px 15px;
         }
 
-        /* LOGO & DÖNEN VINYL BASS EFFECT */
+        /* LOGO & DÖNEN DÜNYA + BASS EFFECT */
         .logo-container {
             text-align: center;
             margin-bottom: 15px;
@@ -163,23 +163,30 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%) scale(1) rotate(0deg);
-            width: 220px;
-            height: 220px;
-            border: 2px dashed rgba(255, 255, 255, 0.15);
+            width: 230px;
+            height: 230px;
+            border: 2px dashed rgba(255, 255, 255, 0.2);
             border-radius: 50%;
             z-index: -1;
             transition: border-color 0.5s, box-shadow 0.5s;
+            
+            /* DÜNYA HARİTASI ARKA PLANI */
+            background-image: radial-gradient(circle, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.85) 80%), url('https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            filter: contrast(130%) brightness(85%);
         }
 
         .is-playing .vinyl-ring {
             animation: 
-                spinVinyl 8s linear infinite,
+                spinVinyl 12s linear infinite,
                 bassPulse 0.8s ease-in-out infinite alternate;
             border-style: solid;
-            border-color: rgba(255, 255, 255, 0.85);
+            border-color: rgba(255, 255, 255, 0.9);
             box-shadow: 
-                0 0 25px rgba(255, 255, 255, 0.5),
-                inset 0 0 15px rgba(255, 255, 255, 0.3);
+                0 0 30px rgba(255, 255, 255, 0.6),
+                inset 0 0 20px rgba(255, 255, 255, 0.4);
         }
 
         @keyframes spinVinyl {
@@ -187,7 +194,7 @@
             100% { transform: translate(-50%, -50%) scale(1) rotate(360deg); }
         }
 
-        /* Bas vuruşu / Patlama efekti */
+        /* Bas vuruşu / Dünya Patlama efekti */
         @keyframes bassPulse {
             0% {
                 transform: translate(-50%, -50%) scale(1) rotate(0deg);
@@ -195,14 +202,16 @@
                     0 0 15px rgba(255, 255, 255, 0.3),
                     0 0 30px rgba(255, 255, 255, 0.1);
                 border-color: rgba(255, 255, 255, 0.5);
+                filter: contrast(130%) brightness(85%);
             }
             50% {
                 transform: translate(-50%, -50%) scale(1.08) rotate(180deg);
                 box-shadow: 
-                    0 0 35px rgba(255, 255, 255, 0.9),
-                    0 0 70px rgba(255, 255, 255, 0.4),
-                    inset 0 0 20px rgba(255, 255, 255, 0.6);
+                    0 0 40px rgba(255, 255, 255, 0.95),
+                    0 0 80px rgba(255, 255, 255, 0.5),
+                    inset 0 0 25px rgba(255, 255, 255, 0.7);
                 border-color: #ffffff;
+                filter: contrast(160%) brightness(120%);
             }
             100% {
                 transform: translate(-50%, -50%) scale(1) rotate(360deg);
@@ -210,6 +219,7 @@
                     0 0 15px rgba(255, 255, 255, 0.3),
                     0 0 30px rgba(255, 255, 255, 0.1);
                 border-color: rgba(255, 255, 255, 0.5);
+                filter: contrast(130%) brightness(85%);
             }
         }
 

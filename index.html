@@ -273,7 +273,7 @@
             background: #000;
         }
 
-        .video-container iframe, .video-container #player {
+        .video-container iframe {
             position: absolute;
             top: 0;
             left: 0;
@@ -416,7 +416,7 @@
             <div id="start-overlay" onclick="startRadio()">
                 <button class="start-btn">CANLI YAYINA KATIL</button>
             </div>
-            <div id="player"></div>
+            <iframe id="player-iframe" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
         </div>
 
         <div class="now-playing-card">
@@ -433,13 +433,8 @@
         <canvas id="visualizer-canvas"></canvas>
     </div>
 
-    <!-- YouTube IFrame API -->
-    <script src="https://www.youtube.com/iframe_api"></script>
-
     <script>
         let isPlayingState = false;
-        let player = null;
-        let isPlayerReady = false;
         let checkAudioInterval = null;
         let autoSyncInterval = null;
         let currentLoadedVideoId = null;
@@ -448,13 +443,13 @@
             document.body.classList.toggle('diamond-mode-active', checkbox.checked);
         }
 
-        // --- THREE.JS GERÇEK 3D SİYAH-BEYAZ DÜNYA VE TEK "EA$Y FM" YAZISI ---
+        // --- THREE.JS HD BANT/YAZI ÇÖZÜNÜRLÜĞÜ ---
         const globeContainer = document.getElementById('globe-3d-container');
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(45, 480 / 340, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
         renderer.setSize(480, 340);
-        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         globeContainer.appendChild(renderer.domElement);
 
         const textureLoader = new THREE.TextureLoader();
@@ -488,30 +483,33 @@
         dirLight.position.set(5, 3, 5);
         scene.add(dirLight);
 
-        // SADECE BİR TANE "EA$Y FM" YAZISININ BULUNDUĞU SILINDIR HALKA
+        // ULTRA HD HD "EA$Y FM" TEK YAZI SILINDIR HALKASI (2048x256 Yüksek Çözünürlük)
         let ringMesh = null;
 
         function createOrbitRingText() {
             const canvas = document.createElement('canvas');
-            canvas.width = 1024;
-            canvas.height = 128;
+            canvas.width = 2048;
+            canvas.height = 256;
             const ctx = canvas.getContext('2d');
 
             ctx.fillStyle = 'transparent';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            ctx.font = '900 65px "Anton", sans-serif';
+            ctx.font = '900 130px "Anton", sans-serif';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillStyle = '#ffffff';
 
             ctx.shadowColor = '#ffffff';
-            ctx.shadowBlur = 25;
+            ctx.shadowBlur = 35;
 
-            // TEK YAZI (Tekrarlanma tamamen kaldırıldı)
+            // ULTRA HD TEK EA$Y FM YAZISI
             ctx.fillText("EA$Y FM", canvas.width / 2, canvas.height / 2);
 
             const ringTex = new THREE.CanvasTexture(canvas);
+            ringTex.minFilter = THREE.LinearFilter;
+            ringTex.magFilter = THREE.LinearFilter;
+            ringTex.anisotropy = renderer.capabilities.getMaxAnisotropy();
 
             const ringGeo = new THREE.CylinderGeometry(2.1, 2.1, 0.5, 64, 1, true);
             const ringMat = new THREE.MeshBasicMaterial({
@@ -694,33 +692,6 @@
         const initialState = getCurrentStreamState();
         updateTrackLabels(initialState.songIndex);
 
-        // YOUTUBE OYNATICI KURULUMU
-        function onYouTubeIframeAPIReady() {
-            const state = getCurrentStreamState();
-            currentLoadedVideoId = songList[state.songIndex].id;
-
-            player = new YT.Player('player', {
-                videoId: currentLoadedVideoId,
-                playerVars: {
-                    'autoplay': 1,
-                    'controls': 1,
-                    'rel': 0,
-                    'playsinline': 1,
-                    'start': Math.floor(state.seekTo)
-                },
-                events: {
-                    'onReady': onPlayerReady,
-                    'onStateChange': onPlayerStateChange
-                }
-            });
-        }
-
-        function onPlayerReady(event) {
-            isPlayerReady = true;
-            const iframe = document.querySelector('#player');
-            if (iframe) iframe.setAttribute('allow', 'autoplay; encrypted-media');
-        }
-
         function setPlaybackVisualState(active) {
             isPlayingState = active;
             const wrapper = document.getElementById('main-wrapper');
@@ -731,58 +702,31 @@
             }
         }
 
-        function onPlayerStateChange(event) {
-            if (event.data === YT.PlayerState.PLAYING) {
-                setPlaybackVisualState(true);
-            } else if (event.data === YT.PlayerState.ENDED) {
-                syncAndPlay();
-            } else {
-                setPlaybackVisualState(false);
-            }
-        }
-
-        function checkAudioState() {
-            if (!player || typeof player.getPlayerState !== 'function') return;
-            setPlaybackVisualState(player.getPlayerState() === YT.PlayerState.PLAYING);
-        }
-
-        function syncAndPlay() {
-            if (!player) return;
+        function playStreamNow() {
             const state = getCurrentStreamState();
             const targetSong = songList[state.songIndex];
             updateTrackLabels(state.songIndex);
+
+            const iframe = document.getElementById('player-iframe');
+            const startSec = Math.floor(state.seekTo);
+            
+            // Doğrudan YouTube Embed URL'si ile güvenli otomatik oynatma
+            iframe.src = `https://www.youtube.com/embed/${targetSong.id}?autoplay=1&start=${startSec}&enablejsapi=1&rel=0&controls=1`;
             
             currentLoadedVideoId = targetSong.id;
-            
-            player.loadVideoById({
-                videoId: targetSong.id,
-                startSeconds: Math.floor(state.seekTo)
-            });
-            player.playVideo();
+            setPlaybackVisualState(true);
         }
 
         function checkLiveSync() {
-            if (!player || typeof player.getPlayerState !== 'function') return;
+            const state = getCurrentStreamState();
+            const expectedSong = songList[state.songIndex];
 
-            if (player.getPlayerState() === YT.PlayerState.PLAYING) {
-                const state = getCurrentStreamState();
-                const expectedSong = songList[state.songIndex];
-
-                if (currentLoadedVideoId !== expectedSong.id) {
-                    syncAndPlay();
-                    return;
-                }
-
-                const currentTime = player.getCurrentTime();
-                const timeDiff = Math.abs(currentTime - state.seekTo);
-
-                if (timeDiff > 4) {
-                    player.seekTo(state.seekTo, true);
-                }
+            if (currentLoadedVideoId !== expectedSong.id) {
+                playStreamNow();
             }
         }
 
-        // KULLANICI TIKLAMASIYLA YAYINI ANINDA BAŞLATMA
+        // KULLANICI TIKLAMASIYLA CANLI YAYINI GARANTİ BAŞLATMA
         function startRadio() {
             const blast = document.getElementById('blast-wave');
             blast.classList.remove('blast-active');
@@ -795,36 +739,12 @@
                 overlay.style.visibility = 'hidden'; 
             }, 600);
 
-            // Doğrudan tıklama olayı esnasında YouTube API play çağrısı
-            if (player && typeof player.playVideo === 'function') {
-                const state = getCurrentStreamState();
-                const targetSong = songList[state.songIndex];
-                updateTrackLabels(state.songIndex);
-
-                if (currentLoadedVideoId !== targetSong.id) {
-                    currentLoadedVideoId = targetSong.id;
-                    player.loadVideoById({
-                        videoId: targetSong.id,
-                        startSeconds: Math.floor(state.seekTo)
-                    });
-                } else {
-                    player.seekTo(Math.floor(state.seekTo), true);
-                    player.playVideo();
-                }
-            }
-
-            if (checkAudioInterval) clearInterval(checkAudioInterval);
-            checkAudioInterval = setInterval(checkAudioState, 400);
+            // Anında akışı başlat
+            playStreamNow();
 
             if (autoSyncInterval) clearInterval(autoSyncInterval);
-            autoSyncInterval = setInterval(checkLiveSync, 3500);
+            autoSyncInterval = setInterval(checkLiveSync, 5000);
         }
-
-        document.addEventListener("visibilitychange", () => {
-            if (!document.hidden && player && isPlayerReady && typeof player.getPlayerState === 'function' && player.getPlayerState() === YT.PlayerState.PLAYING) {
-                checkLiveSync();
-            }
-        });
     </script>
 </body>
 </html>

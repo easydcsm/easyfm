@@ -93,4 +93,956 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%) scale(0.6);
-            width: 220px
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, 1);
+            box-shadow: 0 0 90px rgba(255, 255, 255, 1), inset 0 0 50px rgba(255, 255, 255, 0.8);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .blast-active {
+            animation: fastExplode 0.45s cubic-bezier(0.0, 0.9, 0.2, 1) forwards;
+        }
+
+        @keyframes fastExplode {
+            0% {
+                transform: translate(-50%, -50%) scale(0.6);
+                opacity: 1;
+                border-width: 10px;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(2.6);
+                opacity: 0;
+                border-width: 1px;
+            }
+        }
+
+        #globe-3d-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            z-index: 2;
+            overflow: visible;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            filter: drop-shadow(0 0 25px rgba(255, 255, 255, 0.2));
+        }
+
+        #globe-3d-container canvas {
+            display: block;
+            outline: none;
+        }
+
+        /* BADGES BAR */
+        .status-bar {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 2px;
+            margin-bottom: 2px;
+        }
+
+        .badge {
+            background: linear-gradient(135deg, rgba(35, 35, 35, 0.9), rgba(10, 10, 10, 0.95));
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            padding: 6px 18px;
+            border-radius: 30px;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 2.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-transform: uppercase;
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .badge::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(60deg, transparent 30%, rgba(255,255,255,0.25) 50%, transparent 70%);
+            transform: rotate(30deg);
+            animation: shine 3.5s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(30deg); }
+            20% { transform: translateX(100%) rotate(30deg); }
+            100% { transform: translateX(100%) rotate(30deg); }
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #ffffff;
+            border-radius: 50%;
+            box-shadow: 0 0 14px #ffffff;
+            animation: pulse 1.4s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); box-shadow: 0 0 14px #ffffff; }
+            50% { opacity: 0.2; transform: scale(0.65); box-shadow: 0 0 2px #ffffff; }
+            100% { opacity: 1; transform: scale(1); box-shadow: 0 0 14px #ffffff; }
+        }
+
+        /* SES KONTROL ÇUBUĞU */
+        .volume-control-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(20, 20, 20, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 4px 14px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .volume-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .volume-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 70px;
+            height: 4px;
+            border-radius: 2px;
+            background: rgba(255, 255, 255, 0.3);
+            outline: none;
+            cursor: pointer;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ffffff;
+            box-shadow: 0 0 8px #ffffff;
+            cursor: pointer;
+        }
+
+        /* VİDEO ÇERÇEVESİ VE OVERLAY */
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 48%;
+            height: 0;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.95), 0 0 35px rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            transition: border-color 0.5s, box-shadow 0.5s;
+            background: #000;
+            margin: 0;
+        }
+
+        .video-container.playing-border {
+            border-color: rgba(255, 255, 255, 0.7);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.9), 0 0 45px rgba(255, 255, 255, 0.25);
+        }
+
+        #youtube-player {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            pointer-events: none;
+        }
+
+        #start-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(20, 20, 20, 0.95) 0%, rgba(0, 0, 0, 0.98) 100%);
+            z-index: 30;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: opacity 0.6s ease, visibility 0.6s;
+        }
+
+        .start-btn {
+            background: #ffffff;
+            color: #000;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 900;
+            font-size: 13px;
+            padding: 14px 34px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            letter-spacing: 2px;
+            box-shadow: 0 0 35px rgba(255, 255, 255, 0.8);
+            transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .start-btn:hover {
+            transform: scale(1.06);
+            box-shadow: 0 0 55px rgba(255, 255, 255, 1);
+            background-color: #f5f5f5;
+        }
+
+        /* NOW PLAYING CARD */
+        .now-playing-card {
+            width: 100%;
+            background: linear-gradient(135deg, rgba(28, 28, 28, 0.9), rgba(12, 12, 12, 0.95));
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 14px;
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            margin: 0;
+            position: relative;
+            transition: border-color 0.3s ease;
+        }
+
+        .now-playing-card:hover {
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .track-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            overflow: hidden;
+        }
+
+        .track-label {
+            font-size: 9px;
+            font-weight: 900;
+            letter-spacing: 2.5px;
+            color: #aaa;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .track-title {
+            font-size: 14px;
+            font-weight: 900;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
+        }
+
+        .next-track {
+            font-size: 10px;
+            color: #bbb;
+            text-align: right;
+            max-width: 42%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* DİNAMİK SES DALGASI ANIMASYONU */
+        .wave-bars {
+            display: flex;
+            align-items: flex-end;
+            gap: 2px;
+            height: 12px;
+            margin-left: 4px;
+        }
+
+        .wave-bar {
+            width: 2px;
+            background: #fff;
+            border-radius: 1px;
+            animation: waveAnim 1s ease-in-out infinite alternate;
+        }
+
+        .wave-bar:nth-child(1) { height: 30%; animation-delay: 0.1s; }
+        .wave-bar:nth-child(2) { height: 80%; animation-delay: 0.3s; }
+        .wave-bar:nth-child(3) { height: 50%; animation-delay: 0.2s; }
+        .wave-bar:nth-child(4) { height: 100%; animation-delay: 0.4s; }
+
+        @keyframes waveAnim {
+            0% { transform: scaleY(0.3); }
+            100% { transform: scaleY(1); }
+        }
+
+        #visualizer-canvas {
+            width: 100%;
+            height: 26px;
+            margin: 0;
+            transition: opacity 1s ease;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+        }
+
+        /* MOBİL ÖZEL AYARLAR */
+        @media (max-width: 600px) {
+            .main-wrapper {
+                padding: 5px 12px 25px 12px;
+                gap: 10px;
+            }
+
+            .logo-container {
+                height: 195px;
+                width: 100%;
+            }
+
+            .video-container {
+                padding-bottom: 53%;
+            }
+
+            .now-playing-card {
+                padding: 10px 14px;
+            }
+
+            .start-btn {
+                font-size: 11px;
+                padding: 11px 24px;
+            }
+        }
+    </style>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+</head>
+<body>
+
+    <canvas id="bg-canvas"></canvas>
+    <div class="ambient-glow" id="ambient-glow"></div>
+
+    <div class="main-wrapper" id="main-wrapper">
+        <div class="logo-container">
+            <div class="blast-wave" id="blast-wave"></div>
+            <div id="globe-3d-container"></div>
+        </div>
+
+        <div class="status-bar">
+            <div class="badge">
+                <span class="live-dot"></span>
+                <span>CANLI YAYIN</span>
+            </div>
+            <div class="badge">
+                <span>🎧 DİNLEYİCİ: <strong id="listener-count" style="color: #ffffff; text-shadow: 0 0 8px #fff;">0</strong></span>
+            </div>
+            <div class="volume-control-box">
+                <button class="volume-btn" id="mute-btn">🔊</button>
+                <input type="range" class="volume-slider" id="volume-range" min="0" max="100" value="100">
+            </div>
+        </div>
+
+        <div class="video-container" id="video-box">
+            <div id="start-overlay">
+                <button class="start-btn" id="start-btn-el">CANLI YAYINA KATIL</button>
+            </div>
+            <div id="youtube-player"></div>
+        </div>
+
+        <div class="now-playing-card">
+            <div class="track-info">
+                <span class="track-label">
+                    <span style="display:inline-block; width:6px; height:6px; background:#fff; border-radius:50%;"></span>
+                    ŞU AN YAYINDA
+                    <div class="wave-bars" id="wave-bars" style="opacity: 0;">
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                    </div>
+                </span>
+                <span class="track-title" id="current-track-name">Canlı Yayın Bekleniyor...</span>
+            </div>
+            <div class="next-track">
+                <div class="track-label" style="justify-content: flex-end;">SIRADAKİ</div>
+                <span id="next-track-name" style="font-weight:700;">---</span>
+            </div>
+        </div>
+
+        <canvas id="visualizer-canvas"></canvas>
+    </div>
+
+    <script>
+        // MOBİL İLK AÇILIŞ KAYMA ENGELLEYİCİ KİLİT
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+
+        function forceScrollTop() {
+            if (window.scrollY !== 0 || document.documentElement.scrollTop !== 0) {
+                window.scrollTo(0, 0);
+                document.body.scrollTop = 0;
+                document.documentElement.scrollTop = 0;
+            }
+        }
+
+        forceScrollTop();
+        window.addEventListener('DOMContentLoaded', forceScrollTop);
+        window.addEventListener('load', forceScrollTop);
+
+        const scrollInterval = setInterval(forceScrollTop, 50);
+        setTimeout(() => clearInterval(scrollInterval), 1200);
+
+        let player = null;
+        let isPlayerReady = false;
+        let isPlayingState = false;
+        let currentLoadedVideoId = null;
+        let syncCheckInterval = null;
+
+        const baseSongList = [
+            { id: '1IEg_3x35go', duration: 120, title: 'FRANCHISE' },
+            { id: 'qAlF70MdfwU', duration: 207, title: 'OUT WEST' }, 
+            { id: 'L_BpiSsIBFM', duration: 236, title: 'BROTHER STONE' }, 
+            { id: 'cTGQrA5HHIU', duration: 204, title: 'WITH THAT' }, 
+            { id: 'ftaXMKV3ffE', duration: 160, title: 'BACKR00MS' },
+            { id: 'LPTlvQ1Zet0', duration: 188, title: 'RIC FLAIR DRIP' },
+            { id: 'EfHNIPXTxy0', duration: 276, title: 'ZEZE' },
+            { id: 'yST9RwZNZDw', duration: 169, title: 'VURURUM KAFANDAN' },
+            { id: 'JrPBResAG2s', duration: 175, title: 'KÖPEKBALIKLARI BURDA' },
+            { id: '-q-XvhV7GFA', duration: 165, title: 'HARBİDEN ŞEKERMİŞ' },
+            { id: 'N4nfjhJN6SA', duration: 197, title: 'TAKE IT TO TRIAL' },
+            { id: 'kC2nGcgKeX0', duration: 167, title: 'GOSTOSO' },
+            { id: 'LcKC9YG-TQY', duration: 150, title: 'MOB GUYS' },
+            { id: '-yElvysKMCY', duration: 164, title: 'TRIMSKI' },
+            { id: 'pfjy7PhVtMo', duration: 135, title: 'POTATO LOADED' },
+            { id: 'bHDWrnlIqfQ', duration: 173, title: 'POPPIN/TALIBAN' },
+            { id: 'KPz33BLkvho', duration: 165, title: 'ESCAPE PLAN' },
+            { id: 'B9synWjqBn8', duration: 209, title: 'FE!N' },
+            { id: 'MKPEZlXY49Q', duration: 244, title: 'JENGA' }
+        ];
+
+        const STREAM_START_TIME = 1700000000; 
+
+        function getDeterministicShuffledList(array, seed) {
+            let shuffled = [...array];
+            let m = shuffled.length, t, i;
+            let pseudoRandom = function() {
+                let z = (seed += 0x6D2B79F5);
+                z = Math.imul(z ^ (z >>> 15), z | 1);
+                z ^= z + Math.imul(z ^ (z >>> 7), z | 61);
+                return ((z ^ (z >>> 14)) >>> 0) / 4294967296;
+            };
+
+            while (m) {
+                i = Math.floor(pseudoRandom() * m--);
+                t = shuffled[m];
+                shuffled[m] = shuffled[i];
+                shuffled[i] = t;
+            }
+            return shuffled;
+        }
+
+        const songList = getDeterministicShuffledList(baseSongList, STREAM_START_TIME);
+        const totalPlaylistDuration = songList.reduce((acc, song) => acc + song.duration, 0);
+
+        function getCurrentStreamState() {
+            const nowInSeconds = Math.floor(Date.now() / 1000);
+            const elapsedTime = (nowInSeconds - STREAM_START_TIME) % totalPlaylistDuration;
+            let accumulatedTime = 0;
+            for (let i = 0; i < songList.length; i++) {
+                if (elapsedTime < accumulatedTime + songList[i].duration) {
+                    return {
+                        songIndex: i,
+                        seekTo: elapsedTime - accumulatedTime
+                    };
+                }
+                accumulatedTime += songList[i].duration;
+            }
+            return { songIndex: 0, seekTo: 0 };
+        }
+
+        function updateTrackLabels(currentIndex) {
+            const currentSong = songList[currentIndex];
+            const nextIndex = (currentIndex + 1) % songList.length;
+            const nextSong = songList[nextIndex];
+
+            document.getElementById('current-track-name').innerText = currentSong.title;
+            document.getElementById('next-track-name').innerText = nextSong.title;
+        }
+
+        const initialState = getCurrentStreamState();
+        updateTrackLabels(initialState.songIndex);
+
+        const tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        document.head.appendChild(tag);
+
+        function onYouTubeIframeAPIReady() {
+            const state = getCurrentStreamState();
+            const targetSong = songList[state.songIndex];
+            currentLoadedVideoId = targetSong.id;
+
+            player = new YT.Player('youtube-player', {
+                videoId: targetSong.id,
+                playerVars: {
+                    'autoplay': 0,
+                    'controls': 0,
+                    'rel': 0,
+                    'playsinline': 1,
+                    'enablejsapi': 1,
+                    'iv_load_policy': 3,
+                    'start': Math.floor(state.seekTo)
+                },
+                events: {
+                    'onReady': () => { 
+                        isPlayerReady = true; 
+                        if (document.activeElement) {
+                            document.activeElement.blur();
+                        }
+                        forceScrollTop();
+                    },
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+        }
+
+        function onPlayerStateChange(event) {
+            const vBox = document.getElementById('video-box');
+            const waveBars = document.getElementById('wave-bars');
+            if (event.data === YT.PlayerState.PLAYING) {
+                isPlayingState = true;
+                vBox.classList.add('playing-border');
+                waveBars.style.opacity = '1';
+            } else {
+                isPlayingState = false;
+                vBox.classList.remove('playing-border');
+                waveBars.style.opacity = '0';
+            }
+        }
+
+        function syncToLiveStream() {
+            if (!isPlayerReady || !player) return;
+
+            const state = getCurrentStreamState();
+            const targetSong = songList[state.songIndex];
+
+            updateTrackLabels(state.songIndex);
+
+            if (currentLoadedVideoId !== targetSong.id) {
+                currentLoadedVideoId = targetSong.id;
+                player.loadVideoById({
+                    videoId: targetSong.id,
+                    startSeconds: Math.floor(state.seekTo)
+                });
+                player.playVideo();
+                return;
+            }
+
+            if (typeof player.getCurrentTime === 'function') {
+                const currentTime = player.getCurrentTime();
+                const timeDiff = Math.abs(currentTime - state.seekTo);
+                if (timeDiff > 3) {
+                    player.seekTo(state.seekTo, true);
+                    player.playVideo();
+                }
+            }
+        }
+
+        function handleUserClick() {
+            const blast = document.getElementById('blast-wave');
+            blast.classList.remove('blast-active');
+            void blast.offsetWidth;
+            blast.classList.add('blast-active');
+
+            const overlay = document.getElementById('start-overlay');
+            overlay.style.opacity = '0';
+            setTimeout(() => { 
+                overlay.style.visibility = 'hidden'; 
+            }, 600);
+
+            const startPlaying = () => {
+                const state = getCurrentStreamState();
+                const targetSong = songList[state.songIndex];
+
+                updateTrackLabels(state.songIndex);
+                currentLoadedVideoId = targetSong.id;
+
+                if (typeof player.unMute === 'function') {
+                    player.unMute();
+                }
+
+                player.loadVideoById({
+                    videoId: targetSong.id,
+                    startSeconds: Math.floor(state.seekTo)
+                });
+                player.playVideo();
+                isPlayingState = true;
+
+                if (syncCheckInterval) clearInterval(syncCheckInterval);
+                syncCheckInterval = setInterval(syncToLiveStream, 3000);
+            };
+
+            if (isPlayerReady && player) {
+                startPlaying();
+            } else {
+                const checkReady = setInterval(() => {
+                    if (isPlayerReady && player) {
+                        clearInterval(checkReady);
+                        startPlaying();
+                    }
+                }, 100);
+            }
+        }
+
+        document.getElementById('start-overlay').addEventListener('click', handleUserClick);
+        document.getElementById('start-btn-el').addEventListener('click', (e) => {
+            e.stopPropagation();
+            handleUserClick();
+        });
+
+        // DÜZELTİLMİŞ SES VE BUTON SENKRON KONTROLÜ
+        const volumeRange = document.getElementById('volume-range');
+        const muteBtn = document.getElementById('mute-btn');
+        let isMuted = false;
+
+        volumeRange.addEventListener('input', (e) => {
+            const val = Number(e.target.value);
+            
+            if (player && typeof player.setVolume === 'function') {
+                player.setVolume(val);
+                
+                if (val === 0) {
+                    player.mute();
+                    muteBtn.innerText = '🔇';
+                    isMuted = true;
+                } else {
+                    if (isMuted || (typeof player.isMuted === 'function' && player.isMuted())) {
+                        player.unMute();
+                        isMuted = false;
+                    }
+                    muteBtn.innerText = '🔊';
+                }
+            }
+        });
+
+        muteBtn.addEventListener('click', () => {
+            if (!player) return;
+            if (isMuted) {
+                player.unMute();
+                muteBtn.innerText = '🔊';
+                
+                let currentVol = Number(volumeRange.value);
+                if (currentVol === 0) {
+                    currentVol = 100;
+                    volumeRange.value = 100;
+                }
+                
+                if (typeof player.setVolume === 'function') {
+                    player.setVolume(currentVol);
+                }
+                isMuted = false;
+            } else {
+                player.mute();
+                muteBtn.innerText = '🔇';
+                volumeRange.value = 0;
+                isMuted = true;
+            }
+        });
+
+        // THREE.JS 3D DÜNYA
+        const globeContainer = document.getElementById('globe-3d-container');
+        
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
+        
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        globeContainer.appendChild(renderer.domElement);
+
+        function resizeThreeJS() {
+            const width = globeContainer.clientWidth;
+            const height = globeContainer.clientHeight;
+            if (width === 0 || height === 0) return;
+
+            camera.aspect = width / height;
+
+            if (window.innerWidth <= 400) {
+                camera.position.z = 5.6;
+            } else if (window.innerWidth <= 600) {
+                camera.position.z = 5.2;
+            } else {
+                camera.position.z = 4.8;
+            }
+
+            camera.updateProjectionMatrix();
+            renderer.setSize(width, height);
+        }
+
+        const textureLoader = new THREE.TextureLoader();
+        const earthTexture = textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_atmos_2048.jpg');
+
+        const baseRadius = 1.65;
+        const geometry = new THREE.SphereGeometry(baseRadius, 64, 64);
+        const material = new THREE.MeshStandardMaterial({
+            map: earthTexture,
+            roughness: 0.35,
+            metalness: 0.45
+        });
+        const globeMesh = new THREE.Mesh(geometry, material);
+        scene.add(globeMesh);
+
+        const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
+        scene.add(ambientLight);
+
+        const dirLight = new THREE.DirectionalLight(0xffffff, 2.0);
+        dirLight.position.set(5, 4, 5);
+        scene.add(dirLight);
+
+        let ringMesh = null;
+
+        function createOrbitRingText() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 2048;
+            canvas.height = 512;
+            const ctx = canvas.getContext('2d');
+
+            ctx.fillStyle = 'transparent';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = '#ffffff';
+
+            ctx.shadowColor = '#ffffff';
+            ctx.shadowBlur = 40;
+
+            ctx.font = '900 160px "Anton", sans-serif';
+            ctx.fillText("EA$Y FM", canvas.width / 2, 160);
+
+            ctx.font = '900 65px "Montserrat", sans-serif';
+            ctx.letterSpacing = '6px';
+            ctx.fillText("7/24 YÜZDE YÜZ MÜZİK", canvas.width / 2, 340);
+
+            const ringTex = new THREE.CanvasTexture(canvas);
+            ringTex.minFilter = THREE.LinearFilter;
+            ringTex.magFilter = THREE.LinearFilter;
+            ringTex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+
+            const ringGeo = new THREE.CylinderGeometry(baseRadius + 0.28, baseRadius + 0.28, 0.95, 64, 1, true);
+            const ringMat = new THREE.MeshBasicMaterial({
+                map: ringTex,
+                transparent: true,
+                side: THREE.DoubleSide,
+                depthWrite: false
+            });
+
+            ringMesh = new THREE.Mesh(ringGeo, ringMat);
+            ringMesh.rotation.z = 0.08;
+            scene.add(ringMesh);
+        }
+
+        document.fonts.ready.then(() => {
+            createOrbitRingText();
+        });
+
+        let bassAngle = 0;
+        const ambientGlowEl = document.getElementById('ambient-glow');
+
+        function animateGlobe() {
+            requestAnimationFrame(animateGlobe);
+
+            const globeSpeed = isPlayingState ? 0.007 : 0.0025;
+            const ringSpeed = isPlayingState ? 0.01 : 0.0035;
+
+            globeMesh.rotation.y += globeSpeed;
+            if (ringMesh) ringMesh.rotation.y -= ringSpeed;
+
+            if (isPlayingState) {
+                bassAngle += 0.09;
+                const bassScale = 1 + Math.pow(Math.sin(bassAngle), 6) * 0.055;
+                globeMesh.scale.set(bassScale, bassScale, bassScale);
+
+                const glowScale = 1 + Math.sin(bassAngle) * 0.08;
+                ambientGlowEl.style.transform = `translate(-50%, -50%) scale(${glowScale})`;
+            } else {
+                globeMesh.scale.lerp(new THREE.Vector3(1, 1, 1), 0.1);
+                ambientGlowEl.style.transform = `translate(-50%, -50%) scale(1)`;
+            }
+
+            renderer.render(scene, camera);
+        }
+        
+        resizeThreeJS();
+        animateGlobe();
+
+        // Gelişmiş Pırlanta Sparkle Parçacık Animasyonu
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let particlesArray = [];
+
+        function handleResize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            resizeThreeJS();
+        }
+        window.addEventListener('resize', handleResize);
+        handleResize();
+
+        class DiamondParticle {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 3.2 + 1;
+                this.speedX = (Math.random() - 0.5) * 0.35;
+                this.speedY = (Math.random() - 0.5) * 0.35;
+                this.opacity = Math.random() * 0.7 + 0.2;
+                this.isSparkle = Math.random() > 0.65;
+                this.pulseSpeed = Math.random() * 0.03 + 0.015;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                this.opacity += Math.sin(Date.now() * this.pulseSpeed) * 0.015;
+                if (this.opacity < 0.1) this.opacity = 0.1;
+                if (this.opacity > 0.95) this.opacity = 0.95;
+
+                if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) {
+                    this.reset();
+                }
+            }
+
+            draw() {
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                ctx.strokeStyle = `rgba(255, 255, 255, ${this.opacity})`;
+
+                if (this.isSparkle) {
+                    const len = this.size * 2.8;
+                    ctx.beginPath();
+                    ctx.moveTo(this.x - len, this.y);
+                    ctx.lineTo(this.x + len, this.y);
+                    ctx.moveTo(this.x, this.y - len);
+                    ctx.lineTo(this.x, this.y + len);
+                    ctx.lineWidth = 0.8;
+                    ctx.stroke();
+                } else {
+                    ctx.beginPath();
+                    ctx.moveTo(this.x, this.y - this.size);
+                    ctx.lineTo(this.x + this.size, this.y);
+                    ctx.lineTo(this.x, this.y + this.size);
+                    ctx.lineTo(this.x - this.size, this.y);
+                    ctx.closePath();
+                    ctx.fill();
+                }
+            }
+        }
+
+        for (let i = 0; i < 65; i++) particlesArray.push(new DiamondParticle());
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particlesArray.forEach(p => { p.update(); p.draw(); });
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+
+        // FIREBASE SAYAÇ
+        const firebaseConfig = {
+            apiKey: "AIzaSyBaTlb6V6e4FMLTYNXAPBgdzsgiclL8Qw8",
+            authDomain: "easyfm-37b9e.firebaseapp.com",
+            databaseURL: "https://easyfm-37b9e-default-rtdb.firebaseio.com",
+            projectId: "easyfm-37b9e",
+            storageBucket: "easyfm-37b9e.firebasestorage.app",
+            messagingSenderId: "869244564550",
+            appId: "1:869244564550:web:f0824148dbcae6b7024647"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        const myConnectionsRef = db.ref('online_listeners');
+        db.ref('.info/connected').on('value', (snap) => {
+            if (snap.val() === true) {
+                const con = myConnectionsRef.push();
+                con.onDisconnect().remove();
+                con.set(true);
+            }
+        });
+        myConnectionsRef.on('value', (snap) => {
+            document.getElementById('listener-count').innerText = snap.numChildren();
+        });
+
+        // HİBRİT KRİSTAL VISUALIZER
+        const vCanvas = document.getElementById('visualizer-canvas');
+        const vCtx = vCanvas.getContext('2d');
+        const numBars = 42;
+        let barHeights = new Array(numBars).fill(3);
+        let peakHeights = new Array(numBars).fill(3);
+
+        function drawVisualizer() {
+            vCanvas.width = vCanvas.offsetWidth;
+            vCanvas.height = vCanvas.offsetHeight;
+            vCtx.clearRect(0, 0, vCanvas.width, vCanvas.height);
+
+            const gap = 3;
+            const barWidth = (vCanvas.width / numBars) - gap;
+
+            for (let i = 0; i < numBars; i++) {
+                if (isPlayingState) {
+                    const target = Math.random() * (vCanvas.height - 6) + 4;
+                    barHeights[i] += (target - barHeights[i]) * 0.16;
+                } else {
+                    barHeights[i] += (3 - barHeights[i]) * 0.1;
+                }
+
+                if (barHeights[i] > peakHeights[i]) {
+                    peakHeights[i] = barHeights[i];
+                } else {
+                    peakHeights[i] -= 0.35;
+                }
+                if (peakHeights[i] < 3) peakHeights[i] = 3;
+
+                const x = i * (barWidth + gap);
+                const y = vCanvas.height - barHeights[i];
+
+                const grad = vCtx.createLinearGradient(0, vCanvas.height, 0, y);
+                grad.addColorStop(0, 'rgba(80, 80, 80, 0.2)');
+                grad.addColorStop(1, '#ffffff');
+
+                vCtx.fillStyle = grad;
+                vCtx.fillRect(x, y, barWidth, barHeights[i]);
+
+                vCtx.fillStyle = '#ffffff';
+                vCtx.fillRect(x, vCanvas.height - peakHeights[i] - 2, barWidth, 1.5);
+            }
+            requestAnimationFrame(drawVisualizer);
+        }
+        drawVisualizer();
+    </script>
+</body>
+</html>

@@ -273,6 +273,7 @@
             width: 100%;
             height: 100%;
             border: none;
+            pointer-events: none; /* YouTube içi tıklamaları engelleyerek temiz görünüm sağlar */
         }
 
         #start-overlay {
@@ -610,10 +611,11 @@
                 videoId: targetSong.id,
                 playerVars: {
                     'autoplay': 0,
-                    'controls': 1,
+                    'controls': 0, // YouTube alt çubuğu, ses ve altyazı simgeleri gizlendi
                     'rel': 0,
                     'playsinline': 1,
                     'enablejsapi': 1,
+                    'iv_load_policy': 3, // Video içi notları kapatır
                     'start': Math.floor(state.seekTo)
                 },
                 events: {

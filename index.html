@@ -246,7 +246,7 @@
             cursor: pointer;
         }
 
-        /* VİDEO ÇERÇEVESİ VE OVERLAY */
+        /* VİDEO ÇERÇEVESİ VE MASKELER */
         .video-container {
             position: relative;
             width: 100%;
@@ -273,7 +273,28 @@
             width: 100%;
             height: 100%;
             border: none;
-            pointer-events: auto; /* Videoya tıklamaya izin verildi */
+            pointer-events: auto;
+        }
+
+        /* İLERİ SARMA / KONTROL ENGELLEME MASKELERİ */
+        .yt-shield-top {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 25%;
+            z-index: 15;
+            background: transparent;
+        }
+
+        .yt-shield-bottom {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 65%; /* Sol ve orta alt alanı kapatarak sarma çubuğunu engeller */
+            height: 35%;
+            z-index: 15;
+            background: transparent;
         }
 
         #start-overlay {
@@ -468,6 +489,10 @@
         </div>
 
         <div class="video-container" id="video-box">
+            <!-- Görünmez Koruma Katmanları (Üst başlık ve Alt sarma çubuğu engelleme) -->
+            <div class="yt-shield-top"></div>
+            <div class="yt-shield-bottom"></div>
+
             <div id="start-overlay">
                 <button class="start-btn" id="start-btn-el">CANLI YAYINA KATIL</button>
             </div>
@@ -498,7 +523,6 @@
     </div>
 
     <script>
-        // MOBİL İLK AÇILIŞ KAYMA ENGELLEYİCİ KİLİT
         if ('scrollRestoration' in history) {
             history.scrollRestoration = 'manual';
         }
@@ -611,11 +635,12 @@
                 videoId: targetSong.id,
                 playerVars: {
                     'autoplay': 0,
-                    'controls': 1, /* YouTube varsayılan kontrolleri (Reklamı Atla vb.) gösterilsin */
+                    'controls': 1,
                     'rel': 0,
                     'playsinline': 1,
                     'enablejsapi': 1,
                     'iv_load_policy': 3,
+                    'fs': 0, /* Tam ekran butonunu devredışı bırakır */
                     'start': Math.floor(state.seekTo)
                 },
                 events: {
@@ -645,6 +670,7 @@
             }
         }
 
+        /* YAYIN SENKRONİZASYONUNU KORUMA VE İLERİ SARMAYI ENGELLENME LOGİĞİ */
         function syncToLiveStream() {
             if (!isPlayerReady || !player) return;
 
@@ -666,7 +692,9 @@
             if (typeof player.getCurrentTime === 'function') {
                 const currentTime = player.getCurrentTime();
                 const timeDiff = Math.abs(currentTime - state.seekTo);
-                if (timeDiff > 3) {
+                
+                // Kullanıcı videoyu ileri/geri sarmaya çalışırsa (1.5 saniyeden fazla sapma olursa) anında canlı yayına geri zorla
+                if (timeDiff > 1.5) {
                     player.seekTo(state.seekTo, true);
                     player.playVideo();
                 }
@@ -681,9 +709,9 @@
 
             const overlay = document.getElementById('start-overlay');
             overlay.style.opacity = '0';
-            overlay.style.pointerEvents = 'none'; // Overlay tık engeli kaldırıldı
+            overlay.style.pointerEvents = 'none';
             setTimeout(() => { 
-                overlay.style.display = 'none'; // Ekrandan tamamen kaldırıldı
+                overlay.style.display = 'none'; 
             }, 600);
 
             const startPlaying = () => {
@@ -705,7 +733,8 @@
                 isPlayingState = true;
 
                 if (syncCheckInterval) clearInterval(syncCheckInterval);
-                syncCheckInterval = setInterval(syncToLiveStream, 3000);
+                /* Senkron kontrol sıklığı 1 saniyeye düşürüldü (sarma durumunda anında yayına çeker) */
+                syncCheckInterval = setInterval(syncToLiveStream, 1000);
             };
 
             if (isPlayerReady && player) {

@@ -220,10 +220,25 @@
             -webkit-backdrop-filter: blur(16px);
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.2);
             transition: border-color 0.3s;
+            position: relative;
+            overflow: hidden;
         }
 
         .volume-control-box:hover {
             border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .volume-control-box::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(60deg, transparent 30%, rgba(255,255,255,0.15) 50%, transparent 70%);
+            transform: rotate(30deg);
+            animation: shine 4s infinite;
+            pointer-events: none;
         }
 
         .volume-btn {
@@ -237,6 +252,8 @@
             align-items: center;
             justify-content: center;
             transition: transform 0.2s;
+            position: relative;
+            z-index: 2;
         }
 
         .volume-btn:active {
@@ -252,6 +269,8 @@
             background: rgba(255, 255, 255, 0.25);
             outline: none;
             cursor: pointer;
+            position: relative;
+            z-index: 2;
         }
 
         .volume-slider::-webkit-slider-thumb {

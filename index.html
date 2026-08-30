@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>EA$Y FM | CANLI</title>
+    <!-- Google Fonts: Anton & Montserrat -->
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     
     <style>
@@ -272,7 +273,7 @@
             width: 100%;
             height: 100%;
             border: none;
-            pointer-events: none;
+            pointer-events: auto; /* Videoya tıklamaya izin verildi */
         }
 
         #start-overlay {
@@ -435,7 +436,9 @@
         }
     </style>
 
+    <!-- Three.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
@@ -608,7 +611,7 @@
                 videoId: targetSong.id,
                 playerVars: {
                     'autoplay': 0,
-                    'controls': 0,
+                    'controls': 1, /* YouTube varsayılan kontrolleri (Reklamı Atla vb.) gösterilsin */
                     'rel': 0,
                     'playsinline': 1,
                     'enablejsapi': 1,
@@ -678,8 +681,9 @@
 
             const overlay = document.getElementById('start-overlay');
             overlay.style.opacity = '0';
+            overlay.style.pointerEvents = 'none'; // Overlay tık engeli kaldırıldı
             setTimeout(() => { 
-                overlay.style.visibility = 'hidden'; 
+                overlay.style.display = 'none'; // Ekrandan tamamen kaldırıldı
             }, 600);
 
             const startPlaying = () => {
@@ -722,7 +726,7 @@
             handleUserClick();
         });
 
-        // DÜZELTİLMİŞ SES VE BUTON SENKRON KONTROLÜ
+        // SES VE BUTON SENKRON KONTROLÜ
         const volumeRange = document.getElementById('volume-range');
         const muteBtn = document.getElementById('mute-btn');
         let isMuted = false;

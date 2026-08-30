@@ -246,7 +246,7 @@
             cursor: pointer;
         }
 
-        /* VİDEO ÇERÇEVESİ VE MASKELER */
+        /* VİDEO ÇERÇEVESİ VE ÖZEL REKLAM TIKLAMA MASKESİ */
         .video-container {
             position: relative;
             width: 100%;
@@ -276,26 +276,42 @@
             pointer-events: auto;
         }
 
-        /* İLERİ SARMA / KONTROL ENGELLEME MASKELERİ */
-        .yt-shield-top {
+        /* TAM KİLİT MASKELERİ (SADECE SAĞ ALT REKLAM BUTONU AÇIK) */
+        
+        /* 1. Üst ve Orta Alanın Tamamını Kapatan Katman (%82 yükseklik) */
+        .yt-shield-top-main {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: 25%;
+            height: 82%;
             z-index: 15;
             background: transparent;
         }
 
-        .yt-shield-bottom {
+        /* 2. En Alt Çubuğun Sol ve Orta Alanını Kapatan Katman (Sarma çubuğunu kilitler) */
+        .yt-shield-bottom-left {
             position: absolute;
             bottom: 0;
             left: 0;
-            width: 65%; /* Sol ve orta alt alanı kapatarak sarma çubuğunu engeller */
-            height: 35%;
+            width: 78%; /* Sol %78 kilitli */
+            height: 18%;
             z-index: 15;
             background: transparent;
         }
+
+        /* 3. Sağ Alt Butonun Hemen Sağ Tarafındaki Boşluğu Kapatan İnce Katman */
+        .yt-shield-bottom-edge {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 2%; /* En sağdaki mini boşluk kilitli */
+            height: 18%;
+            z-index: 15;
+            background: transparent;
+        }
+
+        /* Not: Geriye kalan Sağ Alt (%78 ile %98 arası x düzlemi, %82 ile %100 arası y düzlemi) tıklamaya açık kalır! */
 
         #start-overlay {
             position: absolute;
@@ -430,7 +446,7 @@
             filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
         }
 
-        /* MOBİL ÖZEL AYARLAR */
+        /* MOBİL UYUM DÜZENLEMELERİ */
         @media (max-width: 600px) {
             .main-wrapper {
                 padding: 5px 12px 25px 12px;
@@ -444,6 +460,11 @@
 
             .video-container {
                 padding-bottom: 53%;
+            }
+
+            /* Mobilde YouTube Skip Ad butonu ekran oranına göre daha geniş kapladığı için açıyı genişletiyoruz */
+            .yt-shield-bottom-left {
+                width: 68%; /* Mobilde sağ tıklama alanı %30 genişliktedir */
             }
 
             .now-playing-card {
@@ -489,9 +510,10 @@
         </div>
 
         <div class="video-container" id="video-box">
-            <!-- Görünmez Koruma Katmanları (Üst başlık ve Alt sarma çubuğu engelleme) -->
-            <div class="yt-shield-top"></div>
-            <div class="yt-shield-bottom"></div>
+            <!-- REKLAM DIŞINDAKİ TÜM EKRANI KİLİTLEYEN MASKELER -->
+            <div class="yt-shield-top-main"></div>
+            <div class="yt-shield-bottom-left"></div>
+            <div class="yt-shield-bottom-edge"></div>
 
             <div id="start-overlay">
                 <button class="start-btn" id="start-btn-el">CANLI YAYINA KATIL</button>
@@ -640,7 +662,7 @@
                     'playsinline': 1,
                     'enablejsapi': 1,
                     'iv_load_policy': 3,
-                    'fs': 0, /* Tam ekran butonunu devredışı bırakır */
+                    'fs': 0,
                     'start': Math.floor(state.seekTo)
                 },
                 events: {
@@ -670,7 +692,6 @@
             }
         }
 
-        /* YAYIN SENKRONİZASYONUNU KORUMA VE İLERİ SARMAYI ENGELLENME LOGİĞİ */
         function syncToLiveStream() {
             if (!isPlayerReady || !player) return;
 
@@ -693,7 +714,6 @@
                 const currentTime = player.getCurrentTime();
                 const timeDiff = Math.abs(currentTime - state.seekTo);
                 
-                // Kullanıcı videoyu ileri/geri sarmaya çalışırsa (1.5 saniyeden fazla sapma olursa) anında canlı yayına geri zorla
                 if (timeDiff > 1.5) {
                     player.seekTo(state.seekTo, true);
                     player.playVideo();
@@ -733,7 +753,6 @@
                 isPlayingState = true;
 
                 if (syncCheckInterval) clearInterval(syncCheckInterval);
-                /* Senkron kontrol sıklığı 1 saniyeye düşürüldü (sarma durumunda anında yayına çeker) */
                 syncCheckInterval = setInterval(syncToLiveStream, 1000);
             };
 

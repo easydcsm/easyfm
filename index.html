@@ -167,7 +167,6 @@
             overflow: hidden;
         }
 
-        /* Gümüş Işıltı Animasyonu */
         .badge::after {
             content: '';
             position: absolute;
@@ -199,6 +198,52 @@
             0% { opacity: 1; transform: scale(1); box-shadow: 0 0 14px #ffffff; }
             50% { opacity: 0.2; transform: scale(0.65); box-shadow: 0 0 2px #ffffff; }
             100% { opacity: 1; transform: scale(1); box-shadow: 0 0 14px #ffffff; }
+        }
+
+        /* SES KONTROL ÇUBUĞU */
+        .volume-control-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(20, 20, 20, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 4px 14px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .volume-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .volume-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 70px;
+            height: 4px;
+            border-radius: 2px;
+            background: rgba(255, 255, 255, 0.3);
+            outline: none;
+            cursor: pointer;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ffffff;
+            box-shadow: 0 0 8px #ffffff;
+            cursor: pointer;
         }
 
         /* VİDEO ÇERÇEVESİ VE OVERLAY */
@@ -284,6 +329,11 @@
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.3);
             margin: 0;
             position: relative;
+            transition: border-color 0.3s ease;
+        }
+
+        .now-playing-card:hover {
+            border-color: rgba(255, 255, 255, 0.5);
         }
 
         .track-info {
@@ -322,6 +372,32 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+        }
+
+        /* DİNAMİK SES DALGASI ANIMASYONU */
+        .wave-bars {
+            display: flex;
+            align-items: flex-end;
+            gap: 2px;
+            height: 12px;
+            margin-left: 4px;
+        }
+
+        .wave-bar {
+            width: 2px;
+            background: #fff;
+            border-radius: 1px;
+            animation: waveAnim 1s ease-in-out infinite alternate;
+        }
+
+        .wave-bar:nth-child(1) { height: 30%; animation-delay: 0.1s; }
+        .wave-bar:nth-child(2) { height: 80%; animation-delay: 0.3s; }
+        .wave-bar:nth-child(3) { height: 50%; animation-delay: 0.2s; }
+        .wave-bar:nth-child(4) { height: 100%; animation-delay: 0.4s; }
+
+        @keyframes waveAnim {
+            0% { transform: scaleY(0.3); }
+            100% { transform: scaleY(1); }
         }
 
         #visualizer-canvas {
@@ -384,6 +460,10 @@
             <div class="badge">
                 <span>🎧 DİNLEYİCİ: <strong id="listener-count" style="color: #ffffff; text-shadow: 0 0 8px #fff;">0</strong></span>
             </div>
+            <div class="volume-control-box">
+                <button class="volume-btn" id="mute-btn">🔊</button>
+                <input type="range" class="volume-slider" id="volume-range" min="0" max="100" value="100">
+            </div>
         </div>
 
         <div class="video-container" id="video-box">
@@ -398,6 +478,12 @@
                 <span class="track-label">
                     <span style="display:inline-block; width:6px; height:6px; background:#fff; border-radius:50%;"></span>
                     ŞU AN YAYINDA
+                    <div class="wave-bars" id="wave-bars" style="opacity: 0;">
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                    </div>
                 </span>
                 <span class="track-title" id="current-track-name">Canlı Yayın Bekleniyor...</span>
             </div>
@@ -545,12 +631,15 @@
 
         function onPlayerStateChange(event) {
             const vBox = document.getElementById('video-box');
+            const waveBars = document.getElementById('wave-bars');
             if (event.data === YT.PlayerState.PLAYING) {
                 isPlayingState = true;
                 vBox.classList.add('playing-border');
+                waveBars.style.opacity = '1';
             } else {
                 isPlayingState = false;
                 vBox.classList.remove('playing-border');
+                waveBars.style.opacity = '0';
             }
         }
 
@@ -634,7 +723,39 @@
             handleUserClick();
         });
 
-        // THREE.JS 3D DÜNYA (TAMAMEN TEMİZ VE KATMANSIZ)
+        // SES KONTROLÜ
+        const volumeRange = document.getElementById('volume-range');
+        const muteBtn = document.getElementById('mute-btn');
+        let isMuted = false;
+
+        volumeRange.addEventListener('input', (e) => {
+            const val = e.target.value;
+            if (player && typeof player.setVolume === 'function') {
+                player.setVolume(val);
+                if (val == 0) {
+                    muteBtn.innerText = '🔇';
+                } else {
+                    muteBtn.innerText = '🔊';
+                }
+            }
+        });
+
+        muteBtn.addEventListener('click', () => {
+            if (!player) return;
+            if (isMuted) {
+                player.unMute();
+                muteBtn.innerText = '🔊';
+                volumeRange.value = player.getVolume() || 100;
+                isMuted = false;
+            } else {
+                player.mute();
+                muteBtn.innerText = '🔇';
+                volumeRange.value = 0;
+                isMuted = true;
+            }
+        });
+
+        // THREE.JS 3D DÜNYA
         const globeContainer = document.getElementById('globe-3d-container');
         
         const scene = new THREE.Scene();

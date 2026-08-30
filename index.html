@@ -46,7 +46,7 @@
             pointer-events: none;
         }
 
-        /* DÜNYA ARKASI RİTMİK GLOW */
+        /* ARKA PLAN ORTAM DERİNLİĞİ */
         .ambient-glow {
             position: fixed;
             top: 50%;
@@ -54,7 +54,7 @@
             transform: translate(-50%, -50%);
             width: 80vw;
             height: 80vh;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.12) 0%, rgba(150, 150, 150, 0.02) 50%, rgba(0, 0, 0, 0) 75%);
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, rgba(150, 150, 150, 0.01) 50%, rgba(0, 0, 0, 0) 75%);
             z-index: 2;
             pointer-events: none;
             transition: transform 0.3s ease;
@@ -130,7 +130,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            filter: drop-shadow(0 0 35px rgba(255, 255, 255, 0.25));
+            filter: drop-shadow(0 0 25px rgba(255, 255, 255, 0.2));
         }
 
         #globe-3d-container canvas {
@@ -634,7 +634,7 @@
             handleUserClick();
         });
 
-        // THREE.JS 3D DÜNYA (HALKASIZ - TEMİZ VE SADE MONOKROM)
+        // THREE.JS 3D DÜNYA (TAMAMEN TEMİZ VE KATMANSIZ)
         const globeContainer = document.getElementById('globe-3d-container');
         
         const scene = new THREE.Scene();
@@ -670,22 +670,11 @@
         const geometry = new THREE.SphereGeometry(baseRadius, 64, 64);
         const material = new THREE.MeshStandardMaterial({
             map: earthTexture,
-            roughness: 0.3,
-            metalness: 0.5
+            roughness: 0.35,
+            metalness: 0.45
         });
         const globeMesh = new THREE.Mesh(geometry, material);
         scene.add(globeMesh);
-
-        // Derin Temiz Atmosfer Katmanı
-        const atmosGeo = new THREE.SphereGeometry(baseRadius + 0.06, 64, 64);
-        const atmosMat = new THREE.MeshBasicMaterial({
-            color: 0xffffff,
-            transparent: true,
-            opacity: 0.18,
-            side: THREE.BackSide
-        });
-        const atmosMesh = new THREE.Mesh(atmosGeo, atmosMat);
-        scene.add(atmosMesh);
 
         const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
         scene.add(ambientLight);
@@ -757,14 +746,11 @@
                 bassAngle += 0.09;
                 const bassScale = 1 + Math.pow(Math.sin(bassAngle), 6) * 0.055;
                 globeMesh.scale.set(bassScale, bassScale, bassScale);
-                atmosMesh.scale.set(bassScale, bassScale, bassScale);
 
-                // Glow Pulsar Efekti
                 const glowScale = 1 + Math.sin(bassAngle) * 0.08;
                 ambientGlowEl.style.transform = `translate(-50%, -50%) scale(${glowScale})`;
             } else {
                 globeMesh.scale.lerp(new THREE.Vector3(1, 1, 1), 0.1);
-                atmosMesh.scale.lerp(new THREE.Vector3(1, 1, 1), 0.1);
                 ambientGlowEl.style.transform = `translate(-50%, -50%) scale(1)`;
             }
 
@@ -799,7 +785,7 @@
                 this.speedX = (Math.random() - 0.5) * 0.35;
                 this.speedY = (Math.random() - 0.5) * 0.35;
                 this.opacity = Math.random() * 0.7 + 0.2;
-                this.isSparkle = Math.random() > 0.65; // %35 Sparkle
+                this.isSparkle = Math.random() > 0.65;
                 this.pulseSpeed = Math.random() * 0.03 + 0.015;
             }
 

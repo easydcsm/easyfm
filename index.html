@@ -277,8 +277,6 @@
         }
 
         /* TAM KİLİT MASKELERİ (SADECE SAĞ ALT REKLAM BUTONU AÇIK) */
-        
-        /* 1. Üst ve Orta Alanın Tamamını Kapatan Katman (%82 yükseklik) */
         .yt-shield-top-main {
             position: absolute;
             top: 0;
@@ -289,29 +287,25 @@
             background: transparent;
         }
 
-        /* 2. En Alt Çubuğun Sol ve Orta Alanını Kapatan Katman (Sarma çubuğunu kilitler) */
         .yt-shield-bottom-left {
             position: absolute;
             bottom: 0;
             left: 0;
-            width: 78%; /* Sol %78 kilitli */
+            width: 78%;
             height: 18%;
             z-index: 15;
             background: transparent;
         }
 
-        /* 3. Sağ Alt Butonun Hemen Sağ Tarafındaki Boşluğu Kapatan İnce Katman */
         .yt-shield-bottom-edge {
             position: absolute;
             bottom: 0;
             right: 0;
-            width: 2%; /* En sağdaki mini boşluk kilitli */
+            width: 2%;
             height: 18%;
             z-index: 15;
             background: transparent;
         }
-
-        /* Not: Geriye kalan Sağ Alt (%78 ile %98 arası x düzlemi, %82 ile %100 arası y düzlemi) tıklamaya açık kalır! */
 
         #start-overlay {
             position: absolute;
@@ -419,6 +413,7 @@
             gap: 2px;
             height: 12px;
             margin-left: 4px;
+            transition: opacity 0.3s ease;
         }
 
         .wave-bar {
@@ -462,9 +457,8 @@
                 padding-bottom: 53%;
             }
 
-            /* Mobilde YouTube Skip Ad butonu ekran oranına göre daha geniş kapladığı için açıyı genişletiyoruz */
             .yt-shield-bottom-left {
-                width: 68%; /* Mobilde sağ tıklama alanı %30 genişliktedir */
+                width: 68%;
             }
 
             .now-playing-card {
@@ -510,7 +504,6 @@
         </div>
 
         <div class="video-container" id="video-box">
-            <!-- REKLAM DIŞINDAKİ TÜM EKRANI KİLİTLEYEN MASKELER -->
             <div class="yt-shield-top-main"></div>
             <div class="yt-shield-bottom-left"></div>
             <div class="yt-shield-bottom-edge"></div>
@@ -567,6 +560,7 @@
         let player = null;
         let isPlayerReady = false;
         let isPlayingState = false;
+        let actualPlayerStatePlaying = false; 
         let currentLoadedVideoId = null;
         let syncCheckInterval = null;
 
@@ -678,18 +672,30 @@
             });
         }
 
-        function onPlayerStateChange(event) {
+        function updateAudioVisualState() {
             const vBox = document.getElementById('video-box');
             const waveBars = document.getElementById('wave-bars');
-            if (event.data === YT.PlayerState.PLAYING) {
-                isPlayingState = true;
-                vBox.classList.add('playing-border');
-                waveBars.style.opacity = '1';
-            } else {
+            const vol = Number(volumeRange.value);
+
+            // Ses 0 ise veya sessizde ise animasyon durumunu tamamen kapalıya çek
+            if (vol === 0 || isMuted || !actualPlayerStatePlaying) {
                 isPlayingState = false;
                 vBox.classList.remove('playing-border');
                 waveBars.style.opacity = '0';
+            } else {
+                isPlayingState = true;
+                vBox.classList.add('playing-border');
+                waveBars.style.opacity = '1';
             }
+        }
+
+        function onPlayerStateChange(event) {
+            if (event.data === YT.PlayerState.PLAYING) {
+                actualPlayerStatePlaying = true;
+            } else {
+                actualPlayerStatePlaying = false;
+            }
+            updateAudioVisualState();
         }
 
         function syncToLiveStream() {
@@ -750,7 +756,6 @@
                     startSeconds: Math.floor(state.seekTo)
                 });
                 player.playVideo();
-                isPlayingState = true;
 
                 if (syncCheckInterval) clearInterval(syncCheckInterval);
                 syncCheckInterval = setInterval(syncToLiveStream, 1000);
@@ -797,6 +802,7 @@
                     muteBtn.innerText = '🔊';
                 }
             }
+            updateAudioVisualState();
         });
 
         muteBtn.addEventListener('click', () => {
@@ -821,6 +827,7 @@
                 volumeRange.value = 0;
                 isMuted = true;
             }
+            updateAudioVisualState();
         });
 
         // THREE.JS 3D DÜNYA

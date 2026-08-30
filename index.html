@@ -677,7 +677,6 @@
             const waveBars = document.getElementById('wave-bars');
             const vol = Number(volumeRange.value);
 
-            // Ses 0 ise veya sessizde ise animasyon durumunu tamamen kapalıya çek
             if (vol === 0 || isMuted || !actualPlayerStatePlaying) {
                 isPlayingState = false;
                 vBox.classList.remove('playing-border');
@@ -929,24 +928,32 @@
         let bassAngle = 0;
         const ambientGlowEl = document.getElementById('ambient-glow');
 
-        function animateGlobe() {
+        // FPS / Cihaz Ekran Yenileme Hızından Bağımsız Dönüş Kontrolü (Delta Time)
+        let lastTime = performance.now();
+
+        function animateGlobe(currentTime) {
             requestAnimationFrame(animateGlobe);
 
-            const globeSpeed = isPlayingState ? 0.007 : 0.0025;
-            const ringSpeed = isPlayingState ? 0.01 : 0.0035;
+            const deltaTime = (currentTime - lastTime) / 1000; 
+            lastTime = currentTime;
 
-            globeMesh.rotation.y += globeSpeed;
-            if (ringMesh) ringMesh.rotation.y -= ringSpeed;
+            if (isNaN(deltaTime) || deltaTime > 0.1) return;
+
+            const globeSpeed = isPlayingState ? 0.45 : 0.15;
+            const ringSpeed = isPlayingState ? 0.65 : 0.22;
+
+            globeMesh.rotation.y += globeSpeed * deltaTime;
+            if (ringMesh) ringMesh.rotation.y -= ringSpeed * deltaTime;
 
             if (isPlayingState) {
-                bassAngle += 0.09;
+                bassAngle += 5.5 * deltaTime;
                 const bassScale = 1 + Math.pow(Math.sin(bassAngle), 6) * 0.055;
                 globeMesh.scale.set(bassScale, bassScale, bassScale);
 
                 const glowScale = 1 + Math.sin(bassAngle) * 0.08;
                 ambientGlowEl.style.transform = `translate(-50%, -50%) scale(${glowScale})`;
             } else {
-                globeMesh.scale.lerp(new THREE.Vector3(1, 1, 1), 0.1);
+                globeMesh.scale.lerp(new THREE.Vector3(1, 1, 1), 10 * deltaTime);
                 ambientGlowEl.style.transform = `translate(-50%, -50%) scale(1)`;
             }
 
@@ -954,7 +961,7 @@
         }
         
         resizeThreeJS();
-        animateGlobe();
+        requestAnimationFrame(animateGlobe);
 
         // Gelişmiş Pırlanta Sparkle Parçacık Animasyonu
         const canvas = document.getElementById('bg-canvas');

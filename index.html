@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EA$Y FM | CANLI</title>
-    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:wght@400;600;700;900&family=Space+Grotesk:wght@500;700;900&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <title>EA$Y FM | TRAPHOUSE LIVE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:wght@400;600;700;900&family=Space+Grotesk:wght@500;700;900&family=Syne:wght@800;900&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --primary: #00ff66;
-            --primary-glow: rgba(0, 255, 102, 0.4);
-            --bg-dark: #050505;
-            --card-bg: rgba(18, 18, 20, 0.7);
-            --border-glow: rgba(255, 255, 255, 0.15);
+            --ice-white: #ffffff;
+            --ice-glow: rgba(255, 255, 255, 0.6);
+            --silver-dark: #121214;
+            --card-bg: rgba(15, 15, 18, 0.85);
+            --border-glow: rgba(255, 255, 255, 0.18);
         }
 
         * {
@@ -26,7 +26,7 @@
             padding: 0;
             width: 100%;
             height: 100%;
-            background-color: var(--bg-dark);
+            background-color: #000000;
             color: #fff;
             font-family: 'Space Grotesk', 'Montserrat', sans-serif;
             overflow-x: hidden;
@@ -61,12 +61,12 @@
             transform: translate(-50%, -50%);
             width: 85vw;
             height: 85vh;
-            background: radial-gradient(circle, rgba(0, 255, 102, 0.08) 0%, rgba(20, 20, 20, 0.02) 45%, rgba(0, 0, 0, 0) 70%);
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.12) 0%, rgba(80, 80, 80, 0.03) 45%, rgba(0, 0, 0, 0) 70%);
             z-index: 2;
             pointer-events: none;
             transition: transform 0.2s cubic-bezier(0.1, 0.9, 0.2, 1), opacity 0.5s ease;
             will-change: transform;
-            filter: blur(30px);
+            filter: blur(35px);
         }
 
         .main-wrapper {
@@ -78,8 +78,8 @@
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
-            padding: 20px 16px 30px 16px;
-            gap: 20px;
+            padding: 18px 16px 30px 16px;
+            gap: 18px;
             margin: 0 auto;
         }
 
@@ -97,7 +97,7 @@
             margin: 0 auto;
         }
 
-        /* PIRLANTA PATLAMA EFEKTİ */
+        /* PIRLANTA/ICE PATLAMA EFEKTİ */
         .blast-wave {
             position: absolute;
             top: 50%;
@@ -106,8 +106,8 @@
             width: 220px;
             height: 220px;
             border-radius: 50%;
-            border: 2px solid var(--primary);
-            box-shadow: 0 0 90px var(--primary), inset 0 0 50px var(--primary);
+            border: 3px solid #ffffff;
+            box-shadow: 0 0 100px #ffffff, inset 0 0 60px #ffffff;
             opacity: 0;
             pointer-events: none;
             z-index: 5;
@@ -122,7 +122,7 @@
             0% {
                 transform: translate(-50%, -50%) scale(0.6);
                 opacity: 1;
-                border-width: 10px;
+                border-width: 12px;
             }
             100% {
                 transform: translate(-50%, -50%) scale(2.8);
@@ -150,7 +150,7 @@
         /* STATUS BAR (BADGES & VOLUME) */
         .status-bar {
             display: flex;
-            gap: 12px;
+            gap: 10px;
             flex-wrap: wrap;
             justify-content: center;
             align-items: center;
@@ -164,28 +164,28 @@
             border: 1px solid var(--border-glow);
             padding: 8px 18px;
             border-radius: 30px;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 800;
-            letter-spacing: 2px;
+            letter-spacing: 2.5px;
             display: flex;
             align-items: center;
             gap: 8px;
             text-transform: uppercase;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8);
+            transition: all 0.3s;
         }
 
         .badge:hover {
-            border-color: var(--primary);
-            box-shadow: 0 0 15px var(--primary-glow);
+            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
         }
 
         .live-dot {
             width: 8px;
             height: 8px;
-            background-color: var(--primary);
+            background-color: #ffffff;
             border-radius: 50%;
-            box-shadow: 0 0 12px var(--primary);
+            box-shadow: 0 0 12px #ffffff;
             animation: pulse 1.4s infinite;
         }
 
@@ -206,13 +206,12 @@
             border-radius: 30px;
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8);
             transition: all 0.3s;
         }
 
         .volume-control-box:hover {
-            border-color: var(--primary);
-            box-shadow: 0 0 15px var(--primary-glow);
+            border-color: rgba(255, 255, 255, 0.5);
         }
 
         .volume-btn {
@@ -220,7 +219,7 @@
             border: none;
             color: #fff;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 13px;
             padding: 0;
             display: flex;
             align-items: center;
@@ -235,7 +234,7 @@
         .volume-slider {
             -webkit-appearance: none;
             appearance: none;
-            width: 80px;
+            width: 75px;
             height: 4px;
             border-radius: 2px;
             background: rgba(255, 255, 255, 0.2);
@@ -249,8 +248,8 @@
             width: 12px;
             height: 12px;
             border-radius: 50%;
-            background: var(--primary);
-            box-shadow: 0 0 10px var(--primary);
+            background: #ffffff;
+            box-shadow: 0 0 10px #ffffff;
             cursor: pointer;
             transition: transform 0.15s;
         }
@@ -259,13 +258,13 @@
             transform: scale(1.3);
         }
 
-        /* VİDEO ÇERÇEVESİ VE MASKELER */
+        /* VİDEO ÇERÇEVESİ */
         .video-container {
             position: relative;
             width: 100%;
             padding-bottom: 52%;
             height: 0;
-            border-radius: 24px;
+            border-radius: 22px;
             overflow: hidden;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.95);
             border: 1px solid var(--border-glow);
@@ -274,8 +273,8 @@
         }
 
         .video-container.playing-border {
-            border-color: var(--primary);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9), 0 0 35px var(--primary-glow);
+            border-color: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9), 0 0 45px rgba(255, 255, 255, 0.25);
         }
 
         #youtube-player {
@@ -324,37 +323,37 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle, rgba(15, 15, 18, 0.94) 0%, rgba(5, 5, 5, 0.98) 100%);
+            background: radial-gradient(circle, rgba(20, 20, 22, 0.95) 0%, rgba(0, 0, 0, 0.98) 100%);
             z-index: 30;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             transition: opacity 0.5s ease, visibility 0.5s;
         }
 
         .start-btn {
-            background: var(--primary);
-            color: #000;
+            background: #ffffff;
+            color: #000000;
             font-family: 'Syne', sans-serif;
-            font-weight: 800;
-            font-size: 13px;
-            padding: 16px 40px;
+            font-weight: 900;
+            font-size: 12px;
+            padding: 15px 38px;
             border: none;
             border-radius: 50px;
             cursor: pointer;
-            letter-spacing: 2px;
-            box-shadow: 0 0 30px var(--primary-glow);
+            letter-spacing: 2.5px;
+            box-shadow: 0 0 35px rgba(255, 255, 255, 0.8);
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .start-btn:hover {
             transform: scale(1.06);
-            box-shadow: 0 0 50px var(--primary);
-            background-color: #33ff85;
+            box-shadow: 0 0 55px rgba(255, 255, 255, 1);
+            background-color: #f0f0f0;
         }
 
         .start-btn:active {
@@ -368,32 +367,32 @@
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--border-glow);
-            border-radius: 20px;
-            padding: 18px 24px;
+            border-radius: 18px;
+            padding: 16px 22px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.75);
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.8);
             transition: all 0.3s ease;
         }
 
         .now-playing-card:hover {
-            border-color: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.4);
         }
 
         .track-info {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 4px;
             overflow: hidden;
             max-width: 55%;
         }
 
         .track-label {
-            font-size: 10px;
-            font-weight: 800;
-            letter-spacing: 2px;
-            color: var(--primary);
+            font-size: 9px;
+            font-weight: 900;
+            letter-spacing: 2.5px;
+            color: #aaa;
             text-transform: uppercase;
             display: flex;
             align-items: center;
@@ -401,18 +400,18 @@
         }
 
         .track-title {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 900;
             color: #fff;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            letter-spacing: -0.5px;
+            text-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
         }
 
         .next-track {
-            font-size: 11px;
-            color: #888;
+            font-size: 10px;
+            color: #777;
             text-align: right;
             max-width: 42%;
             white-space: nowrap;
@@ -420,14 +419,14 @@
             text-overflow: ellipsis;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 4px;
         }
 
         /* SES DALGASI ANIMASYONU */
         .wave-bars {
             display: flex;
             align-items: flex-end;
-            gap: 3px;
+            gap: 2.5px;
             height: 12px;
             margin-left: 4px;
             transition: opacity 0.3s ease;
@@ -435,8 +434,9 @@
 
         .wave-bar {
             width: 2px;
-            background: var(--primary);
+            background: #fff;
             border-radius: 1px;
+            box-shadow: 0 0 6px #fff;
             animation: waveAnim 0.8s ease-in-out infinite alternate;
         }
 
@@ -452,16 +452,16 @@
 
         #visualizer-canvas {
             width: 100%;
-            height: 36px;
+            height: 32px;
             margin: 0;
             transition: opacity 1s ease;
         }
 
-        /* MOBİL UYUM DÜZENLEMELERİ */
+        /* MOBİL UYUM */
         @media (max-width: 600px) {
             .main-wrapper {
-                padding: 12px 14px 25px 14px;
-                gap: 14px;
+                padding: 10px 12px 25px 12px;
+                gap: 12px;
             }
 
             .logo-container {
@@ -470,17 +470,17 @@
 
             .video-container {
                 padding-bottom: 56%;
-                border-radius: 18px;
+                border-radius: 16px;
             }
 
             .now-playing-card {
-                padding: 14px 18px;
-                border-radius: 16px;
+                padding: 12px 16px;
+                border-radius: 14px;
             }
 
             .start-btn {
                 font-size: 11px;
-                padding: 14px 32px;
+                padding: 12px 28px;
             }
         }
     </style>
@@ -506,7 +506,7 @@
                 <span>CANLI YAYIN</span>
             </div>
             <div class="badge">
-                <span>🎧 DİNLEYİCİ: <strong id="listener-count" style="color: var(--primary); text-shadow: 0 0 10px var(--primary-glow);">0</strong></span>
+                <span>🎧 DİNLEYİCİ: <strong id="listener-count" style="color: #ffffff; text-shadow: 0 0 10px #ffffff;">0</strong></span>
             </div>
             <div class="volume-control-box">
                 <button class="volume-btn" id="mute-btn" title="Sesi Kapat/Aç">🔊</button>
@@ -520,7 +520,7 @@
             <div class="yt-shield-bottom-edge"></div>
 
             <div id="start-overlay">
-                <button class="start-btn" id="start-btn-el">CANLI YAYINA KATIL</button>
+                <button class="start-btn" id="start-btn-el">TRAPHOUSE'A KATIL</button>
             </div>
             <div id="youtube-player"></div>
         </div>
@@ -528,7 +528,7 @@
         <div class="now-playing-card">
             <div class="track-info">
                 <span class="track-label">
-                    <span style="display:inline-block; width:6px; height:6px; background:var(--primary); border-radius:50%; box-shadow: 0 0 8px var(--primary);"></span>
+                    <span style="display:inline-block; width:5px; height:5px; background:#fff; border-radius:50%; box-shadow:0 0 8px #fff;"></span>
                     ŞU AN YAYINDA
                     <div class="wave-bars" id="wave-bars" style="opacity: 0;">
                         <div class="wave-bar"></div>
@@ -540,8 +540,8 @@
                 <span class="track-title" id="current-track-name">Canlı Yayın Bekleniyor...</span>
             </div>
             <div class="next-track">
-                <div class="track-label" style="justify-content: flex-end; color: #666;">SIRADAKİ</div>
-                <span id="next-track-name" style="font-weight:700; color: #ccc;">---</span>
+                <div class="track-label" style="justify-content: flex-end;">SIRADAKİ</div>
+                <span id="next-track-name" style="font-weight:700;">---</span>
             </div>
         </div>
 
@@ -844,7 +844,7 @@
             updateAudioVisualState();
         });
 
-        /* THREE.JS 3D DÜNYA VE HALKA EFEKTİ */
+        /* THREE.JS 3D DÜNYA VE TRAPHOUSE HALKA EFEKTİ */
         const globeContainer = document.getElementById('globe-3d-container');
         
         const scene = new THREE.Scene();
@@ -881,16 +881,16 @@
         const geometry = new THREE.SphereGeometry(baseRadius, segments, segments);
         const material = new THREE.MeshStandardMaterial({
             map: earthTexture,
-            roughness: 0.4,
-            metalness: 0.3
+            roughness: 0.3,
+            metalness: 0.4
         });
         const globeMesh = new THREE.Mesh(geometry, material);
         scene.add(globeMesh);
 
-        const ambientLight = new THREE.AmbientLight(0xffffff, 1.6);
+        const ambientLight = new THREE.AmbientLight(0xffffff, 1.8);
         scene.add(ambientLight);
 
-        const dirLight = new THREE.DirectionalLight(0xffffff, 2.2);
+        const dirLight = new THREE.DirectionalLight(0xffffff, 2.4);
         dirLight.position.set(5, 4, 5);
         scene.add(dirLight);
 
@@ -907,14 +907,13 @@
 
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillStyle = '#00ff66';
-
-            ctx.font = '900 80px "Anton", sans-serif';
-            ctx.fillText("EA$Y FM", canvas.width / 2, 80);
-
             ctx.fillStyle = '#ffffff';
-            ctx.font = '900 32px "Space Grotesk", sans-serif';
-            ctx.fillText("7/24 YÜZDE YÜZ MÜZİK", canvas.width / 2, 170);
+
+            ctx.font = '900 78px "Anton", sans-serif';
+            ctx.fillText("EA$Y'S TRAPHOUSE", canvas.width / 2, 80);
+
+            ctx.font = '900 30px "Space Grotesk", sans-serif';
+            ctx.fillText("✦ 7/24 ICE CULTURE ✦ RAW HIP-HOP ✦", canvas.width / 2, 170);
 
             const ringTex = new THREE.CanvasTexture(canvas);
             ringTex.minFilter = THREE.LinearFilter;
@@ -973,7 +972,7 @@
         resizeThreeJS();
         requestAnimationFrame(animateGlobe);
 
-        /* PARÇACIK ANIMASYONU */
+        /* PIRLANTA / ICE SPARKLE ANIMASYONU */
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
         let particlesArray = [];
@@ -998,7 +997,7 @@
                 this.speedX = (Math.random() - 0.5) * 0.3;
                 this.speedY = (Math.random() - 0.5) * 0.3;
                 this.opacity = Math.random() * 0.7 + 0.2;
-                this.isSparkle = Math.random() > 0.7;
+                this.isSparkle = Math.random() > 0.65;
                 this.pulseSpeed = Math.random() * 0.03 + 0.015;
             }
 
@@ -1016,17 +1015,17 @@
             }
 
             draw() {
-                ctx.fillStyle = `rgba(0, 255, 102, ${this.opacity})`;
-                ctx.strokeStyle = `rgba(0, 255, 102, ${this.opacity})`;
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                ctx.strokeStyle = `rgba(255, 255, 255, ${this.opacity})`;
 
                 if (this.isSparkle) {
-                    const len = this.size * 2.5;
+                    const len = this.size * 2.8;
                     ctx.beginPath();
                     ctx.moveTo(this.x - len, this.y);
                     ctx.lineTo(this.x + len, this.y);
                     ctx.moveTo(this.x, this.y - len);
                     ctx.lineTo(this.x, this.y + len);
-                    ctx.lineWidth = 0.8;
+                    ctx.lineWidth = 0.9;
                     ctx.stroke();
                 } else {
                     ctx.fillRect(this.x, this.y, this.size, this.size);
@@ -1034,7 +1033,7 @@
             }
         }
 
-        const particleCount = isMobileDevice ? 25 : 50;
+        const particleCount = isMobileDevice ? 25 : 55;
         for (let i = 0; i < particleCount; i++) particlesArray.push(new DiamondParticle());
 
         function animateParticles() {
@@ -1068,10 +1067,10 @@
             document.getElementById('listener-count').innerText = snap.numChildren();
         });
 
-        /* VISUALIZER */
+        /* VISUALIZER (MONOCHROME ICE EQUALIZER) */
         const vCanvas = document.getElementById('visualizer-canvas');
         const vCtx = vCanvas.getContext('2d');
-        const numBars = isMobileDevice ? 28 : 52; 
+        const numBars = isMobileDevice ? 28 : 50; 
         let barHeights = new Array(numBars).fill(3);
         let peakHeights = new Array(numBars).fill(3);
 
@@ -1101,9 +1100,9 @@
                 const x = i * (barWidth + gap);
                 const y = vCanvas.height - barHeights[i];
 
-                vCtx.fillStyle = '#00ff66';
-                vCtx.shadowColor = 'rgba(0, 255, 102, 0.5)';
-                vCtx.shadowBlur = 8;
+                vCtx.fillStyle = '#ffffff';
+                vCtx.shadowColor = 'rgba(255, 255, 255, 0.6)';
+                vCtx.shadowBlur = 6;
                 vCtx.fillRect(x, y, barWidth, barHeights[i]);
                 
                 vCtx.fillStyle = '#ffffff';

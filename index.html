@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>EA$Y FM | CANLI</title>
     
-    <!-- Pırlanta & Hip-Hop Estetiği Fontları -->
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;900&family=Syne:wght@800;900&family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     
     <style>
@@ -49,6 +48,23 @@
             opacity: 0.6;
         }
 
+        /* TRAP HUD KÖŞE SÜSLERİ */
+        .hud-corner {
+            position: fixed;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 8px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            color: rgba(255, 255, 255, 0.3);
+            z-index: 40;
+            pointer-events: none;
+            text-transform: uppercase;
+        }
+        .hud-tl { top: 12px; left: 12px; }
+        .hud-tr { top: 12px; right: 12px; }
+        .hud-bl { bottom: 12px; left: 12px; }
+        .hud-br { bottom: 12px; right: 12px; }
+
         #bg-canvas {
             position: fixed;
             top: 0;
@@ -59,7 +75,7 @@
             pointer-events: none;
         }
 
-        /* BASS ŞİMŞEK ÇAKMA KATMANI (NET VE BELİRGİN) */
+        /* BASS ŞİMŞEK ÇAKMA KATMANI */
         #lightning-flash {
             position: fixed;
             top: 0;
@@ -115,8 +131,8 @@
 
         @keyframes trapBassShake {
             0% { transform: scale(1) translate(0, 0); }
-            50% { transform: scale(1.003) translate(-1px, 1px); }
-            100% { transform: scale(0.998) translate(1px, -1px); }
+            50% { transform: scale(1.005) translate(-1.5px, 1.5px); }
+            100% { transform: scale(0.995) translate(1.5px, -1.5px); }
         }
 
         .logo-container {
@@ -183,6 +199,13 @@
             text-transform: uppercase;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8), inset 0 0 10px rgba(255, 255, 255, 0.05);
             white-space: nowrap;
+            transition: transform 0.1s ease, border-color 0.1s ease;
+        }
+
+        .badge-bass-pulse {
+            transform: scale(1.04);
+            border-color: #ffffff;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
         }
 
         .live-dot {
@@ -262,7 +285,7 @@
             overflow: hidden;
             box-shadow: 0 10px 35px rgba(0, 0, 0, 0.95);
             border: 1px solid rgba(255, 255, 255, 0.22);
-            transition: border-color 0.3s, box-shadow 0.3s;
+            transition: border-color 0.3s, box-shadow 0.3s, transform 0.08s ease;
             background: #000;
             margin: 2px 0;
         }
@@ -445,6 +468,11 @@
 </head>
 <body>
 
+    <div class="hud-corner hud-tl">┌ EA$Y_SYS v2.6</div>
+    <div class="hud-corner hud-tr">TRAP_MODE // ACTIVE ┐</div>
+    <div class="hud-corner hud-bl">└ 808_BASS_STATION</div>
+    <div class="hud-corner hud-br">ICE_GLOW_ON ┘</div>
+
     <canvas id="bg-canvas"></canvas>
     <div id="lightning-flash"></div>
     <div class="ambient-glow" id="ambient-glow"></div>
@@ -455,11 +483,11 @@
         </div>
 
         <div class="status-bar">
-            <div class="badge">
+            <div class="badge" id="badge-live">
                 <span class="live-dot"></span>
                 <span>CANLI</span>
             </div>
-            <div class="badge">
+            <div class="badge" id="badge-listener">
                 <span>🎧 DİNLEYİCİ: <strong id="listener-count" style="color: #ffffff; text-shadow:0 0 6px #fff;">0</strong></span>
             </div>
             <div class="volume-control-box">
@@ -887,6 +915,9 @@
         let bassAngle = 0;
         const ambientGlowEl = document.getElementById('ambient-glow');
         const lightningEl = document.getElementById('lightning-flash');
+        const badgeLiveEl = document.getElementById('badge-live');
+        const badgeListenerEl = document.getElementById('badge-listener');
+        const videoBoxEl = document.getElementById('video-box');
         let lastTime = performance.now();
 
         function animateGlobe(currentTime) {
@@ -909,7 +940,7 @@
                 
                 /* TRAP BASS PUNCH & PULSE */
                 const bassPower = Math.pow(Math.sin(bassAngle), 6);
-                const bassScale = 1 + bassPower * 0.05;
+                const bassScale = 1 + bassPower * 0.06;
                 globeMesh.scale.set(bassScale, bassScale, bassScale);
 
                 dirLight.intensity = 2.2 + bassPower * 4.0;
@@ -918,7 +949,19 @@
                 ambientGlowEl.style.transform = `translate(-50%, -50%) scale(${glowScale})`;
                 ambientGlowEl.style.opacity = (0.45 + bassPower * 0.55).toString();
 
-                /* BAS VURDUĞUNDA ŞARTSIZ BEYAZ ŞİMŞEK ÇAKMA (VERY BRIGHT LIGHTNING STROBE) */
+                /* VİDEO KUTUSU BASS TİTREŞİMİ */
+                videoBoxEl.style.transform = `scale(${1 + bassPower * 0.015})`;
+
+                /* BADGE GLITCH RİTİM EFEKTİ */
+                if (bassPower > 0.6) {
+                    badgeLiveEl.classList.add('badge-bass-pulse');
+                    badgeListenerEl.classList.add('badge-bass-pulse');
+                } else {
+                    badgeLiveEl.classList.remove('badge-bass-pulse');
+                    badgeListenerEl.classList.remove('badge-bass-pulse');
+                }
+
+                /* BAS VURDUĞUNDA ŞARTSIZ BEYAZ ŞİMŞEK ÇAKMA */
                 if (bassPower > 0.75) {
                     lightningEl.style.opacity = (Math.random() > 0.3 ? (0.6 + (bassPower - 0.75) * 1.6) : 0).toString();
                 } else {
@@ -939,6 +982,9 @@
                 ambientGlowEl.style.transform = `translate(-50%, -50%) scale(1)`;
                 ambientGlowEl.style.opacity = '0.4';
                 lightningEl.style.opacity = '0';
+                videoBoxEl.style.transform = `scale(1)`;
+                badgeLiveEl.classList.remove('badge-bass-pulse');
+                badgeListenerEl.classList.remove('badge-bass-pulse');
 
                 ringBarMeshes.forEach((bar) => {
                     bar.scale.set(1, 0.4, 1);
@@ -952,10 +998,11 @@
         resizeThreeJS();
         requestAnimationFrame(animateGlobe);
 
-        /* SADECE DÖNEN NOKTALAR - SADE PARÇACIKLAR */
+        /* SADECE DÖNEN NOKTALAR VE İMLEÇ DUMAN/BUZ EFEKTİ */
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
         let particlesArray = [];
+        let cursorParticles = [];
 
         function handleResize() {
             canvas.width = window.innerWidth;
@@ -993,12 +1040,48 @@
             }
         }
 
+        class CursorParticle {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.size = Math.random() * 3 + 1;
+                this.speedX = (Math.random() - 0.5) * 1.5;
+                this.speedY = (Math.random() - 0.5) * 1.5;
+                this.life = 1.0;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.life -= 0.03;
+            }
+            draw() {
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.life})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        window.addEventListener('pointermove', (e) => {
+            for (let i = 0; i < 2; i++) {
+                cursorParticles.push(new CursorParticle(e.clientX, e.clientY));
+            }
+        });
+
         const particleCount = isMobileDevice ? 30 : 65;
         for (let i = 0; i < particleCount; i++) particlesArray.push(new CleanDotParticle());
 
         function animateParticles() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             particlesArray.forEach(p => { p.update(); p.draw(); });
+            
+            for (let i = cursorParticles.length - 1; i >= 0; i--) {
+                const cp = cursorParticles[i];
+                cp.update();
+                cp.draw();
+                if (cp.life <= 0) cursorParticles.splice(i, 1);
+            }
+
             requestAnimationFrame(animateParticles);
         }
         animateParticles();

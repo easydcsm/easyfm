@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>EA$Y FM | CANLI</title>
-    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:wght@400;600;700;900&family=Syne:wght@800&display=swap" rel="stylesheet">
     
     <style>
         * {
@@ -13,12 +13,17 @@
             -webkit-tap-highlight-color: transparent;
         }
 
+        :root {
+            --accent-color: #39FF14; /* YSL Slime Green */
+            --accent-glow: rgba(57, 255, 20, 0.5);
+        }
+
         html, body {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
-            background-color: #000000;
+            background-color: #050505;
             color: #fff;
             font-family: 'Montserrat', sans-serif;
             overflow-x: hidden;
@@ -34,7 +39,6 @@
             justify-content: flex-start;
         }
 
-        /* ARKA PLAN CANVAS */
         #bg-canvas {
             position: fixed;
             top: 0;
@@ -45,7 +49,6 @@
             pointer-events: none;
         }
 
-        /* DİNAMİK ARKA PLAN AMBİYANSI */
         .ambient-glow {
             position: fixed;
             top: 50%;
@@ -53,12 +56,12 @@
             transform: translate(-50%, -50%);
             width: 85vw;
             height: 85vh;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.12) 0%, rgba(100, 100, 100, 0.03) 45%, rgba(0, 0, 0, 0) 70%);
+            background: radial-gradient(circle, var(--accent-glow) 0%, rgba(10, 10, 10, 0.05) 50%, rgba(0, 0, 0, 0) 75%);
             z-index: 2;
             pointer-events: none;
             transition: transform 0.2s cubic-bezier(0.1, 0.9, 0.2, 1), opacity 0.5s ease;
             will-change: transform;
-            filter: blur(20px);
+            filter: blur(40px);
         }
 
         .main-wrapper {
@@ -75,7 +78,6 @@
             margin: 0 auto;
         }
 
-        /* LOGO & 3D DÜNYA ALANI */
         .logo-container {
             text-align: center;
             position: relative;
@@ -89,7 +91,6 @@
             margin: 0 auto;
         }
 
-        /* PIRLANTA PATLAMA EFEKTİ */
         .blast-wave {
             position: absolute;
             top: 50%;
@@ -98,8 +99,8 @@
             width: 220px;
             height: 220px;
             border-radius: 50%;
-            border: 3px solid rgba(255, 255, 255, 1);
-            box-shadow: 0 0 90px rgba(255, 255, 255, 1), inset 0 0 50px rgba(255, 255, 255, 0.8);
+            border: 3px solid var(--accent-color);
+            box-shadow: 0 0 90px var(--accent-color), inset 0 0 50px var(--accent-color);
             opacity: 0;
             pointer-events: none;
             z-index: 5;
@@ -111,16 +112,8 @@
         }
 
         @keyframes fastExplode {
-            0% {
-                transform: translate(-50%, -50%) scale(0.6);
-                opacity: 1;
-                border-width: 10px;
-            }
-            100% {
-                transform: translate(-50%, -50%) scale(2.8);
-                opacity: 0;
-                border-width: 1px;
-            }
+            0% { transform: translate(-50%, -50%) scale(0.6); opacity: 1; border-width: 10px; }
+            100% { transform: translate(-50%, -50%) scale(2.8); opacity: 0; border-width: 1px; }
         }
 
         #globe-3d-container {
@@ -139,7 +132,6 @@
             outline: none;
         }
 
-        /* STATUS BAR (BADGES & VOLUME) */
         .status-bar {
             display: flex;
             gap: 10px;
@@ -152,10 +144,10 @@
         }
 
         .badge {
-            background: rgba(20, 20, 20, 0.8);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(15, 15, 15, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             padding: 8px 18px;
             border-radius: 30px;
             font-size: 10px;
@@ -165,22 +157,23 @@
             align-items: center;
             gap: 8px;
             text-transform: uppercase;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8);
             position: relative;
             overflow: hidden;
-            transition: border-color 0.3s;
+            transition: border-color 0.3s, box-shadow 0.3s;
         }
 
         .badge:hover {
-            border-color: rgba(255, 255, 255, 0.4);
+            border-color: var(--accent-color);
+            box-shadow: 0 0 15px var(--accent-glow);
         }
 
         .live-dot {
             width: 8px;
             height: 8px;
-            background-color: #ffffff;
+            background-color: var(--accent-color);
             border-radius: 50%;
-            box-shadow: 0 0 12px #ffffff;
+            box-shadow: 0 0 12px var(--accent-color);
             animation: pulse 1.4s infinite;
         }
 
@@ -190,25 +183,22 @@
             100% { opacity: 1; transform: scale(1); }
         }
 
-        /* SES KONTROL ÇUBUĞU */
         .volume-control-box {
             display: flex;
             align-items: center;
             gap: 10px;
-            background: rgba(20, 20, 20, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(15, 15, 15, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             padding: 6px 16px;
             border-radius: 30px;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8);
             transition: border-color 0.3s;
-            position: relative;
-            overflow: hidden;
         }
 
         .volume-control-box:hover {
-            border-color: rgba(255, 255, 255, 0.4);
+            border-color: var(--accent-color);
         }
 
         .volume-btn {
@@ -222,13 +212,9 @@
             align-items: center;
             justify-content: center;
             transition: transform 0.2s;
-            position: relative;
-            z-index: 2;
         }
 
-        .volume-btn:active {
-            transform: scale(0.85);
-        }
+        .volume-btn:active { transform: scale(0.85); }
 
         .volume-slider {
             -webkit-appearance: none;
@@ -236,11 +222,9 @@
             width: 75px;
             height: 4px;
             border-radius: 2px;
-            background: rgba(255, 255, 255, 0.25);
+            background: rgba(255, 255, 255, 0.2);
             outline: none;
             cursor: pointer;
-            position: relative;
-            z-index: 2;
         }
 
         .volume-slider::-webkit-slider-thumb {
@@ -249,17 +233,12 @@
             width: 12px;
             height: 12px;
             border-radius: 50%;
-            background: #ffffff;
-            box-shadow: 0 0 10px #ffffff;
+            background: var(--accent-color);
+            box-shadow: 0 0 10px var(--accent-color);
             cursor: pointer;
             transition: transform 0.15s;
         }
 
-        .volume-slider::-webkit-slider-thumb:hover {
-            transform: scale(1.2);
-        }
-
-        /* VİDEO ÇERÇEVESİ VE ÖZEL REKLAM MASKESİ */
         .video-container {
             position: relative;
             width: 100%;
@@ -268,15 +247,14 @@
             border-radius: 20px;
             overflow: hidden;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.95);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: border-color 0.5s, box-shadow 0.5s;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: border-color 0.5s, box-shadow 0.5s, transform 0.1s ease;
             background: #000;
-            margin: 0;
         }
 
         .video-container.playing-border {
-            border-color: rgba(255, 255, 255, 0.65);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9), 0 0 45px rgba(255, 255, 255, 0.2);
+            border-color: var(--accent-color);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9), 0 0 35px var(--accent-glow);
         }
 
         #youtube-player {
@@ -289,36 +267,9 @@
             pointer-events: auto;
         }
 
-        /* TAM KİLİT MASKELERİ */
-        .yt-shield-top-main {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 82%;
-            z-index: 15;
-            background: transparent;
-        }
-
-        .yt-shield-bottom-left {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 78%;
-            height: 18%;
-            z-index: 15;
-            background: transparent;
-        }
-
-        .yt-shield-bottom-edge {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 2%;
-            height: 18%;
-            z-index: 15;
-            background: transparent;
-        }
+        .yt-shield-top-main { position: absolute; top: 0; left: 0; width: 100%; height: 82%; z-index: 15; background: transparent; }
+        .yt-shield-bottom-left { position: absolute; bottom: 0; left: 0; width: 78%; height: 18%; z-index: 15; background: transparent; }
+        .yt-shield-bottom-edge { position: absolute; bottom: 0; right: 0; width: 2%; height: 18%; z-index: 15; background: transparent; }
 
         #start-overlay {
             position: absolute;
@@ -326,65 +277,55 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle, rgba(20, 20, 20, 0.92) 0%, rgba(0, 0, 0, 0.98) 100%);
+            background: radial-gradient(circle, rgba(15, 15, 15, 0.94) 0%, rgba(0, 0, 0, 0.98) 100%);
             z-index: 30;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             transition: opacity 0.5s ease, visibility 0.5s;
         }
 
         .start-btn {
-            background: #ffffff;
+            background: var(--accent-color);
             color: #000;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 900;
-            font-size: 12px;
-            padding: 14px 36px;
+            font-family: 'Syne', 'Montserrat', sans-serif;
+            font-weight: 800;
+            font-size: 13px;
+            padding: 16px 42px;
             border: none;
             border-radius: 50px;
             cursor: pointer;
-            letter-spacing: 2px;
-            box-shadow: 0 0 30px rgba(255, 255, 255, 0.7);
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s, background-color 0.3s;
-            position: relative;
-            overflow: hidden;
+            letter-spacing: 3px;
+            box-shadow: 0 0 35px var(--accent-glow);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s;
         }
 
         .start-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 50px rgba(255, 255, 255, 0.95);
-            background-color: #f8f8f8;
+            transform: scale(1.08);
+            box-shadow: 0 0 50px var(--accent-color);
         }
 
-        .start-btn:active {
-            transform: scale(0.97);
-        }
-
-        /* NOW PLAYING CARD */
         .now-playing-card {
             width: 100%;
-            background: rgba(20, 20, 20, 0.8);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(15, 15, 15, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 16px;
             padding: 16px 22px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.75);
-            margin: 0;
-            position: relative;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.85);
             transition: border-color 0.3s ease;
         }
 
         .now-playing-card:hover {
-            border-color: rgba(255, 255, 255, 0.45);
+            border-color: var(--accent-color);
         }
 
         .track-info {
@@ -407,8 +348,9 @@
         }
 
         .track-title {
-            font-size: 14px;
-            font-weight: 900;
+            font-family: 'Syne', sans-serif;
+            font-size: 15px;
+            font-weight: 800;
             color: #fff;
             white-space: nowrap;
             overflow: hidden;
@@ -429,7 +371,6 @@
             gap: 4px;
         }
 
-        /* DİNAMİK SES DALGASI ANIMASYONU */
         .wave-bars {
             display: flex;
             align-items: flex-end;
@@ -440,9 +381,10 @@
         }
 
         .wave-bar {
-            width: 2px;
-            background: #fff;
+            width: 2.5px;
+            background: var(--accent-color);
             border-radius: 1px;
+            box-shadow: 0 0 8px var(--accent-color);
             animation: waveAnim 0.8s ease-in-out infinite alternate;
         }
 
@@ -458,41 +400,18 @@
 
         #visualizer-canvas {
             width: 100%;
-            height: 28px;
+            height: 32px;
             margin: 0;
             transition: opacity 1s ease;
         }
 
-        /* MOBİL UYUM DÜZENLEMELERİ */
         @media (max-width: 600px) {
-            .main-wrapper {
-                padding: 10px 12px 25px 12px;
-                gap: 12px;
-            }
-
-            .logo-container {
-                height: 200px;
-                width: 100%;
-            }
-
-            .video-container {
-                padding-bottom: 56%;
-                border-radius: 16px;
-            }
-
-            .yt-shield-bottom-left {
-                width: 68%;
-            }
-
-            .now-playing-card {
-                padding: 12px 16px;
-                border-radius: 14px;
-            }
-
-            .start-btn {
-                font-size: 11px;
-                padding: 12px 28px;
-            }
+            .main-wrapper { padding: 10px 12px 25px 12px; gap: 12px; }
+            .logo-container { height: 200px; }
+            .video-container { padding-bottom: 56%; border-radius: 16px; }
+            .yt-shield-bottom-left { width: 68%; }
+            .now-playing-card { padding: 12px 16px; border-radius: 14px; }
+            .start-btn { font-size: 11px; padding: 14px 32px; }
         }
     </style>
 
@@ -517,7 +436,7 @@
                 <span>CANLI YAYIN</span>
             </div>
             <div class="badge">
-                <span>🎧 DİNLEYİCİ: <strong id="listener-count" style="color: #ffffff; text-shadow: 0 0 8px #fff;">0</strong></span>
+                <span>🎧 DİNLEYİCİ: <strong id="listener-count" style="color: var(--accent-color); text-shadow: 0 0 8px var(--accent-color);">0</strong></span>
             </div>
             <div class="volume-control-box">
                 <button class="volume-btn" id="mute-btn" title="Sesi Kapat/Aç">🔊</button>
@@ -539,7 +458,7 @@
         <div class="now-playing-card">
             <div class="track-info">
                 <span class="track-label">
-                    <span style="display:inline-block; width:5px; height:5px; background:#fff; border-radius:50%;"></span>
+                    <span style="display:inline-block; width:6px; height:6px; background:var(--accent-color); border-radius:50%; box-shadow:0 0 6px var(--accent-color);"></span>
                     ŞU AN YAYINDA
                     <div class="wave-bars" id="wave-bars" style="opacity: 0;">
                         <div class="wave-bar"></div>
@@ -560,16 +479,8 @@
     </div>
 
     <script>
-        if ('scrollRestoration' in history) {
-            history.scrollRestoration = 'manual';
-        }
-
-        function forceScrollTop() {
-            if (window.scrollY !== 0 || document.documentElement.scrollTop !== 0) {
-                window.scrollTo(0, 0);
-            }
-        }
-
+        if ('scrollRestoration' in history) { history.scrollRestoration = 'manual'; }
+        function forceScrollTop() { if (window.scrollY !== 0 || document.documentElement.scrollTop !== 0) { window.scrollTo(0, 0); } }
         forceScrollTop();
         window.addEventListener('DOMContentLoaded', forceScrollTop);
         window.addEventListener('load', forceScrollTop);
@@ -624,7 +535,6 @@
                 z ^= z + Math.imul(z ^ (z >>> 7), z | 61);
                 return ((z ^ (z >>> 14)) >>> 0) / 4294967296;
             };
-
             while (m) {
                 i = Math.floor(pseudoRandom() * m--);
                 t = shuffled[m];
@@ -643,10 +553,7 @@
             let accumulatedTime = 0;
             for (let i = 0; i < songList.length; i++) {
                 if (elapsedTime < accumulatedTime + songList[i].duration) {
-                    return {
-                        songIndex: i,
-                        seekTo: elapsedTime - accumulatedTime
-                    };
+                    return { songIndex: i, seekTo: elapsedTime - accumulatedTime };
                 }
                 accumulatedTime += songList[i].duration;
             }
@@ -689,9 +596,7 @@
                 events: {
                     'onReady': () => { 
                         isPlayerReady = true; 
-                        if (document.activeElement) {
-                            document.activeElement.blur();
-                        }
+                        if (document.activeElement) document.activeElement.blur();
                         forceScrollTop();
                     },
                     'onStateChange': onPlayerStateChange
@@ -716,17 +621,12 @@
         }
 
         function onPlayerStateChange(event) {
-            if (event.data === YT.PlayerState.PLAYING) {
-                actualPlayerStatePlaying = true;
-            } else {
-                actualPlayerStatePlaying = false;
-            }
+            actualPlayerStatePlaying = (event.data === YT.PlayerState.PLAYING);
             updateAudioVisualState();
         }
 
         function syncToLiveStream() {
             if (!isPlayerReady || !player) return;
-
             const state = getCurrentStreamState();
             const targetSong = songList[state.songIndex];
 
@@ -734,19 +634,14 @@
 
             if (currentLoadedVideoId !== targetSong.id) {
                 currentLoadedVideoId = targetSong.id;
-                player.loadVideoById({
-                    videoId: targetSong.id,
-                    startSeconds: Math.floor(state.seekTo)
-                });
+                player.loadVideoById({ videoId: targetSong.id, startSeconds: Math.floor(state.seekTo) });
                 player.playVideo();
                 return;
             }
 
             if (typeof player.getCurrentTime === 'function') {
                 const currentTime = player.getCurrentTime();
-                const timeDiff = Math.abs(currentTime - state.seekTo);
-                
-                if (timeDiff > 1.8) {
+                if (Math.abs(currentTime - state.seekTo) > 1.8) {
                     player.seekTo(state.seekTo, true);
                     player.playVideo();
                 }
@@ -762,25 +657,16 @@
             const overlay = document.getElementById('start-overlay');
             overlay.style.opacity = '0';
             overlay.style.pointerEvents = 'none';
-            setTimeout(() => { 
-                overlay.style.display = 'none'; 
-            }, 500);
+            setTimeout(() => { overlay.style.display = 'none'; }, 500);
 
             const startPlaying = () => {
                 const state = getCurrentStreamState();
                 const targetSong = songList[state.songIndex];
-
                 updateTrackLabels(state.songIndex);
                 currentLoadedVideoId = targetSong.id;
 
-                if (typeof player.unMute === 'function') {
-                    player.unMute();
-                }
-
-                player.loadVideoById({
-                    videoId: targetSong.id,
-                    startSeconds: Math.floor(state.seekTo)
-                });
+                if (typeof player.unMute === 'function') player.unMute();
+                player.loadVideoById({ videoId: targetSong.id, startSeconds: Math.floor(state.seekTo) });
                 player.playVideo();
 
                 if (syncCheckInterval) clearInterval(syncCheckInterval);
@@ -811,10 +697,8 @@
 
         volumeRange.addEventListener('input', (e) => {
             const val = Number(e.target.value);
-            
             if (player && typeof player.setVolume === 'function') {
                 player.setVolume(val);
-                
                 if (val === 0) {
                     player.mute();
                     muteBtn.innerText = '🔇';
@@ -835,16 +719,9 @@
             if (isMuted) {
                 player.unMute();
                 muteBtn.innerText = '🔊';
-                
-                let currentVol = Number(volumeRange.value);
-                if (currentVol === 0) {
-                    currentVol = 100;
-                    volumeRange.value = 100;
-                }
-                
-                if (typeof player.setVolume === 'function') {
-                    player.setVolume(currentVol);
-                }
+                let currentVol = Number(volumeRange.value) || 100;
+                volumeRange.value = currentVol;
+                if (typeof player.setVolume === 'function') player.setVolume(currentVol);
                 isMuted = false;
             } else {
                 player.mute();
@@ -855,14 +732,12 @@
             updateAudioVisualState();
         });
 
-        /* THREE.JS 3D DÜNYA VE HALKA EFEKTİ (OPTIMIZED) */
+        /* THREE.JS 3D DÜNYA, HALKA VE 3D UFO EFEKTİ */
         const globeContainer = document.getElementById('globe-3d-container');
-        
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
         
         const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: !isMobileDevice, powerPreference: "high-performance" });
-        // Mobilde GPU aşırı yükünü önlemek için piksel oranını 1.5 ile sınırlıyoruz
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
         globeContainer.appendChild(renderer.domElement);
 
@@ -872,15 +747,7 @@
             if (width === 0 || height === 0) return;
 
             camera.aspect = width / height;
-
-            if (window.innerWidth <= 400) {
-                camera.position.z = 5.5;
-            } else if (window.innerWidth <= 600) {
-                camera.position.z = 5.1;
-            } else {
-                camera.position.z = 4.7;
-            }
-
+            camera.position.z = window.innerWidth <= 400 ? 5.5 : (window.innerWidth <= 600 ? 5.1 : 4.7);
             camera.updateProjectionMatrix();
             renderer.setSize(width, height);
         }
@@ -889,21 +756,16 @@
         const earthTexture = textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_atmos_2048.jpg');
 
         const baseRadius = 1.65;
-        // Poligon sayısını mobil uyumlu seviyeye çektik (36x36)
         const segments = isMobileDevice ? 36 : 64;
         const geometry = new THREE.SphereGeometry(baseRadius, segments, segments);
-        const material = new THREE.MeshStandardMaterial({
-            map: earthTexture,
-            roughness: 0.4,
-            metalness: 0.3
-        });
+        const material = new THREE.MeshStandardMaterial({ map: earthTexture, roughness: 0.4, metalness: 0.3 });
         const globeMesh = new THREE.Mesh(geometry, material);
         scene.add(globeMesh);
 
         const ambientLight = new THREE.AmbientLight(0xffffff, 1.6);
         scene.add(ambientLight);
 
-        const dirLight = new THREE.DirectionalLight(0xffffff, 2.2);
+        const dirLight = new THREE.DirectionalLight(0x39FF14, 2.0); // Slime yeşili ışık dokunuşu
         dirLight.position.set(5, 4, 5);
         scene.add(dirLight);
 
@@ -911,18 +773,17 @@
 
         function createOrbitRingText() {
             const canvas = document.createElement('canvas');
-            canvas.width = 1024; // Mobilde bellek harcamaması için 1024'e optimize edildi
+            canvas.width = 1024;
             canvas.height = 256;
             const ctx = canvas.getContext('2d');
 
             ctx.fillStyle = 'transparent';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillStyle = '#ffffff';
 
-            // shadowBlur GPU katili olduğu için kaldırıldı
+            // YAZILARA DOKUNULMADI
+            ctx.fillStyle = '#ffffff';
             ctx.font = '900 80px "Anton", sans-serif';
             ctx.fillText("EA$Y FM", canvas.width / 2, 80);
 
@@ -934,24 +795,62 @@
             ringTex.magFilter = THREE.LinearFilter;
 
             const ringGeo = new THREE.CylinderGeometry(baseRadius + 0.28, baseRadius + 0.28, 0.95, isMobileDevice ? 32 : 64, 1, true);
-            const ringMat = new THREE.MeshBasicMaterial({
-                map: ringTex,
-                transparent: true,
-                side: THREE.DoubleSide,
-                depthWrite: false
-            });
+            const ringMat = new THREE.MeshBasicMaterial({ map: ringTex, transparent: true, side: THREE.DoubleSide, depthWrite: false });
 
             ringMesh = new THREE.Mesh(ringGeo, ringMat);
             ringMesh.rotation.z = 0.08;
             scene.add(ringMesh);
         }
 
-        document.fonts.ready.then(() => {
-            createOrbitRingText();
-        });
+        document.fonts.ready.then(() => { createOrbitRingText(); });
+
+        /* 3D GERÇEKÇİ UFO MODELİ OLUŞTURMA */
+        const ufoGroup = new THREE.Group();
+
+        // UFO Gövdesi (Disk)
+        const ufoBodyGeo = new THREE.CylinderGeometry(0.5, 0.5, 0.08, 24);
+        const ufoMat = new THREE.MeshStandardMaterial({ color: 0x222222, metalness: 0.9, roughness: 0.1 });
+        const ufoBody = new THREE.Mesh(ufoBodyGeo, ufoMat);
+        ufoGroup.add(ufoBody);
+
+        // UFO Kubbesi (Cam)
+        const ufoDomeGeo = new THREE.SphereGeometry(0.25, 16, 16, 0, Math.PI * 2, 0, Math.PI / 2);
+        const ufoDomeMat = new THREE.MeshStandardMaterial({ color: 0x39FF14, emissive: 0x39FF14, emissiveIntensity: 0.6, transparent: true, opacity: 0.85 });
+        const ufoDome = new THREE.Mesh(ufoDomeGeo, ufoDomeMat);
+        ufoDome.position.y = 0.04;
+        ufoGroup.add(ufoDome);
+
+        // UFO Alt Işık Hüzmesi
+        const ufoLightGeo = new THREE.ConeGeometry(0.4, 0.8, 16, 1, true);
+        const ufoLightMat = new THREE.MeshBasicMaterial({ color: 0x39FF14, transparent: true, opacity: 0.3, side: THREE.DoubleSide });
+        const ufoLight = new THREE.Mesh(ufoLightGeo, ufoLightMat);
+        ufoLight.position.y = -0.4;
+        ufoGroup.add(ufoLight);
+
+        ufoGroup.scale.set(0.6, 0.6, 0.6);
+        ufoGroup.position.set(-8, 2, -2); // Sahne dışında başlasın
+        scene.add(ufoGroup);
+
+        let ufoActive = false;
+        let ufoProgress = 0;
+
+        function triggerUFO() {
+            if (!ufoActive) {
+                ufoActive = true;
+                ufoProgress = 0;
+                // Rastgele bir yükseklikten başlasın
+                ufoGroup.position.set(-6, (Math.random() - 0.2) * 2, (Math.random() - 0.5) * 2);
+            }
+        }
+
+        // Her 25-40 saniyede bir UFO geçsin
+        setInterval(() => {
+            if (Math.random() > 0.3) triggerUFO();
+        }, 25000);
 
         let bassAngle = 0;
         const ambientGlowEl = document.getElementById('ambient-glow');
+        const videoBoxEl = document.getElementById('video-box');
         let lastTime = performance.now();
 
         function animateGlobe(currentTime) {
@@ -968,6 +867,19 @@
             globeMesh.rotation.y += globeSpeed * deltaTime;
             if (ringMesh) ringMesh.rotation.y -= ringSpeed * deltaTime;
 
+            // UFO Hareketi
+            if (ufoActive) {
+                ufoProgress += deltaTime * 0.4; // UFO hızı
+                ufoGroup.position.x = -6 + ufoProgress * 12;
+                ufoGroup.position.y += Math.sin(ufoProgress * 6) * 0.005; // Dalgalanma
+                ufoGroup.rotation.y += 3.0 * deltaTime; // Kendi etrafında dönme
+
+                if (ufoProgress >= 1) {
+                    ufoActive = false;
+                    ufoGroup.position.x = -10;
+                }
+            }
+
             if (isPlayingState) {
                 bassAngle += 6.0 * deltaTime;
                 const bassScale = 1 + Math.pow(Math.sin(bassAngle), 6) * 0.055;
@@ -975,9 +887,17 @@
 
                 const glowScale = 1 + Math.sin(bassAngle) * 0.08;
                 ambientGlowEl.style.transform = `translate(-50%, -50%) scale(${glowScale})`;
+
+                // Bas Vurduğunda Ekran Titremesi Efekti
+                if (Math.sin(bassAngle) > 0.92) {
+                    videoBoxEl.style.transform = `translate(${(Math.random() - 0.5) * 2}px, ${(Math.random() - 0.5) * 2}px)`;
+                } else {
+                    videoBoxEl.style.transform = `translate(0, 0)`;
+                }
             } else {
                 globeMesh.scale.lerp(new THREE.Vector3(1, 1, 1), 10 * deltaTime);
                 ambientGlowEl.style.transform = `translate(-50%, -50%) scale(1)`;
+                videoBoxEl.style.transform = `translate(0, 0)`;
             }
 
             renderer.render(scene, camera);
@@ -986,7 +906,7 @@
         resizeThreeJS();
         requestAnimationFrame(animateGlobe);
 
-        /* PIRLANTA SPARKLE PARÇACIK ANIMASYONU (OPTIMIZED) */
+        /* PARÇACIK VE YILDIZ EFEKTI */
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
         let particlesArray = [];
@@ -1000,9 +920,7 @@
         handleResize();
 
         class DiamondParticle {
-            constructor() {
-                this.reset();
-            }
+            constructor() { this.reset(); }
 
             reset() {
                 this.x = Math.random() * canvas.width;
@@ -1013,6 +931,8 @@
                 this.opacity = Math.random() * 0.7 + 0.2;
                 this.isSparkle = Math.random() > 0.7;
                 this.pulseSpeed = Math.random() * 0.03 + 0.015;
+                // Trap temasına uygun neon yeşil parıltılı parçacık şansı
+                this.color = Math.random() > 0.85 ? '#39FF14' : '#ffffff';
             }
 
             update() {
@@ -1029,8 +949,9 @@
             }
 
             draw() {
-                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
-                ctx.strokeStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                ctx.fillStyle = this.color;
+                ctx.strokeStyle = this.color;
+                ctx.globalAlpha = this.opacity;
 
                 if (this.isSparkle) {
                     const len = this.size * 2.5;
@@ -1044,10 +965,10 @@
                 } else {
                     ctx.fillRect(this.x, this.y, this.size, this.size);
                 }
+                ctx.globalAlpha = 1.0;
             }
         }
 
-        // Parçacık sayısı mobilde 25, masaüstünde 50 olacak şekilde düşürüldü
         const particleCount = isMobileDevice ? 25 : 50;
         for (let i = 0; i < particleCount; i++) particlesArray.push(new DiamondParticle());
 
@@ -1082,10 +1003,10 @@
             document.getElementById('listener-count').innerText = snap.numChildren();
         });
 
-        /* VISUALIZER */
+        /* VISUALIZER (SLIME NEON STİLİ) */
         const vCanvas = document.getElementById('visualizer-canvas');
         const vCtx = vCanvas.getContext('2d');
-        const numBars = isMobileDevice ? 24 : 44; // Mobilde bar sayısı yarıya düşürüldü
+        const numBars = isMobileDevice ? 24 : 44;
         let barHeights = new Array(numBars).fill(3);
         let peakHeights = new Array(numBars).fill(3);
 
@@ -1115,8 +1036,12 @@
                 const x = i * (barWidth + gap);
                 const y = vCanvas.height - barHeights[i];
 
-                vCtx.fillStyle = '#ffffff';
+                // Neon Slime Yeşil Barlar
+                vCtx.fillStyle = '#39FF14';
                 vCtx.fillRect(x, y, barWidth, barHeights[i]);
+                
+                // Beyaz Zirve Çizgileri
+                vCtx.fillStyle = '#ffffff';
                 vCtx.fillRect(x, vCanvas.height - peakHeights[i] - 2, barWidth, 1.5);
             }
             requestAnimationFrame(drawVisualizer);

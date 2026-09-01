@@ -48,19 +48,30 @@
             opacity: 0.6;
         }
 
-        #bg-canvas, #trail-canvas, #ice-crack-canvas, #reaction-canvas {
+        #bg-canvas {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            z-index: 1;
             pointer-events: none;
         }
 
-        #bg-canvas { z-index: 1; }
-        #trail-canvas { z-index: 45; }
-        #ice-crack-canvas { z-index: 40; }
-        #reaction-canvas { z-index: 42; }
+        /* DİNAMİK ŞİMŞEK ÇAKMA KATMANI */
+        #lightning-flash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.45) 0%, rgba(200, 230, 255, 0.15) 50%, rgba(0, 0, 0, 0) 90%);
+            z-index: 2;
+            pointer-events: none;
+            opacity: 0;
+            mix-blend-mode: screen;
+            transition: opacity 0.05s ease-out;
+        }
 
         /* ICE / AMBIENT GLOW */
         .ambient-glow {
@@ -71,7 +82,7 @@
             width: 85vw;
             height: 85vh;
             background: radial-gradient(circle, rgba(255, 255, 255, 0.22) 0%, rgba(180, 220, 255, 0.05) 40%, rgba(0, 0, 0, 0) 70%);
-            z-index: 2;
+            z-index: 3;
             pointer-events: none;
             transition: transform 0.08s ease-out, opacity 0.08s ease-out;
             will-change: transform, opacity;
@@ -425,55 +436,6 @@
             flex-shrink: 0;
             display: block;
         }
-
-        /* SOUNDBOARD & REACTION KONTROLLERİ */
-        .fx-soundboard {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            z-index: 60;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .reaction-bar {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 60;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .trap-btn {
-            background: rgba(15, 15, 15, 0.85);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: #fff;
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.8);
-            transition: transform 0.15s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .trap-btn:hover {
-            transform: scale(1.15);
-            border-color: #ffffff;
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
-        }
-
-        .trap-btn:active {
-            transform: scale(0.9);
-        }
     </style>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -483,23 +445,8 @@
 <body>
 
     <canvas id="bg-canvas"></canvas>
-    <canvas id="ice-crack-canvas"></canvas>
-    <canvas id="reaction-canvas"></canvas>
-    <canvas id="trail-canvas"></canvas>
-
+    <div id="lightning-flash"></div>
     <div class="ambient-glow" id="ambient-glow"></div>
-
-    <div class="fx-soundboard">
-        <button class="trap-btn" onclick="playFx('gunshot')" title="Gunshot">🔫</button>
-        <button class="trap-btn" onclick="playFx('slatt')" title="Slatt / YSL">🗣️</button>
-        <button class="trap-btn" onclick="playFx('airhorn')" title="Airhorn">📢</button>
-    </div>
-
-    <div class="reaction-bar">
-        <button class="trap-btn" onclick="throwReaction('💎')" title="Throw Ice">💎</button>
-        <button class="trap-btn" onclick="throwReaction('🔥')" title="Fire">🔥</button>
-        <button class="trap-btn" onclick="throwReaction('🦇')" title="Bat">🦇</button>
-    </div>
 
     <div class="main-wrapper" id="main-wrapper">
         <div class="logo-container">
@@ -823,7 +770,7 @@
             updateAudioVisualState();
         });
 
-        /* THREE.JS DÜNYA & DİNAMİK ICE/EQUALIZER HALKASI */
+        /* THREE.JS DÜNYA & DİNAMİK ICE/EQUALIZER HALKASI (FOV VE KAMERA DENGELİ) */
         const globeContainer = document.getElementById('globe-3d-container');
         
         const scene = new THREE.Scene();
@@ -938,6 +885,7 @@
 
         let bassAngle = 0;
         const ambientGlowEl = document.getElementById('ambient-glow');
+        const lightningEl = document.getElementById('lightning-flash');
         let lastTime = performance.now();
 
         function animateGlobe(currentTime) {
@@ -969,6 +917,13 @@
                 ambientGlowEl.style.transform = `translate(-50%, -50%) scale(${glowScale})`;
                 ambientGlowEl.style.opacity = (0.45 + bassPower * 0.55).toString();
 
+                /* ŞARKIYLA UYUMLU ŞİMŞEK ÇAKMA KONTROLÜ */
+                if (bassPower > 0.88) {
+                    lightningEl.style.opacity = (0.3 + (bassPower - 0.88) * 4).toString();
+                } else {
+                    lightningEl.style.opacity = '0';
+                }
+
                 /* DİNAMİK EKOLAYZIR HALKASI ANİMASYONU */
                 ringBarMeshes.forEach((bar, idx) => {
                     const rnd = Math.sin(bassAngle * 2 + idx) * 0.5 + 0.5;
@@ -977,16 +932,12 @@
                     bar.material.opacity = 0.3 + rnd * 0.7;
                 });
 
-                /* BASS VURDUĞUNDA BUZ ÇATLAMA EFEKTİ TETİKLE */
-                if (bassPower > 0.82 && Math.random() > 0.6) {
-                    triggerIceCrack();
-                }
-
             } else {
                 globeMesh.scale.lerp(new THREE.Vector3(1, 1, 1), 10 * deltaTime);
                 dirLight.intensity = 2.2;
                 ambientGlowEl.style.transform = `translate(-50%, -50%) scale(1)`;
                 ambientGlowEl.style.opacity = '0.4';
+                lightningEl.style.opacity = '0';
 
                 ringBarMeshes.forEach((bar) => {
                     bar.scale.set(1, 0.4, 1);
@@ -1000,7 +951,7 @@
         resizeThreeJS();
         requestAnimationFrame(animateGlobe);
 
-        /* ARKA PLAN PARÇACIKLARI */
+        /* SADECE DÖNEN NOKTALAR - ARTI VE PIRLANTA EFEKTLERİ KALDIRILDI */
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
         let particlesArray = [];
@@ -1008,293 +959,48 @@
         function handleResize() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            trailCanvas.width = window.innerWidth;
-            trailCanvas.height = window.innerHeight;
-            crackCanvas.width = window.innerWidth;
-            crackCanvas.height = window.innerHeight;
-            reactCanvas.width = window.innerWidth;
-            reactCanvas.height = window.innerHeight;
             resizeThreeJS();
         }
         window.addEventListener('resize', handleResize);
+        handleResize();
 
-        class DiamondParticle {
+        class CleanDotParticle {
             constructor() { this.reset(); }
             reset() {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 2.5 + 0.8;
+                this.size = Math.random() * 2.2 + 0.8;
                 this.speedX = (Math.random() - 0.5) * 0.35;
                 this.speedY = (Math.random() - 0.5) * 0.35;
-                this.opacity = Math.random() * 0.7 + 0.2;
-                this.isSparkle = Math.random() > 0.65;
+                this.opacity = Math.random() * 0.6 + 0.2;
                 this.pulseSpeed = Math.random() * 0.05 + 0.02;
             }
             update() {
                 const speedMult = isPlayingState ? 1.8 : 1.0;
                 this.x += this.speedX * speedMult;
                 this.y += this.speedY * speedMult;
-                this.opacity += Math.sin(Date.now() * this.pulseSpeed) * 0.03;
+                this.opacity += Math.sin(Date.now() * this.pulseSpeed) * 0.02;
                 if (this.opacity < 0.1) this.opacity = 0.1;
-                if (this.opacity > 0.95) this.opacity = 0.95;
+                if (this.opacity > 0.85) this.opacity = 0.85;
                 if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) this.reset();
             }
             draw() {
                 ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
-                ctx.strokeStyle = `rgba(255, 255, 255, ${this.opacity})`;
-                if (this.isSparkle) {
-                    const len = this.size * (isPlayingState ? 3.2 : 2.2);
-                    ctx.beginPath();
-                    ctx.moveTo(this.x - len, this.y);
-                    ctx.lineTo(this.x + len, this.y);
-                    ctx.moveTo(this.x, this.y - len);
-                    ctx.lineTo(this.x, this.y + len);
-                    ctx.lineWidth = 0.9;
-                    ctx.stroke();
-                } else {
-                    ctx.fillRect(this.x, this.y, this.size, this.size);
-                }
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
             }
         }
 
-        const particleCount = isMobileDevice ? 25 : 55;
-        for (let i = 0; i < particleCount; i++) particlesArray.push(new DiamondParticle());
+        const particleCount = isMobileDevice ? 30 : 65;
+        for (let i = 0; i < particleCount; i++) particlesArray.push(new CleanDotParticle());
 
         function animateParticles() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             particlesArray.forEach(p => { p.update(); p.draw(); });
             requestAnimationFrame(animateParticles);
         }
-
-        /* -------------------------------------------------------------
-           EKLENEN YENİ ÖZELLİKLER (ICE-CRACK, TRAIL, FX, REACTIONS)
-        ------------------------------------------------------------- */
-
-        /* 1. ELMAS IŞILTISI KURŞUN İZİ (DIAMOND SPARKLE TRAIL) */
-        const trailCanvas = document.getElementById('trail-canvas');
-        const tCtx = trailCanvas.getContext('2d');
-        let trailParticles = [];
-
-        class SparkleTrailParticle {
-            constructor(x, y) {
-                this.x = x;
-                this.y = y;
-                this.size = Math.random() * 3.5 + 1.5;
-                this.speedX = (Math.random() - 0.5) * 1.5;
-                this.speedY = (Math.random() - 0.5) * 1.5;
-                this.life = 1.0;
-                this.decay = Math.random() * 0.04 + 0.02;
-            }
-            update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
-                this.life -= this.decay;
-            }
-            draw() {
-                tCtx.strokeStyle = `rgba(255, 255, 255, ${this.life})`;
-                tCtx.lineWidth = 1;
-                const len = this.size * 2;
-                tCtx.beginPath();
-                tCtx.moveTo(this.x - len, this.y);
-                tCtx.lineTo(this.x + len, this.y);
-                tCtx.moveTo(this.x, this.y - len);
-                tCtx.lineTo(this.x, this.y + len);
-                tCtx.stroke();
-            }
-        }
-
-        function addTrail(x, y) {
-            for (let i = 0; i < 2; i++) {
-                trailParticles.push(new SparkleTrailParticle(x, y));
-            }
-        }
-
-        window.addEventListener('mousemove', (e) => addTrail(e.clientX, e.clientY));
-        window.addEventListener('touchmove', (e) => {
-            if (e.touches[0]) addTrail(e.touches[0].clientX, e.touches[0].clientY);
-        });
-
-        function animateTrail() {
-            tCtx.clearRect(0, 0, trailCanvas.width, trailCanvas.height);
-            for (let i = trailParticles.length - 1; i >= 0; i--) {
-                const p = trailParticles[i];
-                p.update();
-                p.draw();
-                if (p.life <= 0) trailParticles.splice(i, 1);
-            }
-            requestAnimationFrame(animateTrail);
-        }
-
-        /* 2. GÖRSEL ÇATLAMA EFEKTİ (BASS ICE-CRACK) */
-        const crackCanvas = document.getElementById('ice-crack-canvas');
-        const cCtx = crackCanvas.getContext('2d');
-        let cracks = [];
-
-        function triggerIceCrack() {
-            if (cracks.length > 3) return; 
-
-            const side = Math.floor(Math.random() * 4);
-            let startX, startY;
-            if (side === 0) { startX = Math.random() * window.innerWidth; startY = 0; }
-            else if (side === 1) { startX = window.innerWidth; startY = Math.random() * window.innerHeight; }
-            else if (side === 2) { startX = Math.random() * window.innerWidth; startY = window.innerHeight; }
-            else { startX = 0; startY = Math.random() * window.innerHeight; }
-
-            const lines = [];
-            let currX = startX;
-            let currY = startY;
-            const segments = Math.floor(Math.random() * 5) + 4;
-
-            for (let i = 0; i < segments; i++) {
-                let nextX = currX + (Math.random() - 0.5) * 120;
-                let nextY = currY + (Math.random() - 0.5) * 120;
-                lines.push({ x1: currX, y1: currY, x2: nextX, y2: nextY });
-                currX = nextX;
-                currY = nextY;
-            }
-
-            cracks.push({ lines: lines, opacity: 1.0 });
-        }
-
-        function animateCracks() {
-            cCtx.clearRect(0, 0, crackCanvas.width, crackCanvas.height);
-            for (let i = cracks.length - 1; i >= 0; i--) {
-                const crack = cracks[i];
-                cCtx.strokeStyle = `rgba(255, 255, 255, ${crack.opacity})`;
-                cCtx.lineWidth = 1.5;
-                cCtx.shadowColor = '#ffffff';
-                cCtx.shadowBlur = 8;
-
-                cCtx.beginPath();
-                crack.lines.forEach(l => {
-                    cCtx.moveTo(l.x1, l.y1);
-                    cCtx.lineTo(l.x2, l.y2);
-                });
-                cCtx.stroke();
-                cCtx.shadowBlur = 0;
-
-                crack.opacity -= 0.05;
-                if (crack.opacity <= 0) cracks.splice(i, 1);
-            }
-            requestAnimationFrame(animateCracks);
-        }
-
-        /* 3. İNTERAKTİF SOUNDBOARD / LIVE FX (WEB AUDIO SYNTHESIZER) */
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-        function playFx(type) {
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-
-            const now = audioCtx.currentTime;
-
-            if (type === 'gunshot') {
-                const bufferSize = audioCtx.sampleRate * 0.3;
-                const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-                const data = buffer.getChannelData(0);
-                for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
-
-                const noise = audioCtx.createBufferSource();
-                noise.buffer = buffer;
-
-                const filter = audioCtx.createBiquadFilter();
-                filter.type = 'lowpass';
-                filter.frequency.setValueAtTime(1000, now);
-                filter.frequency.exponentialRampToValueAtTime(80, now + 0.25);
-
-                const gain = audioCtx.createGain();
-                gain.gain.setValueAtTime(1.0, now);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
-
-                noise.connect(filter);
-                filter.connect(gain);
-                gain.connect(audioCtx.destination);
-                noise.start(now);
-
-            } else if (type === 'slatt') {
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(350, now);
-                osc.frequency.exponentialRampToValueAtTime(750, now + 0.15);
-
-                gain.gain.setValueAtTime(0.5, now);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
-
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start(now);
-                osc.stop(now + 0.2);
-
-            } else if (type === 'airhorn') {
-                const freqs = [466.16, 466.16, 466.16];
-                freqs.forEach((f, idx) => {
-                    const osc = audioCtx.createOscillator();
-                    const gain = audioCtx.createGain();
-                    osc.type = 'sawtooth';
-                    osc.frequency.setValueAtTime(f, now + idx * 0.08);
-
-                    gain.gain.setValueAtTime(0.4, now + idx * 0.08);
-                    gain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.08 + 0.12);
-
-                    osc.connect(gain);
-                    gain.connect(audioCtx.destination);
-                    osc.start(now + idx * 0.08);
-                    osc.stop(now + idx * 0.08 + 0.12);
-                });
-            }
-        }
-
-        /* 4. "THROW ICE / SLIME" REAKSİYON BUTONU */
-        const reactCanvas = document.getElementById('reaction-canvas');
-        const rCtx = reactCanvas.getContext('2d');
-        let activeReactions = [];
-
-        class FloatingReaction {
-            constructor(symbol) {
-                this.symbol = symbol;
-                this.x = window.innerWidth - 45;
-                this.y = window.innerHeight - 80;
-                this.size = Math.random() * 10 + 22;
-                this.speedY = Math.random() * 2.5 + 2.0;
-                this.speedX = (Math.random() - 0.5) * 2;
-                this.opacity = 1.0;
-            }
-            update() {
-                this.y -= this.speedY;
-                this.x += this.speedX;
-                this.opacity -= 0.015;
-            }
-            draw() {
-                rCtx.globalAlpha = Math.max(0, this.opacity);
-                rCtx.font = `${this.size}px sans-serif`;
-                rCtx.fillText(this.symbol, this.x, this.y);
-                rCtx.globalAlpha = 1.0;
-            }
-        }
-
-        function throwReaction(symbol) {
-            for (let i = 0; i < 4; i++) {
-                activeReactions.push(new FloatingReaction(symbol));
-            }
-        }
-
-        function animateReactions() {
-            rCtx.clearRect(0, 0, reactCanvas.width, reactCanvas.height);
-            for (let i = activeReactions.length - 1; i >= 0; i--) {
-                const r = activeReactions[i];
-                r.update();
-                r.draw();
-                if (r.opacity <= 0) activeReactions.splice(i, 1);
-            }
-            requestAnimationFrame(animateReactions);
-        }
-
-        handleResize();
         animateParticles();
-        animateTrail();
-        animateCracks();
-        animateReactions();
 
         /* FIREBASE */
         const firebaseConfig = {
@@ -1354,6 +1060,7 @@
                 const x = i * (barWidth + gap);
                 const y = vCanvas.height - barHeights[i];
 
+                /* PARLAK ICE OLUŞUMU */
                 const grad = vCtx.createLinearGradient(0, vCanvas.height, 0, 0);
                 grad.addColorStop(0, 'rgba(255, 255, 255, 0.4)');
                 grad.addColorStop(1, '#ffffff');
@@ -1361,6 +1068,7 @@
                 vCtx.fillStyle = grad;
                 vCtx.fillRect(x, y, barWidth, barHeights[i]);
 
+                /* PEAK DOTS */
                 vCtx.fillStyle = '#ffffff';
                 vCtx.shadowColor = '#ffffff';
                 vCtx.shadowBlur = 4;

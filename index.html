@@ -59,18 +59,18 @@
             pointer-events: none;
         }
 
-        /* BASS ŞİMŞEK ÇAKMA KATMANI (NET VE BELİRGİN STROBE) */
+        /* BASS ŞİMŞEK ÇAKMA KATMANI (NET VE BELİRGİN) */
         #lightning-flash {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: #ffffff;
+            background: rgba(255, 255, 255, 0.85);
             z-index: 2;
             pointer-events: none;
             opacity: 0;
-            mix-blend-mode: difference;
+            mix-blend-mode: overlay;
             will-change: opacity;
         }
 
@@ -905,22 +905,22 @@
             ringBarsGroup.rotation.z += (isPlayingState ? 0.3 : 0.05) * deltaTime;
 
             if (isPlayingState) {
-                bassAngle += 8.5 * deltaTime;
+                bassAngle += 7.0 * deltaTime;
                 
                 /* TRAP BASS PUNCH & PULSE */
-                const bassPower = Math.pow(Math.sin(bassAngle), 4); // Bas hassasiyeti artırıldı
-                const bassScale = 1 + bassPower * 0.06;
+                const bassPower = Math.pow(Math.sin(bassAngle), 6);
+                const bassScale = 1 + bassPower * 0.05;
                 globeMesh.scale.set(bassScale, bassScale, bassScale);
 
                 dirLight.intensity = 2.2 + bassPower * 4.0;
 
-                const glowScale = 1 + Math.sin(bassAngle) * 0.18;
+                const glowScale = 1 + Math.sin(bassAngle) * 0.15;
                 ambientGlowEl.style.transform = `translate(-50%, -50%) scale(${glowScale})`;
                 ambientGlowEl.style.opacity = (0.45 + bassPower * 0.55).toString();
 
-                /* BAS VURDUĞUNDA ŞARTSIZ BEYAZ ŞİMŞEK ÇAKMA (OPTIMIZED STROBE) */
-                if (bassPower > 0.6) {
-                    lightningEl.style.opacity = (Math.random() > 0.2 ? (0.7 + (bassPower - 0.6) * 0.75) : 0).toString();
+                /* BAS VURDUĞUNDA ŞARTSIZ BEYAZ ŞİMŞEK ÇAKMA (VERY BRIGHT LIGHTNING STROBE) */
+                if (bassPower > 0.75) {
+                    lightningEl.style.opacity = (Math.random() > 0.3 ? (0.6 + (bassPower - 0.75) * 1.6) : 0).toString();
                 } else {
                     lightningEl.style.opacity = '0';
                 }

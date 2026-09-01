@@ -4,9 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>EA$Y FM | CANLI</title>
-    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:wght@400;600;700;900&family=Space+Grotesk:wght@500;700;900&family=Syne:wght@700;800&display=swap" rel="stylesheet">
     
     <style>
+        :root {
+            --primary: #00ff66;
+            --primary-glow: rgba(0, 255, 102, 0.4);
+            --bg-dark: #050505;
+            --card-bg: rgba(18, 18, 20, 0.7);
+            --border-glow: rgba(255, 255, 255, 0.15);
+        }
+
         * {
             box-sizing: border-box;
             user-select: none;
@@ -18,10 +26,11 @@
             padding: 0;
             width: 100%;
             height: 100%;
-            background-color: #030303;
+            background-color: var(--bg-dark);
             color: #fff;
-            font-family: 'Montserrat', sans-serif;
+            font-family: 'Space Grotesk', 'Montserrat', sans-serif;
             overflow-x: hidden;
+            scroll-behavior: auto !important;
             overscroll-behavior-y: none;
         }
 
@@ -52,12 +61,12 @@
             transform: translate(-50%, -50%);
             width: 85vw;
             height: 85vh;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.18) 0%, rgba(120, 120, 120, 0.05) 50%, rgba(0, 0, 0, 0) 75%);
+            background: radial-gradient(circle, rgba(0, 255, 102, 0.08) 0%, rgba(20, 20, 20, 0.02) 45%, rgba(0, 0, 0, 0) 70%);
             z-index: 2;
             pointer-events: none;
-            transition: transform 0.15s cubic-bezier(0.1, 0.9, 0.2, 1), opacity 0.5s ease;
+            transition: transform 0.2s cubic-bezier(0.1, 0.9, 0.2, 1), opacity 0.5s ease;
             will-change: transform;
-            filter: blur(40px);
+            filter: blur(30px);
         }
 
         .main-wrapper {
@@ -69,8 +78,8 @@
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
-            padding: 15px 16px 30px 16px;
-            gap: 16px;
+            padding: 20px 16px 30px 16px;
+            gap: 20px;
             margin: 0 auto;
         }
 
@@ -80,7 +89,7 @@
             position: relative;
             width: 100%;
             max-width: 440px;
-            height: 240px;
+            height: 250px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -88,6 +97,7 @@
             margin: 0 auto;
         }
 
+        /* PIRLANTA PATLAMA EFEKTİ */
         .blast-wave {
             position: absolute;
             top: 50%;
@@ -96,8 +106,8 @@
             width: 220px;
             height: 220px;
             border-radius: 50%;
-            border: 3px solid rgba(255, 255, 255, 1);
-            box-shadow: 0 0 90px rgba(255, 255, 255, 1), inset 0 0 50px rgba(255, 255, 255, 0.8);
+            border: 2px solid var(--primary);
+            box-shadow: 0 0 90px var(--primary), inset 0 0 50px var(--primary);
             opacity: 0;
             pointer-events: none;
             z-index: 5;
@@ -144,40 +154,38 @@
             flex-wrap: wrap;
             justify-content: center;
             align-items: center;
-            margin-top: 2px;
-            margin-bottom: 2px;
             width: 100%;
         }
 
         .badge {
-            background: rgba(255, 255, 255, 0.06);
+            background: var(--card-bg);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid var(--border-glow);
             padding: 8px 18px;
             border-radius: 30px;
-            font-size: 10px;
+            font-size: 11px;
             font-weight: 800;
             letter-spacing: 2px;
             display: flex;
             align-items: center;
             gap: 8px;
             text-transform: uppercase;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
-            transition: all 0.3s ease;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .badge:hover {
-            border-color: rgba(255, 255, 255, 0.5);
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.25);
+            border-color: var(--primary);
+            box-shadow: 0 0 15px var(--primary-glow);
         }
 
         .live-dot {
             width: 8px;
             height: 8px;
-            background-color: #ffffff;
+            background-color: var(--primary);
             border-radius: 50%;
-            box-shadow: 0 0 12px #ffffff;
+            box-shadow: 0 0 12px var(--primary);
             animation: pulse 1.4s infinite;
         }
 
@@ -192,18 +200,19 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: var(--card-bg);
+            border: 1px solid var(--border-glow);
             padding: 6px 16px;
             border-radius: 30px;
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
-            transition: border-color 0.3s;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+            transition: all 0.3s;
         }
 
         .volume-control-box:hover {
-            border-color: rgba(255, 255, 255, 0.5);
+            border-color: var(--primary);
+            box-shadow: 0 0 15px var(--primary-glow);
         }
 
         .volume-btn {
@@ -211,7 +220,7 @@
             border: none;
             color: #fff;
             cursor: pointer;
-            font-size: 13px;
+            font-size: 14px;
             padding: 0;
             display: flex;
             align-items: center;
@@ -226,10 +235,10 @@
         .volume-slider {
             -webkit-appearance: none;
             appearance: none;
-            width: 75px;
+            width: 80px;
             height: 4px;
             border-radius: 2px;
-            background: rgba(255, 255, 255, 0.25);
+            background: rgba(255, 255, 255, 0.2);
             outline: none;
             cursor: pointer;
         }
@@ -240,8 +249,8 @@
             width: 12px;
             height: 12px;
             border-radius: 50%;
-            background: #ffffff;
-            box-shadow: 0 0 10px #ffffff;
+            background: var(--primary);
+            box-shadow: 0 0 10px var(--primary);
             cursor: pointer;
             transition: transform 0.15s;
         }
@@ -256,17 +265,17 @@
             width: 100%;
             padding-bottom: 52%;
             height: 0;
-            border-radius: 20px;
+            border-radius: 24px;
             overflow: hidden;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.95);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid var(--border-glow);
             transition: all 0.5s ease;
             background: #000;
         }
 
         .video-container.playing-border {
-            border-color: rgba(255, 255, 255, 0.8);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9), 0 0 35px rgba(255, 255, 255, 0.3);
+            border-color: var(--primary);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9), 0 0 35px var(--primary-glow);
         }
 
         #youtube-player {
@@ -315,57 +324,61 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle, rgba(15, 15, 15, 0.9) 0%, rgba(0, 0, 0, 0.98) 100%);
+            background: radial-gradient(circle, rgba(15, 15, 18, 0.94) 0%, rgba(5, 5, 5, 0.98) 100%);
             z-index: 30;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             transition: opacity 0.5s ease, visibility 0.5s;
         }
 
         .start-btn {
-            background: #ffffff;
+            background: var(--primary);
             color: #000;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 900;
-            font-size: 12px;
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 13px;
             padding: 16px 40px;
             border: none;
             border-radius: 50px;
             cursor: pointer;
-            letter-spacing: 2.5px;
-            box-shadow: 0 0 35px rgba(255, 255, 255, 0.8);
+            letter-spacing: 2px;
+            box-shadow: 0 0 30px var(--primary-glow);
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .start-btn:hover {
-            transform: scale(1.08);
-            box-shadow: 0 0 55px rgba(255, 255, 255, 1);
-            background-color: #fff;
+            transform: scale(1.06);
+            box-shadow: 0 0 50px var(--primary);
+            background-color: #33ff85;
+        }
+
+        .start-btn:active {
+            transform: scale(0.96);
         }
 
         /* NOW PLAYING CARD */
         .now-playing-card {
             width: 100%;
-            background: rgba(255, 255, 255, 0.04);
+            background: var(--card-bg);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 16px;
+            border: 1px solid var(--border-glow);
+            border-radius: 20px;
             padding: 18px 24px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.8);
-            transition: border-color 0.3s ease;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.75);
+            transition: all 0.3s ease;
         }
 
         .now-playing-card:hover {
-            border-color: rgba(255, 255, 255, 0.5);
+            border-color: rgba(255, 255, 255, 0.3);
         }
 
         .track-info {
@@ -373,14 +386,14 @@
             flex-direction: column;
             gap: 6px;
             overflow: hidden;
-            max-width: 58%;
+            max-width: 55%;
         }
 
         .track-label {
-            font-size: 9px;
-            font-weight: 900;
-            letter-spacing: 2.5px;
-            color: #aaa;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: var(--primary);
             text-transform: uppercase;
             display: flex;
             align-items: center;
@@ -388,64 +401,33 @@
         }
 
         .track-title {
-            font-size: 15px;
+            font-size: 16px;
             font-weight: 900;
             color: #fff;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            text-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+            letter-spacing: -0.5px;
         }
 
         .next-track {
-            font-size: 10px;
-            color: #aaa;
+            font-size: 11px;
+            color: #888;
             text-align: right;
-            max-width: 38%;
+            max-width: 42%;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 6px;
         }
 
-        /* YENİ: KAYAN BİLGİ / LYRICS BANT */
-        .ticker-wrap {
-            width: 100%;
-            overflow: hidden;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 8px 0;
-            backdrop-filter: blur(10px);
-        }
-
-        .ticker {
-            display: flex;
-            white-space: nowrap;
-            animation: ticker 25s linear infinite;
-        }
-
-        .ticker-item {
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 1.5px;
-            color: rgba(255, 255, 255, 0.7);
-            padding: 0 20px;
-            text-transform: uppercase;
-        }
-
-        @keyframes ticker {
-            0% { transform: translate3d(0, 0, 0); }
-            100% { transform: translate3d(-50%, 0, 0); }
-        }
-
-        /* WAVE ANIMASYONU */
+        /* SES DALGASI ANIMASYONU */
         .wave-bars {
             display: flex;
             align-items: flex-end;
-            gap: 2.5px;
+            gap: 3px;
             height: 12px;
             margin-left: 4px;
             transition: opacity 0.3s ease;
@@ -453,7 +435,7 @@
 
         .wave-bar {
             width: 2px;
-            background: #fff;
+            background: var(--primary);
             border-radius: 1px;
             animation: waveAnim 0.8s ease-in-out infinite alternate;
         }
@@ -470,27 +452,35 @@
 
         #visualizer-canvas {
             width: 100%;
-            height: 32px;
+            height: 36px;
+            margin: 0;
             transition: opacity 1s ease;
         }
 
+        /* MOBİL UYUM DÜZENLEMELERİ */
         @media (max-width: 600px) {
             .main-wrapper {
-                padding: 10px 12px 25px 12px;
-                gap: 12px;
+                padding: 12px 14px 25px 14px;
+                gap: 14px;
             }
 
             .logo-container {
-                height: 190px;
+                height: 200px;
             }
 
             .video-container {
                 padding-bottom: 56%;
-                border-radius: 16px;
+                border-radius: 18px;
             }
 
             .now-playing-card {
                 padding: 14px 18px;
+                border-radius: 16px;
+            }
+
+            .start-btn {
+                font-size: 11px;
+                padding: 14px 32px;
             }
         }
     </style>
@@ -504,7 +494,7 @@
     <canvas id="bg-canvas"></canvas>
     <div class="ambient-glow" id="ambient-glow"></div>
 
-    <div class="main-wrapper">
+    <div class="main-wrapper" id="main-wrapper">
         <div class="logo-container">
             <div class="blast-wave" id="blast-wave"></div>
             <div id="globe-3d-container"></div>
@@ -516,10 +506,10 @@
                 <span>CANLI YAYIN</span>
             </div>
             <div class="badge">
-                <span>🎧 DİNLEYİCİ: <strong id="listener-count" style="color: #ffffff; text-shadow: 0 0 8px #fff;">0</strong></span>
+                <span>🎧 DİNLEYİCİ: <strong id="listener-count" style="color: var(--primary); text-shadow: 0 0 10px var(--primary-glow);">0</strong></span>
             </div>
             <div class="volume-control-box">
-                <button class="volume-btn" id="mute-btn" title="Sesi Kapat/Aç (M)">🔊</button>
+                <button class="volume-btn" id="mute-btn" title="Sesi Kapat/Aç">🔊</button>
                 <input type="range" class="volume-slider" id="volume-range" min="0" max="100" value="100">
             </div>
         </div>
@@ -538,7 +528,7 @@
         <div class="now-playing-card">
             <div class="track-info">
                 <span class="track-label">
-                    <span style="display:inline-block; width:5px; height:5px; background:#fff; border-radius:50%;"></span>
+                    <span style="display:inline-block; width:6px; height:6px; background:var(--primary); border-radius:50%; box-shadow: 0 0 8px var(--primary);"></span>
                     ŞU AN YAYINDA
                     <div class="wave-bars" id="wave-bars" style="opacity: 0;">
                         <div class="wave-bar"></div>
@@ -550,20 +540,8 @@
                 <span class="track-title" id="current-track-name">Canlı Yayın Bekleniyor...</span>
             </div>
             <div class="next-track">
-                <div class="track-label" style="justify-content: flex-end;">SIRADAKİ</div>
-                <span id="next-track-name" style="font-weight:700;">---</span>
-            </div>
-        </div>
-
-        <!-- KAYAN BİLGİ BANDI -->
-        <div class="ticker-wrap">
-            <div class="ticker">
-                <div class="ticker-item">🔥 Kesintisiz Hit Müzik</div>
-                <div class="ticker-item">💎 EA$Y FM 7/24 Canlı</div>
-                <div class="ticker-item">⚡ Yüksek Kalite Ses</div>
-                <div class="ticker-item">🎧 En İyi Türkçe & Yabancı Parçalar</div>
-                <div class="ticker-item">🔥 Kesintisiz Hit Müzik</div>
-                <div class="ticker-item">💎 EA$Y FM 7/24 Canlı</div>
+                <div class="track-label" style="justify-content: flex-end; color: #666;">SIRADAKİ</div>
+                <span id="next-track-name" style="font-weight:700; color: #ccc;">---</span>
             </div>
         </div>
 
@@ -571,6 +549,20 @@
     </div>
 
     <script>
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+
+        function forceScrollTop() {
+            if (window.scrollY !== 0 || document.documentElement.scrollTop !== 0) {
+                window.scrollTo(0, 0);
+            }
+        }
+
+        forceScrollTop();
+        window.addEventListener('DOMContentLoaded', forceScrollTop);
+        window.addEventListener('load', forceScrollTop);
+
         let player = null;
         let isPlayerReady = false;
         let isPlayingState = false;
@@ -684,7 +676,13 @@
                     'start': Math.floor(state.seekTo)
                 },
                 events: {
-                    'onReady': () => { isPlayerReady = true; },
+                    'onReady': () => { 
+                        isPlayerReady = true; 
+                        if (document.activeElement) {
+                            document.activeElement.blur();
+                        }
+                        forceScrollTop();
+                    },
                     'onStateChange': onPlayerStateChange
                 }
             });
@@ -707,12 +705,17 @@
         }
 
         function onPlayerStateChange(event) {
-            actualPlayerStatePlaying = (event.data === YT.PlayerState.PLAYING);
+            if (event.data === YT.PlayerState.PLAYING) {
+                actualPlayerStatePlaying = true;
+            } else {
+                actualPlayerStatePlaying = false;
+            }
             updateAudioVisualState();
         }
 
         function syncToLiveStream() {
             if (!isPlayerReady || !player) return;
+
             const state = getCurrentStreamState();
             const targetSong = songList[state.songIndex];
 
@@ -720,14 +723,19 @@
 
             if (currentLoadedVideoId !== targetSong.id) {
                 currentLoadedVideoId = targetSong.id;
-                player.loadVideoById({ videoId: targetSong.id, startSeconds: Math.floor(state.seekTo) });
+                player.loadVideoById({
+                    videoId: targetSong.id,
+                    startSeconds: Math.floor(state.seekTo)
+                });
                 player.playVideo();
                 return;
             }
 
             if (typeof player.getCurrentTime === 'function') {
                 const currentTime = player.getCurrentTime();
-                if (Math.abs(currentTime - state.seekTo) > 1.8) {
+                const timeDiff = Math.abs(currentTime - state.seekTo);
+                
+                if (timeDiff > 1.8) {
                     player.seekTo(state.seekTo, true);
                     player.playVideo();
                 }
@@ -743,7 +751,9 @@
             const overlay = document.getElementById('start-overlay');
             overlay.style.opacity = '0';
             overlay.style.pointerEvents = 'none';
-            setTimeout(() => { overlay.style.display = 'none'; }, 500);
+            setTimeout(() => { 
+                overlay.style.display = 'none'; 
+            }, 500);
 
             const startPlaying = () => {
                 const state = getCurrentStreamState();
@@ -752,8 +762,14 @@
                 updateTrackLabels(state.songIndex);
                 currentLoadedVideoId = targetSong.id;
 
-                if (typeof player.unMute === 'function') player.unMute();
-                player.loadVideoById({ videoId: targetSong.id, startSeconds: Math.floor(state.seekTo) });
+                if (typeof player.unMute === 'function') {
+                    player.unMute();
+                }
+
+                player.loadVideoById({
+                    videoId: targetSong.id,
+                    startSeconds: Math.floor(state.seekTo)
+                });
                 player.playVideo();
 
                 if (syncCheckInterval) clearInterval(syncCheckInterval);
@@ -778,54 +794,62 @@
             handleUserClick();
         });
 
-        /* SES AYARLARI VE KISAYOLLAR */
         const volumeRange = document.getElementById('volume-range');
         const muteBtn = document.getElementById('mute-btn');
         let isMuted = false;
 
         volumeRange.addEventListener('input', (e) => {
             const val = Number(e.target.value);
+            
             if (player && typeof player.setVolume === 'function') {
                 player.setVolume(val);
+                
                 if (val === 0) {
                     player.mute();
                     muteBtn.innerText = '🔇';
                     isMuted = true;
                 } else {
-                    if (isMuted) player.unMute();
-                    isMuted = false;
+                    if (isMuted || (typeof player.isMuted === 'function' && player.isMuted())) {
+                        player.unMute();
+                        isMuted = false;
+                    }
                     muteBtn.innerText = '🔊';
                 }
             }
             updateAudioVisualState();
         });
 
-        function toggleMute() {
+        muteBtn.addEventListener('click', () => {
             if (!player) return;
             if (isMuted) {
                 player.unMute();
                 muteBtn.innerText = '🔊';
-                if (Number(volumeRange.value) === 0) volumeRange.value = 100;
-                player.setVolume(volumeRange.value);
+                
+                let currentVol = Number(volumeRange.value);
+                if (currentVol === 0) {
+                    currentVol = 100;
+                    volumeRange.value = 100;
+                }
+                
+                if (typeof player.setVolume === 'function') {
+                    player.setVolume(currentVol);
+                }
                 isMuted = false;
             } else {
                 player.mute();
                 muteBtn.innerText = '🔇';
+                volumeRange.value = 0;
                 isMuted = true;
             }
             updateAudioVisualState();
-        }
-
-        muteBtn.addEventListener('click', toggleMute);
-
-        window.addEventListener('keydown', (e) => {
-            if (e.key === 'm' || e.key === 'M') toggleMute();
         });
 
-        /* THREE.JS DÜNYA */
+        /* THREE.JS 3D DÜNYA VE HALKA EFEKTİ */
         const globeContainer = document.getElementById('globe-3d-container');
+        
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
+        
         const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: !isMobileDevice, powerPreference: "high-performance" });
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
         globeContainer.appendChild(renderer.domElement);
@@ -834,52 +858,84 @@
             const width = globeContainer.clientWidth;
             const height = globeContainer.clientHeight;
             if (width === 0 || height === 0) return;
+
             camera.aspect = width / height;
-            camera.position.z = window.innerWidth <= 400 ? 5.5 : (window.innerWidth <= 600 ? 5.1 : 4.7);
+
+            if (window.innerWidth <= 400) {
+                camera.position.z = 5.5;
+            } else if (window.innerWidth <= 600) {
+                camera.position.z = 5.1;
+            } else {
+                camera.position.z = 4.7;
+            }
+
             camera.updateProjectionMatrix();
             renderer.setSize(width, height);
         }
 
         const textureLoader = new THREE.TextureLoader();
         const earthTexture = textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_atmos_2048.jpg');
+
         const baseRadius = 1.65;
-        const globeMesh = new THREE.Mesh(
-            new THREE.SphereGeometry(baseRadius, isMobileDevice ? 36 : 64, isMobileDevice ? 36 : 64),
-            new THREE.MeshStandardMaterial({ map: earthTexture, roughness: 0.4, metalness: 0.3 })
-        );
+        const segments = isMobileDevice ? 36 : 64;
+        const geometry = new THREE.SphereGeometry(baseRadius, segments, segments);
+        const material = new THREE.MeshStandardMaterial({
+            map: earthTexture,
+            roughness: 0.4,
+            metalness: 0.3
+        });
+        const globeMesh = new THREE.Mesh(geometry, material);
         scene.add(globeMesh);
 
-        scene.add(new THREE.AmbientLight(0xffffff, 1.6));
+        const ambientLight = new THREE.AmbientLight(0xffffff, 1.6);
+        scene.add(ambientLight);
+
         const dirLight = new THREE.DirectionalLight(0xffffff, 2.2);
         dirLight.position.set(5, 4, 5);
         scene.add(dirLight);
 
         let ringMesh = null;
+
         function createOrbitRingText() {
             const canvas = document.createElement('canvas');
             canvas.width = 1024;
             canvas.height = 256;
             const ctx = canvas.getContext('2d');
+
+            ctx.fillStyle = 'transparent';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillStyle = '#ffffff';
+            ctx.fillStyle = '#00ff66';
+
             ctx.font = '900 80px "Anton", sans-serif';
             ctx.fillText("EA$Y FM", canvas.width / 2, 80);
-            ctx.font = '900 32px "Montserrat", sans-serif';
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '900 32px "Space Grotesk", sans-serif';
             ctx.fillText("7/24 YÜZDE YÜZ MÜZİK", canvas.width / 2, 170);
 
             const ringTex = new THREE.CanvasTexture(canvas);
             ringTex.minFilter = THREE.LinearFilter;
+            ringTex.magFilter = THREE.LinearFilter;
 
-            ringMesh = new THREE.Mesh(
-                new THREE.CylinderGeometry(baseRadius + 0.28, baseRadius + 0.28, 0.95, isMobileDevice ? 32 : 64, 1, true),
-                new THREE.MeshBasicMaterial({ map: ringTex, transparent: true, side: THREE.DoubleSide, depthWrite: false })
-            );
+            const ringGeo = new THREE.CylinderGeometry(baseRadius + 0.28, baseRadius + 0.28, 0.95, isMobileDevice ? 32 : 64, 1, true);
+            const ringMat = new THREE.MeshBasicMaterial({
+                map: ringTex,
+                transparent: true,
+                side: THREE.DoubleSide,
+                depthWrite: false
+            });
+
+            ringMesh = new THREE.Mesh(ringGeo, ringMat);
             ringMesh.rotation.z = 0.08;
             scene.add(ringMesh);
         }
 
-        document.fonts.ready.then(createOrbitRingText);
+        document.fonts.ready.then(() => {
+            createOrbitRingText();
+        });
 
         let bassAngle = 0;
         const ambientGlowEl = document.getElementById('ambient-glow');
@@ -887,19 +943,25 @@
 
         function animateGlobe(currentTime) {
             requestAnimationFrame(animateGlobe);
-            const deltaTime = (currentTime - lastTime) / 1000;
+
+            const deltaTime = (currentTime - lastTime) / 1000; 
             lastTime = currentTime;
+
             if (isNaN(deltaTime) || deltaTime > 0.1) return;
 
-            const speed = isPlayingState ? 0.45 : 0.15;
-            globeMesh.rotation.y += speed * deltaTime;
-            if (ringMesh) ringMesh.rotation.y -= (speed * 1.4) * deltaTime;
+            const globeSpeed = isPlayingState ? 0.45 : 0.15;
+            const ringSpeed = isPlayingState ? 0.65 : 0.22;
+
+            globeMesh.rotation.y += globeSpeed * deltaTime;
+            if (ringMesh) ringMesh.rotation.y -= ringSpeed * deltaTime;
 
             if (isPlayingState) {
                 bassAngle += 6.0 * deltaTime;
                 const bassScale = 1 + Math.pow(Math.sin(bassAngle), 6) * 0.055;
                 globeMesh.scale.set(bassScale, bassScale, bassScale);
-                ambientGlowEl.style.transform = `translate(-50%, -50%) scale(${1 + Math.sin(bassAngle) * 0.08})`;
+
+                const glowScale = 1 + Math.sin(bassAngle) * 0.08;
+                ambientGlowEl.style.transform = `translate(-50%, -50%) scale(${glowScale})`;
             } else {
                 globeMesh.scale.lerp(new THREE.Vector3(1, 1, 1), 10 * deltaTime);
                 ambientGlowEl.style.transform = `translate(-50%, -50%) scale(1)`;
@@ -907,10 +969,11 @@
 
             renderer.render(scene, camera);
         }
+        
         resizeThreeJS();
         requestAnimationFrame(animateGlobe);
 
-        /* PIRLANTA PARÇACIK ANIMASYONU */
+        /* PARÇACIK ANIMASYONU */
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
         let particlesArray = [];
@@ -924,7 +987,10 @@
         handleResize();
 
         class DiamondParticle {
-            constructor() { this.reset(); }
+            constructor() {
+                this.reset();
+            }
+
             reset() {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
@@ -935,17 +1001,24 @@
                 this.isSparkle = Math.random() > 0.7;
                 this.pulseSpeed = Math.random() * 0.03 + 0.015;
             }
+
             update() {
                 this.x += this.speedX;
                 this.y += this.speedY;
+
                 this.opacity += Math.sin(Date.now() * this.pulseSpeed) * 0.015;
                 if (this.opacity < 0.1) this.opacity = 0.1;
                 if (this.opacity > 0.95) this.opacity = 0.95;
-                if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) this.reset();
+
+                if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) {
+                    this.reset();
+                }
             }
+
             draw() {
-                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
-                ctx.strokeStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                ctx.fillStyle = `rgba(0, 255, 102, ${this.opacity})`;
+                ctx.strokeStyle = `rgba(0, 255, 102, ${this.opacity})`;
+
                 if (this.isSparkle) {
                     const len = this.size * 2.5;
                     ctx.beginPath();
@@ -995,26 +1068,47 @@
             document.getElementById('listener-count').innerText = snap.numChildren();
         });
 
-        /* FREKANS VISUALIZER */
+        /* VISUALIZER */
         const vCanvas = document.getElementById('visualizer-canvas');
         const vCtx = vCanvas.getContext('2d');
-        const numBars = isMobileDevice ? 24 : 44;
+        const numBars = isMobileDevice ? 28 : 52; 
         let barHeights = new Array(numBars).fill(3);
+        let peakHeights = new Array(numBars).fill(3);
 
         function drawVisualizer() {
             vCanvas.width = vCanvas.offsetWidth;
             vCanvas.height = vCanvas.offsetHeight;
             vCtx.clearRect(0, 0, vCanvas.width, vCanvas.height);
+
             const gap = 3;
             const barWidth = (vCanvas.width / numBars) - gap;
 
             for (let i = 0; i < numBars; i++) {
-                const target = isPlayingState ? Math.random() * (vCanvas.height - 6) + 4 : 3;
-                barHeights[i] += (target - barHeights[i]) * 0.2;
+                if (isPlayingState) {
+                    const target = Math.random() * (vCanvas.height - 6) + 4;
+                    barHeights[i] += (target - barHeights[i]) * 0.18;
+                } else {
+                    barHeights[i] += (3 - barHeights[i]) * 0.12;
+                }
+
+                if (barHeights[i] > peakHeights[i]) {
+                    peakHeights[i] = barHeights[i];
+                } else {
+                    peakHeights[i] -= 0.35;
+                }
+                if (peakHeights[i] < 3) peakHeights[i] = 3;
+
                 const x = i * (barWidth + gap);
                 const y = vCanvas.height - barHeights[i];
-                vCtx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+
+                vCtx.fillStyle = '#00ff66';
+                vCtx.shadowColor = 'rgba(0, 255, 102, 0.5)';
+                vCtx.shadowBlur = 8;
                 vCtx.fillRect(x, y, barWidth, barHeights[i]);
+                
+                vCtx.fillStyle = '#ffffff';
+                vCtx.shadowBlur = 0;
+                vCtx.fillRect(x, vCanvas.height - peakHeights[i] - 2, barWidth, 1.5);
             }
             requestAnimationFrame(drawVisualizer);
         }

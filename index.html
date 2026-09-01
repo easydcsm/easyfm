@@ -80,17 +80,17 @@
             box-sizing: border-box;
         }
 
-        /* DÜNYA LOGOSU ALANI */
+        /* DÜNYA LOGOSU ALANI (Genişletilerek kesilmeler tamamen engellendi) */
         .logo-container {
             text-align: center;
             position: relative;
             width: 100%;
             max-width: 360px;
-            height: clamp(100px, 20vh, 180px);
+            height: clamp(140px, 24vh, 220px);
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden; /* Taşmayı kilitler */
+            overflow: visible;
             margin: 0 auto;
             flex-shrink: 0;
         }
@@ -99,41 +99,7 @@
         @media (min-width: 769px) {
             .logo-container {
                 max-width: 520px;
-                height: clamp(160px, 25vh, 260px);
-            }
-        }
-
-        /* PATLAMA EFEKTİ (KUTU İÇİNDE KALACAK ŞEKİLDE AYARLANDI) */
-        .blast-wave {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0.2);
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            border: 3px solid rgba(255, 255, 255, 1);
-            box-shadow: 0 0 50px rgba(255, 255, 255, 1), inset 0 0 30px rgba(255, 255, 255, 0.8);
-            opacity: 0;
-            pointer-events: none;
-            z-index: 5;
-            will-change: transform, opacity;
-        }
-
-        .blast-active {
-            animation: fastExplode 0.45s cubic-bezier(0.0, 0.9, 0.2, 1) forwards;
-        }
-
-        @keyframes fastExplode {
-            0% {
-                transform: translate(-50%, -50%) scale(0.2);
-                opacity: 1;
-                border-width: 8px;
-            }
-            100% {
-                transform: translate(-50%, -50%) scale(1.6);
-                opacity: 0;
-                border-width: 1px;
+                height: clamp(200px, 28vh, 300px);
             }
         }
 
@@ -142,7 +108,7 @@
             height: 100%;
             position: relative;
             z-index: 2;
-            overflow: hidden;
+            overflow: visible;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -248,8 +214,8 @@
             position: relative;
             width: 100%;
             flex: 1 1 auto;
-            min-height: 150px;
-            max-height: 42vh;
+            min-height: 140px;
+            max-height: 38vh;
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.95);
@@ -440,7 +406,6 @@
 
     <div class="main-wrapper" id="main-wrapper">
         <div class="logo-container">
-            <div class="blast-wave" id="blast-wave"></div>
             <div id="globe-3d-container"></div>
         </div>
 
@@ -670,11 +635,6 @@
         }
 
         function handleUserClick() {
-            const blast = document.getElementById('blast-wave');
-            blast.classList.remove('blast-active');
-            void blast.offsetWidth;
-            blast.classList.add('blast-active');
-
             const overlay = document.getElementById('start-overlay');
             overlay.style.opacity = '0';
             overlay.style.pointerEvents = 'none';
@@ -762,7 +722,7 @@
             updateAudioVisualState();
         });
 
-        /* THREE.JS DÜNYA */
+        /* THREE.JS DÜNYA (MÜKEMMEL KAMERA MESAFESİ) */
         const globeContainer = document.getElementById('globe-3d-container');
         
         const scene = new THREE.Scene();
@@ -780,15 +740,15 @@
 
             camera.aspect = width / height;
 
-            /* KAMERA DÜNYANIN TAM VE BÜYÜK GÖRÜNMESİ İÇİN ESKİ DENGELİ DEĞERİNE GETİRİLDİ */
+            /* KAMERA MESAFESİ KESİLMEYİ ÖNLEYECEK ŞEKİLDE AYARLANDI */
             if (window.innerWidth > 768) {
-                camera.position.z = 4.0;
+                camera.position.z = 4.6;
             } else if (window.innerHeight <= 650) {
-                camera.position.z = 5.6;
+                camera.position.z = 6.2;
             } else if (window.innerWidth <= 600) {
-                camera.position.z = 5.0;
+                camera.position.z = 5.8;
             } else {
-                camera.position.z = 4.5;
+                camera.position.z = 5.2;
             }
 
             camera.updateProjectionMatrix();
@@ -877,8 +837,8 @@
             if (isPlayingState) {
                 bassAngle += 6.0 * deltaTime;
                 
-                /* BAS VURUSLARI ESKİ GÜÇLÜ VE BELİRGİN HALİNE GETİRİLDİ */
-                const bassScale = 1 + Math.pow(Math.sin(bassAngle), 6) * 0.038;
+                /* DENGELİ BAS BÜYÜMESİ */
+                const bassScale = 1 + Math.pow(Math.sin(bassAngle), 6) * 0.03;
                 globeMesh.scale.set(bassScale, bassScale, bassScale);
 
                 dirLight.intensity = 2.2 + Math.pow(Math.sin(bassAngle), 6) * 2.5;

@@ -18,7 +18,7 @@
             padding: 0;
             width: 100%;
             height: 100%;
-            background-color: #050505;
+            background-color: #030303;
             color: #fff;
             font-family: 'Montserrat', sans-serif;
             overflow-x: hidden;
@@ -52,12 +52,12 @@
             transform: translate(-50%, -50%);
             width: 85vw;
             height: 85vh;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, rgba(50, 50, 50, 0.05) 50%, rgba(0, 0, 0, 0) 75%);
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.18) 0%, rgba(120, 120, 120, 0.05) 50%, rgba(0, 0, 0, 0) 75%);
             z-index: 2;
             pointer-events: none;
             transition: transform 0.15s cubic-bezier(0.1, 0.9, 0.2, 1), opacity 0.5s ease;
             will-change: transform;
-            filter: blur(35px);
+            filter: blur(40px);
         }
 
         .main-wrapper {
@@ -150,10 +150,10 @@
         }
 
         .badge {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             padding: 8px 18px;
             border-radius: 30px;
             font-size: 10px;
@@ -163,13 +163,13 @@
             align-items: center;
             gap: 8px;
             text-transform: uppercase;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
             transition: all 0.3s ease;
         }
 
         .badge:hover {
-            border-color: rgba(255, 255, 255, 0.4);
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.25);
         }
 
         .live-dot {
@@ -192,18 +192,18 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             padding: 6px 16px;
             border-radius: 30px;
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
             transition: border-color 0.3s;
         }
 
         .volume-control-box:hover {
-            border-color: rgba(255, 255, 255, 0.4);
+            border-color: rgba(255, 255, 255, 0.5);
         }
 
         .volume-btn {
@@ -259,14 +259,14 @@
             border-radius: 20px;
             overflow: hidden;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.95);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             transition: all 0.5s ease;
             background: #000;
         }
 
         .video-container.playing-border {
-            border-color: rgba(255, 255, 255, 0.65);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9), 0 0 30px rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9), 0 0 35px rgba(255, 255, 255, 0.3);
         }
 
         #youtube-player {
@@ -351,21 +351,21 @@
         /* NOW PLAYING CARD */
         .now-playing-card {
             width: 100%;
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 16px;
             padding: 18px 24px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.75);
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.8);
             transition: border-color 0.3s ease;
         }
 
         .now-playing-card:hover {
-            border-color: rgba(255, 255, 255, 0.4);
+            border-color: rgba(255, 255, 255, 0.5);
         }
 
         .track-info {
@@ -408,6 +408,37 @@
             display: flex;
             flex-direction: column;
             gap: 4px;
+        }
+
+        /* YENİ: KAYAN BİLGİ / LYRICS BANT */
+        .ticker-wrap {
+            width: 100%;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 8px 0;
+            backdrop-filter: blur(10px);
+        }
+
+        .ticker {
+            display: flex;
+            white-space: nowrap;
+            animation: ticker 25s linear infinite;
+        }
+
+        .ticker-item {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            color: rgba(255, 255, 255, 0.7);
+            padding: 0 20px;
+            text-transform: uppercase;
+        }
+
+        @keyframes ticker {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-50%, 0, 0); }
         }
 
         /* WAVE ANIMASYONU */
@@ -521,6 +552,18 @@
             <div class="next-track">
                 <div class="track-label" style="justify-content: flex-end;">SIRADAKİ</div>
                 <span id="next-track-name" style="font-weight:700;">---</span>
+            </div>
+        </div>
+
+        <!-- KAYAN BİLGİ BANDI -->
+        <div class="ticker-wrap">
+            <div class="ticker">
+                <div class="ticker-item">🔥 Kesintisiz Hit Müzik</div>
+                <div class="ticker-item">💎 EA$Y FM 7/24 Canlı</div>
+                <div class="ticker-item">⚡ Yüksek Kalite Ses</div>
+                <div class="ticker-item">🎧 En İyi Türkçe & Yabancı Parçalar</div>
+                <div class="ticker-item">🔥 Kesintisiz Hit Müzik</div>
+                <div class="ticker-item">💎 EA$Y FM 7/24 Canlı</div>
             </div>
         </div>
 

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>EA$Y FM | CANLI</title>
-    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:wght@400;600;700;900&family=Syne:wght@800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet">
     
     <style>
         * {
@@ -13,32 +13,28 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        :root {
-            --accent-color: #39FF14; /* YSL Slime Green */
-            --accent-glow: rgba(57, 255, 20, 0.5);
-        }
-
         html, body {
             margin: 0;
             padding: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #050505;
+            width: 100vw;
+            height: 100vh;
+            background-color: #000000;
             color: #fff;
             font-family: 'Montserrat', sans-serif;
-            overflow-x: hidden;
-            scroll-behavior: auto !important;
-            overscroll-behavior-y: none;
+            overflow: hidden !important; /* SAYFA KAYDIRMA TAMAMEN KAPALI */
+            position: fixed;
+            top: 0;
+            left: 0;
         }
 
         body {
-            min-height: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start;
+            justify-content: center;
         }
 
+        /* ARKA PLAN CANVAS */
         #bg-canvas {
             position: fixed;
             top: 0;
@@ -49,6 +45,7 @@
             pointer-events: none;
         }
 
+        /* DİNAMİK PIRLANTA AMBİYANSI */
         .ambient-glow {
             position: fixed;
             top: 50%;
@@ -56,34 +53,35 @@
             transform: translate(-50%, -50%);
             width: 85vw;
             height: 85vh;
-            background: radial-gradient(circle, var(--accent-glow) 0%, rgba(10, 10, 10, 0.05) 50%, rgba(0, 0, 0, 0) 75%);
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.14) 0%, rgba(120, 120, 120, 0.03) 45%, rgba(0, 0, 0, 0) 70%);
             z-index: 2;
             pointer-events: none;
             transition: transform 0.2s cubic-bezier(0.1, 0.9, 0.2, 1), opacity 0.5s ease;
             will-change: transform;
-            filter: blur(40px);
+            filter: blur(25px);
         }
 
         .main-wrapper {
             position: relative;
             z-index: 10;
             width: 100%;
-            max-width: 680px;
+            max-width: 620px;
+            height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start;
-            padding: 15px 16px 30px 16px;
-            gap: 16px;
+            justify-content: space-evenly; /* KOMPAKT EKRAN YERLEŞİMİ */
+            padding: 10px 16px;
             margin: 0 auto;
         }
 
+        /* LOGO & 3D DÜNYA ALANI */
         .logo-container {
             text-align: center;
             position: relative;
             width: 100%;
-            max-width: 440px;
-            height: 250px;
+            max-width: 400px;
+            height: 210px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -91,16 +89,17 @@
             margin: 0 auto;
         }
 
+        /* PIRLANTA PATLAMA EFEKTİ */
         .blast-wave {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%) scale(0.6);
-            width: 220px;
-            height: 220px;
+            width: 200px;
+            height: 200px;
             border-radius: 50%;
-            border: 3px solid var(--accent-color);
-            box-shadow: 0 0 90px var(--accent-color), inset 0 0 50px var(--accent-color);
+            border: 3px solid rgba(255, 255, 255, 1);
+            box-shadow: 0 0 90px rgba(255, 255, 255, 1), inset 0 0 50px rgba(255, 255, 255, 0.8);
             opacity: 0;
             pointer-events: none;
             z-index: 5;
@@ -112,8 +111,16 @@
         }
 
         @keyframes fastExplode {
-            0% { transform: translate(-50%, -50%) scale(0.6); opacity: 1; border-width: 10px; }
-            100% { transform: translate(-50%, -50%) scale(2.8); opacity: 0; border-width: 1px; }
+            0% {
+                transform: translate(-50%, -50%) scale(0.6);
+                opacity: 1;
+                border-width: 10px;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(2.8);
+                opacity: 0;
+                border-width: 1px;
+            }
         }
 
         #globe-3d-container {
@@ -132,23 +139,22 @@
             outline: none;
         }
 
+        /* STATUS BAR (BADGES & VOLUME) */
         .status-bar {
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
             justify-content: center;
             align-items: center;
-            margin-top: 2px;
-            margin-bottom: 2px;
             width: 100%;
         }
 
         .badge {
-            background: rgba(15, 15, 15, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            padding: 8px 18px;
+            background: rgba(20, 20, 20, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 7px 16px;
             border-radius: 30px;
             font-size: 10px;
             font-weight: 800;
@@ -157,23 +163,20 @@
             align-items: center;
             gap: 8px;
             text-transform: uppercase;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8);
-            position: relative;
-            overflow: hidden;
-            transition: border-color 0.3s, box-shadow 0.3s;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+            transition: border-color 0.3s;
         }
 
         .badge:hover {
-            border-color: var(--accent-color);
-            box-shadow: 0 0 15px var(--accent-glow);
+            border-color: rgba(255, 255, 255, 0.5);
         }
 
         .live-dot {
             width: 8px;
             height: 8px;
-            background-color: var(--accent-color);
+            background-color: #ffffff;
             border-radius: 50%;
-            box-shadow: 0 0 12px var(--accent-color);
+            box-shadow: 0 0 12px #ffffff;
             animation: pulse 1.4s infinite;
         }
 
@@ -187,18 +190,18 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            background: rgba(15, 15, 15, 0.85);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            padding: 6px 16px;
+            background: rgba(20, 20, 20, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 5px 14px;
             border-radius: 30px;
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
             transition: border-color 0.3s;
         }
 
         .volume-control-box:hover {
-            border-color: var(--accent-color);
+            border-color: rgba(255, 255, 255, 0.5);
         }
 
         .volume-btn {
@@ -219,10 +222,10 @@
         .volume-slider {
             -webkit-appearance: none;
             appearance: none;
-            width: 75px;
+            width: 70px;
             height: 4px;
             border-radius: 2px;
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.25);
             outline: none;
             cursor: pointer;
         }
@@ -233,28 +236,31 @@
             width: 12px;
             height: 12px;
             border-radius: 50%;
-            background: var(--accent-color);
-            box-shadow: 0 0 10px var(--accent-color);
+            background: #ffffff;
+            box-shadow: 0 0 10px #ffffff;
             cursor: pointer;
             transition: transform 0.15s;
         }
 
+        .volume-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+        /* VİDEO ÇERÇEVESİ VE MASKELER */
         .video-container {
             position: relative;
             width: 100%;
-            padding-bottom: 52%;
+            padding-bottom: 50%;
             height: 0;
-            border-radius: 20px;
+            border-radius: 18px;
             overflow: hidden;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.95);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            transition: border-color 0.5s, box-shadow 0.5s, transform 0.1s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: border-color 0.5s, box-shadow 0.5s, transform 0.08s ease;
             background: #000;
         }
 
         .video-container.playing-border {
-            border-color: var(--accent-color);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9), 0 0 35px var(--accent-glow);
+            border-color: rgba(255, 255, 255, 0.7);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9), 0 0 45px rgba(255, 255, 255, 0.25);
         }
 
         #youtube-player {
@@ -277,61 +283,60 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle, rgba(15, 15, 15, 0.94) 0%, rgba(0, 0, 0, 0.98) 100%);
+            background: radial-gradient(circle, rgba(20, 20, 20, 0.92) 0%, rgba(0, 0, 0, 0.98) 100%);
             z-index: 30;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             transition: opacity 0.5s ease, visibility 0.5s;
         }
 
         .start-btn {
-            background: var(--accent-color);
+            background: #ffffff;
             color: #000;
-            font-family: 'Syne', 'Montserrat', sans-serif;
-            font-weight: 800;
-            font-size: 13px;
-            padding: 16px 42px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 900;
+            font-size: 11px;
+            padding: 13px 34px;
             border: none;
             border-radius: 50px;
             cursor: pointer;
-            letter-spacing: 3px;
-            box-shadow: 0 0 35px var(--accent-glow);
+            letter-spacing: 2px;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.7);
             transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s;
         }
 
         .start-btn:hover {
-            transform: scale(1.08);
-            box-shadow: 0 0 50px var(--accent-color);
+            transform: scale(1.05);
+            box-shadow: 0 0 50px rgba(255, 255, 255, 0.95);
         }
 
+        /* NOW PLAYING CARD */
         .now-playing-card {
             width: 100%;
-            background: rgba(15, 15, 15, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 16px;
-            padding: 16px 22px;
+            background: rgba(20, 20, 20, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 14px;
+            padding: 14px 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.85);
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.75);
             transition: border-color 0.3s ease;
         }
 
-        .now-playing-card:hover {
-            border-color: var(--accent-color);
-        }
+        .now-playing-card:hover { border-color: rgba(255, 255, 255, 0.45); }
 
         .track-info {
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 3px;
             overflow: hidden;
             max-width: 55%;
         }
@@ -348,9 +353,8 @@
         }
 
         .track-title {
-            font-family: 'Syne', sans-serif;
-            font-size: 15px;
-            font-weight: 800;
+            font-size: 14px;
+            font-weight: 900;
             color: #fff;
             white-space: nowrap;
             overflow: hidden;
@@ -368,7 +372,7 @@
             text-overflow: ellipsis;
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 3px;
         }
 
         .wave-bars {
@@ -381,10 +385,9 @@
         }
 
         .wave-bar {
-            width: 2.5px;
-            background: var(--accent-color);
+            width: 2px;
+            background: #fff;
             border-radius: 1px;
-            box-shadow: 0 0 8px var(--accent-color);
             animation: waveAnim 0.8s ease-in-out infinite alternate;
         }
 
@@ -400,18 +403,18 @@
 
         #visualizer-canvas {
             width: 100%;
-            height: 32px;
+            height: 24px;
             margin: 0;
             transition: opacity 1s ease;
         }
 
         @media (max-width: 600px) {
-            .main-wrapper { padding: 10px 12px 25px 12px; gap: 12px; }
-            .logo-container { height: 200px; }
-            .video-container { padding-bottom: 56%; border-radius: 16px; }
+            .main-wrapper { padding: 8px 12px; }
+            .logo-container { height: 170px; }
+            .video-container { padding-bottom: 54%; border-radius: 14px; }
             .yt-shield-bottom-left { width: 68%; }
-            .now-playing-card { padding: 12px 16px; border-radius: 14px; }
-            .start-btn { font-size: 11px; padding: 14px 32px; }
+            .now-playing-card { padding: 10px 14px; border-radius: 12px; }
+            .start-btn { font-size: 10px; padding: 11px 26px; }
         }
     </style>
 
@@ -436,7 +439,7 @@
                 <span>CANLI YAYIN</span>
             </div>
             <div class="badge">
-                <span>🎧 DİNLEYİCİ: <strong id="listener-count" style="color: var(--accent-color); text-shadow: 0 0 8px var(--accent-color);">0</strong></span>
+                <span>🎧 DİNLEYİCİ: <strong id="listener-count" style="color: #ffffff; text-shadow: 0 0 8px #fff;">0</strong></span>
             </div>
             <div class="volume-control-box">
                 <button class="volume-btn" id="mute-btn" title="Sesi Kapat/Aç">🔊</button>
@@ -458,7 +461,7 @@
         <div class="now-playing-card">
             <div class="track-info">
                 <span class="track-label">
-                    <span style="display:inline-block; width:6px; height:6px; background:var(--accent-color); border-radius:50%; box-shadow:0 0 6px var(--accent-color);"></span>
+                    <span style="display:inline-block; width:5px; height:5px; background:#fff; border-radius:50%;"></span>
                     ŞU AN YAYINDA
                     <div class="wave-bars" id="wave-bars" style="opacity: 0;">
                         <div class="wave-bar"></div>
@@ -479,11 +482,9 @@
     </div>
 
     <script>
-        if ('scrollRestoration' in history) { history.scrollRestoration = 'manual'; }
-        function forceScrollTop() { if (window.scrollY !== 0 || document.documentElement.scrollTop !== 0) { window.scrollTo(0, 0); } }
-        forceScrollTop();
-        window.addEventListener('DOMContentLoaded', forceScrollTop);
-        window.addEventListener('load', forceScrollTop);
+        // Sayfa kaydırmasını tam kilitleme
+        window.addEventListener('scroll', () => window.scrollTo(0, 0));
+        document.body.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
 
         let player = null;
         let isPlayerReady = false;
@@ -535,6 +536,7 @@
                 z ^= z + Math.imul(z ^ (z >>> 7), z | 61);
                 return ((z ^ (z >>> 14)) >>> 0) / 4294967296;
             };
+
             while (m) {
                 i = Math.floor(pseudoRandom() * m--);
                 t = shuffled[m];
@@ -594,11 +596,7 @@
                     'start': Math.floor(state.seekTo)
                 },
                 events: {
-                    'onReady': () => { 
-                        isPlayerReady = true; 
-                        if (document.activeElement) document.activeElement.blur();
-                        forceScrollTop();
-                    },
+                    'onReady': () => { isPlayerReady = true; },
                     'onStateChange': onPlayerStateChange
                 }
             });
@@ -629,7 +627,6 @@
             if (!isPlayerReady || !player) return;
             const state = getCurrentStreamState();
             const targetSong = songList[state.songIndex];
-
             updateTrackLabels(state.songIndex);
 
             if (currentLoadedVideoId !== targetSong.id) {
@@ -732,7 +729,7 @@
             updateAudioVisualState();
         });
 
-        /* THREE.JS 3D DÜNYA, HALKA VE 3D UFO EFEKTİ */
+        /* THREE.JS DÜNYA + GERÇEKÇİ 3D PIRLANTA UFO EFEKTİ */
         const globeContainer = document.getElementById('globe-3d-container');
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
@@ -747,7 +744,7 @@
             if (width === 0 || height === 0) return;
 
             camera.aspect = width / height;
-            camera.position.z = window.innerWidth <= 400 ? 5.5 : (window.innerWidth <= 600 ? 5.1 : 4.7);
+            camera.position.z = window.innerWidth <= 400 ? 5.3 : (window.innerWidth <= 600 ? 4.9 : 4.5);
             camera.updateProjectionMatrix();
             renderer.setSize(width, height);
         }
@@ -758,14 +755,18 @@
         const baseRadius = 1.65;
         const segments = isMobileDevice ? 36 : 64;
         const geometry = new THREE.SphereGeometry(baseRadius, segments, segments);
-        const material = new THREE.MeshStandardMaterial({ map: earthTexture, roughness: 0.4, metalness: 0.3 });
+        const material = new THREE.MeshStandardMaterial({
+            map: earthTexture,
+            roughness: 0.4,
+            metalness: 0.3
+        });
         const globeMesh = new THREE.Mesh(geometry, material);
         scene.add(globeMesh);
 
-        const ambientLight = new THREE.AmbientLight(0xffffff, 1.6);
+        const ambientLight = new THREE.AmbientLight(0xffffff, 1.7);
         scene.add(ambientLight);
 
-        const dirLight = new THREE.DirectionalLight(0x39FF14, 2.0); // Slime yeşili ışık dokunuşu
+        const dirLight = new THREE.DirectionalLight(0xffffff, 2.2);
         dirLight.position.set(5, 4, 5);
         scene.add(dirLight);
 
@@ -781,9 +782,8 @@
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-
-            // YAZILARA DOKUNULMADI
             ctx.fillStyle = '#ffffff';
+
             ctx.font = '900 80px "Anton", sans-serif';
             ctx.fillText("EA$Y FM", canvas.width / 2, 80);
 
@@ -795,7 +795,12 @@
             ringTex.magFilter = THREE.LinearFilter;
 
             const ringGeo = new THREE.CylinderGeometry(baseRadius + 0.28, baseRadius + 0.28, 0.95, isMobileDevice ? 32 : 64, 1, true);
-            const ringMat = new THREE.MeshBasicMaterial({ map: ringTex, transparent: true, side: THREE.DoubleSide, depthWrite: false });
+            const ringMat = new THREE.MeshBasicMaterial({
+                map: ringTex,
+                transparent: true,
+                side: THREE.DoubleSide,
+                depthWrite: false
+            });
 
             ringMesh = new THREE.Mesh(ringGeo, ringMat);
             ringMesh.rotation.z = 0.08;
@@ -804,31 +809,31 @@
 
         document.fonts.ready.then(() => { createOrbitRingText(); });
 
-        /* 3D GERÇEKÇİ UFO MODELİ OLUŞTURMA */
+        /* GERÇEKÇİ 3D DISK UFO MODELİ */
         const ufoGroup = new THREE.Group();
 
-        // UFO Gövdesi (Disk)
-        const ufoBodyGeo = new THREE.CylinderGeometry(0.5, 0.5, 0.08, 24);
-        const ufoMat = new THREE.MeshStandardMaterial({ color: 0x222222, metalness: 0.9, roughness: 0.1 });
-        const ufoBody = new THREE.Mesh(ufoBodyGeo, ufoMat);
-        ufoGroup.add(ufoBody);
+        // UFO Ana Disk Gövde (Metalik Kristal Parlaklığında)
+        const ufoDiscGeo = new THREE.CylinderGeometry(0.65, 0.65, 0.07, 32);
+        const ufoDiscMat = new THREE.MeshStandardMaterial({ color: 0x111111, metalness: 0.95, roughness: 0.1 });
+        const ufoDisc = new THREE.Mesh(ufoDiscGeo, ufoDiscMat);
+        ufoGroup.add(ufoDisc);
 
-        // UFO Kubbesi (Cam)
-        const ufoDomeGeo = new THREE.SphereGeometry(0.25, 16, 16, 0, Math.PI * 2, 0, Math.PI / 2);
-        const ufoDomeMat = new THREE.MeshStandardMaterial({ color: 0x39FF14, emissive: 0x39FF14, emissiveIntensity: 0.6, transparent: true, opacity: 0.85 });
+        // UFO Üst Cam Kubbe
+        const ufoDomeGeo = new THREE.SphereGeometry(0.32, 24, 24, 0, Math.PI * 2, 0, Math.PI / 2);
+        const ufoDomeMat = new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 0.8, roughness: 0.2, transparent: true, opacity: 0.75 });
         const ufoDome = new THREE.Mesh(ufoDomeGeo, ufoDomeMat);
-        ufoDome.position.y = 0.04;
+        ufoDome.position.y = 0.035;
         ufoGroup.add(ufoDome);
 
-        // UFO Alt Işık Hüzmesi
-        const ufoLightGeo = new THREE.ConeGeometry(0.4, 0.8, 16, 1, true);
-        const ufoLightMat = new THREE.MeshBasicMaterial({ color: 0x39FF14, transparent: true, opacity: 0.3, side: THREE.DoubleSide });
-        const ufoLight = new THREE.Mesh(ufoLightGeo, ufoLightMat);
-        ufoLight.position.y = -0.4;
-        ufoGroup.add(ufoLight);
+        // UFO Alt Parıldayan Kristal Işık Hüzmesi
+        const ufoBeamGeo = new THREE.ConeGeometry(0.55, 1.2, 24, 1, true);
+        const ufoBeamMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.25, side: THREE.DoubleSide });
+        const ufoBeam = new THREE.Mesh(ufoBeamGeo, ufoBeamMat);
+        ufoBeam.position.y = -0.6;
+        ufoGroup.add(ufoBeam);
 
-        ufoGroup.scale.set(0.6, 0.6, 0.6);
-        ufoGroup.position.set(-8, 2, -2); // Sahne dışında başlasın
+        ufoGroup.position.set(-8, 3, -1);
+        ufoGroup.rotation.z = -0.2; // Hafif sinematik eğim
         scene.add(ufoGroup);
 
         let ufoActive = false;
@@ -838,15 +843,14 @@
             if (!ufoActive) {
                 ufoActive = true;
                 ufoProgress = 0;
-                // Rastgele bir yükseklikten başlasın
-                ufoGroup.position.set(-6, (Math.random() - 0.2) * 2, (Math.random() - 0.5) * 2);
+                ufoGroup.position.set(-6, (Math.random() * 1.5) - 0.5, -0.5);
             }
         }
 
-        // Her 25-40 saniyede bir UFO geçsin
+        // Her 20-35 saniyede bir UFO geçer
         setInterval(() => {
-            if (Math.random() > 0.3) triggerUFO();
-        }, 25000);
+            if (Math.random() > 0.25) triggerUFO();
+        }, 22000);
 
         let bassAngle = 0;
         const ambientGlowEl = document.getElementById('ambient-glow');
@@ -867,12 +871,12 @@
             globeMesh.rotation.y += globeSpeed * deltaTime;
             if (ringMesh) ringMesh.rotation.y -= ringSpeed * deltaTime;
 
-            // UFO Hareketi
+            /* UFO SÜZÜLME ANIMASYONU */
             if (ufoActive) {
-                ufoProgress += deltaTime * 0.4; // UFO hızı
+                ufoProgress += deltaTime * 0.35; 
                 ufoGroup.position.x = -6 + ufoProgress * 12;
-                ufoGroup.position.y += Math.sin(ufoProgress * 6) * 0.005; // Dalgalanma
-                ufoGroup.rotation.y += 3.0 * deltaTime; // Kendi etrafında dönme
+                ufoGroup.position.y += Math.sin(ufoProgress * 5) * 0.006; 
+                ufoGroup.rotation.y += 2.0 * deltaTime; 
 
                 if (ufoProgress >= 1) {
                     ufoActive = false;
@@ -888,7 +892,7 @@
                 const glowScale = 1 + Math.sin(bassAngle) * 0.08;
                 ambientGlowEl.style.transform = `translate(-50%, -50%) scale(${glowScale})`;
 
-                // Bas Vurduğunda Ekran Titremesi Efekti
+                /* BAS VURDUĞUNDA EKRA SARILMASI (SCREEN SHAKE) */
                 if (Math.sin(bassAngle) > 0.92) {
                     videoBoxEl.style.transform = `translate(${(Math.random() - 0.5) * 2}px, ${(Math.random() - 0.5) * 2}px)`;
                 } else {
@@ -906,7 +910,7 @@
         resizeThreeJS();
         requestAnimationFrame(animateGlobe);
 
-        /* PARÇACIK VE YILDIZ EFEKTI */
+        /* PIRLANTA SPARKLE PARÇACIK ANIMASYONU */
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
         let particlesArray = [];
@@ -931,8 +935,6 @@
                 this.opacity = Math.random() * 0.7 + 0.2;
                 this.isSparkle = Math.random() > 0.7;
                 this.pulseSpeed = Math.random() * 0.03 + 0.015;
-                // Trap temasına uygun neon yeşil parıltılı parçacık şansı
-                this.color = Math.random() > 0.85 ? '#39FF14' : '#ffffff';
             }
 
             update() {
@@ -949,9 +951,8 @@
             }
 
             draw() {
-                ctx.fillStyle = this.color;
-                ctx.strokeStyle = this.color;
-                ctx.globalAlpha = this.opacity;
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                ctx.strokeStyle = `rgba(255, 255, 255, ${this.opacity})`;
 
                 if (this.isSparkle) {
                     const len = this.size * 2.5;
@@ -965,7 +966,6 @@
                 } else {
                     ctx.fillRect(this.x, this.y, this.size, this.size);
                 }
-                ctx.globalAlpha = 1.0;
             }
         }
 
@@ -1003,7 +1003,7 @@
             document.getElementById('listener-count').innerText = snap.numChildren();
         });
 
-        /* VISUALIZER (SLIME NEON STİLİ) */
+        /* VISUALIZER (KLASİK BEYAZ PIRLANTA) */
         const vCanvas = document.getElementById('visualizer-canvas');
         const vCtx = vCanvas.getContext('2d');
         const numBars = isMobileDevice ? 24 : 44;
@@ -1036,12 +1036,8 @@
                 const x = i * (barWidth + gap);
                 const y = vCanvas.height - barHeights[i];
 
-                // Neon Slime Yeşil Barlar
-                vCtx.fillStyle = '#39FF14';
-                vCtx.fillRect(x, y, barWidth, barHeights[i]);
-                
-                // Beyaz Zirve Çizgileri
                 vCtx.fillStyle = '#ffffff';
+                vCtx.fillRect(x, y, barWidth, barHeights[i]);
                 vCtx.fillRect(x, vCanvas.height - peakHeights[i] - 2, barWidth, 1.5);
             }
             requestAnimationFrame(drawVisualizer);

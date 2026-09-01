@@ -21,25 +21,21 @@
             -webkit-tap-highlight-color: transparent;
         }
 
+        /* EKRAAN SAYFA KAYDIRMASINI TAMAMEN KİLİTLEME */
         html, body {
             margin: 0;
             padding: 0;
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100vh;
+            max-width: 100vw;
+            max-height: 100vh;
             background-color: #000000;
             color: #fff;
             font-family: 'Space Grotesk', 'Montserrat', sans-serif;
-            overflow-x: hidden;
-            scroll-behavior: auto !important;
-            overscroll-behavior-y: none;
-        }
-
-        body {
-            min-height: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
+            overflow: hidden !important; /* Kaydırma tamamen kapalı */
+            position: fixed;
+            top: 0;
+            left: 0;
         }
 
         /* ARKA PLAN CANVAS */
@@ -59,28 +55,31 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 85vw;
-            height: 85vh;
+            width: 80vw;
+            height: 80vh;
             background: radial-gradient(circle, rgba(255, 255, 255, 0.12) 0%, rgba(80, 80, 80, 0.03) 45%, rgba(0, 0, 0, 0) 70%);
             z-index: 2;
             pointer-events: none;
-            transition: transform 0.2s cubic-bezier(0.1, 0.9, 0.2, 1), opacity 0.5s ease;
+            transition: transform 0.2s cubic-bezier(0.1, 0.9, 0.2, 1);
             will-change: transform;
             filter: blur(35px);
         }
 
+        /* TEK BLOK ANA KONTEYNER (100vh SIKIŞTIRILMIŞ DÜZEN) */
         .main-wrapper {
             position: relative;
             z-index: 10;
             width: 100%;
-            max-width: 680px;
+            max-width: 600px;
+            height: 100vh;
+            max-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start;
-            padding: 18px 16px 30px 16px;
-            gap: 18px;
+            justify-content: space-between;
+            padding: 12px 14px 16px 14px;
             margin: 0 auto;
+            box-sizing: border-box;
         }
 
         /* LOGO & 3D DÜNYA ALANI */
@@ -88,23 +87,23 @@
             text-align: center;
             position: relative;
             width: 100%;
-            max-width: 440px;
-            height: 250px;
+            height: 22vh;
+            min-height: 140px;
+            max-height: 190px;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: visible;
-            margin: 0 auto;
         }
 
-        /* PIRLANTA/ICE PATLAMA EFEKTİ */
+        /* PIRLANTA PATLAMA EFEKTİ */
         .blast-wave {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%) scale(0.6);
-            width: 220px;
-            height: 220px;
+            width: 180px;
+            height: 180px;
             border-radius: 50%;
             border: 3px solid #ffffff;
             box-shadow: 0 0 100px #ffffff, inset 0 0 60px #ffffff;
@@ -125,7 +124,7 @@
                 border-width: 12px;
             }
             100% {
-                transform: translate(-50%, -50%) scale(2.8);
+                transform: translate(-50%, -50%) scale(2.6);
                 opacity: 0;
                 border-width: 1px;
             }
@@ -147,45 +146,61 @@
             outline: none;
         }
 
-        /* STATUS BAR (BADGES & VOLUME) */
+        /* STATUS BAR VE KONTROL BUTONLARI */
         .status-bar {
             display: flex;
-            gap: 10px;
+            gap: 6px;
             flex-wrap: wrap;
             justify-content: center;
             align-items: center;
             width: 100%;
         }
 
-        .badge {
+        .badge, .action-btn {
             background: var(--card-bg);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--border-glow);
-            padding: 8px 18px;
-            border-radius: 30px;
-            font-size: 10px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 9px;
             font-weight: 800;
-            letter-spacing: 2.5px;
+            letter-spacing: 1.5px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             text-transform: uppercase;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8);
-            transition: all 0.3s;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+            color: #fff;
+            transition: all 0.2s;
         }
 
-        .badge:hover {
-            border-color: rgba(255, 255, 255, 0.5);
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+        .action-btn {
+            cursor: pointer;
+        }
+
+        .action-btn:hover {
+            border-color: rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
+        }
+
+        .action-btn:active {
+            transform: scale(0.92);
+        }
+
+        .action-btn.active {
+            background: #ffffff;
+            color: #000000;
+            box-shadow: 0 0 15px #ffffff;
         }
 
         .live-dot {
-            width: 8px;
-            height: 8px;
+            width: 6px;
+            height: 6px;
             background-color: #ffffff;
             border-radius: 50%;
-            box-shadow: 0 0 12px #ffffff;
+            box-shadow: 0 0 10px #ffffff;
             animation: pulse 1.4s infinite;
         }
 
@@ -199,19 +214,13 @@
         .volume-control-box {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             background: var(--card-bg);
             border: 1px solid var(--border-glow);
-            padding: 6px 16px;
-            border-radius: 30px;
+            padding: 5px 12px;
+            border-radius: 20px;
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8);
-            transition: all 0.3s;
-        }
-
-        .volume-control-box:hover {
-            border-color: rgba(255, 255, 255, 0.5);
         }
 
         .volume-btn {
@@ -219,23 +228,17 @@
             border: none;
             color: #fff;
             cursor: pointer;
-            font-size: 13px;
+            font-size: 11px;
             padding: 0;
             display: flex;
             align-items: center;
-            justify-content: center;
-            transition: transform 0.2s;
-        }
-
-        .volume-btn:active {
-            transform: scale(0.85);
         }
 
         .volume-slider {
             -webkit-appearance: none;
             appearance: none;
-            width: 75px;
-            height: 4px;
+            width: 55px;
+            height: 3px;
             border-radius: 2px;
             background: rgba(255, 255, 255, 0.2);
             outline: none;
@@ -245,36 +248,31 @@
         .volume-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
-            width: 12px;
-            height: 12px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
             background: #ffffff;
-            box-shadow: 0 0 10px #ffffff;
+            box-shadow: 0 0 8px #ffffff;
             cursor: pointer;
-            transition: transform 0.15s;
         }
 
-        .volume-slider::-webkit-slider-thumb:hover {
-            transform: scale(1.3);
-        }
-
-        /* VİDEO ÇERÇEVESİ */
+        /* VİDEO ÇERÇEVESİ (KAPLANAN ALANA GÖRE ORANLI) */
         .video-container {
             position: relative;
             width: 100%;
-            padding-bottom: 52%;
-            height: 0;
-            border-radius: 22px;
+            flex-grow: 1;
+            max-height: 42vh;
+            border-radius: 18px;
             overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.95);
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.95);
             border: 1px solid var(--border-glow);
-            transition: all 0.5s ease;
+            transition: all 0.4s ease;
             background: #000;
         }
 
         .video-container.playing-border {
             border-color: rgba(255, 255, 255, 0.8);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9), 0 0 45px rgba(255, 255, 255, 0.25);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9), 0 0 35px rgba(255, 255, 255, 0.25);
         }
 
         #youtube-player {
@@ -284,7 +282,6 @@
             width: 100%;
             height: 100%;
             border: none;
-            pointer-events: auto;
         }
 
         .yt-shield-top-main {
@@ -292,7 +289,7 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 82%;
+            height: 80%;
             z-index: 15;
             background: transparent;
         }
@@ -302,7 +299,7 @@
             bottom: 0;
             left: 0;
             width: 78%;
-            height: 18%;
+            height: 20%;
             z-index: 15;
             background: transparent;
         }
@@ -312,7 +309,7 @@
             bottom: 0;
             right: 0;
             width: 2%;
-            height: 18%;
+            height: 20%;
             z-index: 15;
             background: transparent;
         }
@@ -332,7 +329,7 @@
             cursor: pointer;
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
-            transition: opacity 0.5s ease, visibility 0.5s;
+            transition: opacity 0.4s ease;
         }
 
         .start-btn {
@@ -340,24 +337,19 @@
             color: #000000;
             font-family: 'Syne', sans-serif;
             font-weight: 900;
-            font-size: 12px;
-            padding: 15px 38px;
+            font-size: 11px;
+            padding: 12px 30px;
             border: none;
             border-radius: 50px;
             cursor: pointer;
-            letter-spacing: 2.5px;
-            box-shadow: 0 0 35px rgba(255, 255, 255, 0.8);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            letter-spacing: 2px;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease;
         }
 
         .start-btn:hover {
-            transform: scale(1.06);
-            box-shadow: 0 0 55px rgba(255, 255, 255, 1);
-            background-color: #f0f0f0;
-        }
-
-        .start-btn:active {
-            transform: scale(0.96);
+            transform: scale(1.05);
+            box-shadow: 0 0 45px rgba(255, 255, 255, 1);
         }
 
         /* NOW PLAYING CARD */
@@ -367,50 +359,45 @@
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--border-glow);
-            border-radius: 18px;
-            padding: 16px 22px;
+            border-radius: 14px;
+            padding: 10px 16px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.8);
-            transition: all 0.3s ease;
-        }
-
-        .now-playing-card:hover {
-            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.8);
         }
 
         .track-info {
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 2px;
             overflow: hidden;
             max-width: 55%;
         }
 
         .track-label {
-            font-size: 9px;
+            font-size: 8px;
             font-weight: 900;
-            letter-spacing: 2.5px;
+            letter-spacing: 2px;
             color: #aaa;
             text-transform: uppercase;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
         }
 
         .track-title {
-            font-size: 15px;
+            font-size: 13px;
             font-weight: 900;
             color: #fff;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            text-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
         }
 
         .next-track {
-            font-size: 10px;
+            font-size: 9px;
             color: #777;
             text-align: right;
             max-width: 42%;
@@ -419,16 +406,22 @@
             text-overflow: ellipsis;
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 2px;
         }
 
-        /* SES DALGASI ANIMASYONU */
+        /* EQUALIZER CANVAS */
+        #visualizer-canvas {
+            width: 100%;
+            height: 22px;
+            margin-top: 2px;
+        }
+
         .wave-bars {
             display: flex;
             align-items: flex-end;
-            gap: 2.5px;
-            height: 12px;
-            margin-left: 4px;
+            gap: 2px;
+            height: 10px;
+            margin-left: 3px;
             transition: opacity 0.3s ease;
         }
 
@@ -436,7 +429,7 @@
             width: 2px;
             background: #fff;
             border-radius: 1px;
-            box-shadow: 0 0 6px #fff;
+            box-shadow: 0 0 4px #fff;
             animation: waveAnim 0.8s ease-in-out infinite alternate;
         }
 
@@ -448,40 +441,6 @@
         @keyframes waveAnim {
             0% { transform: scaleY(0.25); }
             100% { transform: scaleY(1); }
-        }
-
-        #visualizer-canvas {
-            width: 100%;
-            height: 32px;
-            margin: 0;
-            transition: opacity 1s ease;
-        }
-
-        /* MOBİL UYUM */
-        @media (max-width: 600px) {
-            .main-wrapper {
-                padding: 10px 12px 25px 12px;
-                gap: 12px;
-            }
-
-            .logo-container {
-                height: 200px;
-            }
-
-            .video-container {
-                padding-bottom: 56%;
-                border-radius: 16px;
-            }
-
-            .now-playing-card {
-                padding: 12px 16px;
-                border-radius: 14px;
-            }
-
-            .start-btn {
-                font-size: 11px;
-                padding: 12px 28px;
-            }
         }
     </style>
 
@@ -506,8 +465,14 @@
                 <span>CANLI YAYIN</span>
             </div>
             <div class="badge">
-                <span>🎧 DİNLEYİCİ: <strong id="listener-count" style="color: #ffffff; text-shadow: 0 0 10px #ffffff;">0</strong></span>
+                <span>🎧 DİNLEYİCİ: <strong id="listener-count" style="color: #ffffff;">0</strong></span>
             </div>
+
+            <!-- YENİ EKLENEN TRAPHOUSE & ICE KONTROL BUTONLARI -->
+            <button class="action-btn" id="cc-btn" title="Altyazı Aç/Kapat">💬 CC</button>
+            <button class="action-btn" id="sync-btn" title="Yayına Senkronize Ol">🔄 SYNC</button>
+            <button class="action-btn" id="bling-btn" title="Pırlanta Efekti">💎 ICE</button>
+
             <div class="volume-control-box">
                 <button class="volume-btn" id="mute-btn" title="Sesi Kapat/Aç">🔊</button>
                 <input type="range" class="volume-slider" id="volume-range" min="0" max="100" value="100">
@@ -528,7 +493,7 @@
         <div class="now-playing-card">
             <div class="track-info">
                 <span class="track-label">
-                    <span style="display:inline-block; width:5px; height:5px; background:#fff; border-radius:50%; box-shadow:0 0 8px #fff;"></span>
+                    <span style="display:inline-block; width:4px; height:4px; background:#fff; border-radius:50%; box-shadow:0 0 6px #fff;"></span>
                     ŞU AN YAYINDA
                     <div class="wave-bars" id="wave-bars" style="opacity: 0;">
                         <div class="wave-bar"></div>
@@ -549,19 +514,8 @@
     </div>
 
     <script>
-        if ('scrollRestoration' in history) {
-            history.scrollRestoration = 'manual';
-        }
-
-        function forceScrollTop() {
-            if (window.scrollY !== 0 || document.documentElement.scrollTop !== 0) {
-                window.scrollTo(0, 0);
-            }
-        }
-
-        forceScrollTop();
-        window.addEventListener('DOMContentLoaded', forceScrollTop);
-        window.addEventListener('load', forceScrollTop);
+        // TOUCH/SCROLL KİLİTLEME DOKUNUŞLARI
+        document.addEventListener('touchmove', function(e) { e.preventDefault(); }, { passive: false });
 
         let player = null;
         let isPlayerReady = false;
@@ -569,8 +523,7 @@
         let actualPlayerStatePlaying = false; 
         let currentLoadedVideoId = null;
         let syncCheckInterval = null;
-
-        const isMobileDevice = window.innerWidth <= 768;
+        let ccEnabled = false;
 
         const baseSongList = [
             { id: '1IEg_3x35go', duration: 120, title: 'FRANCHISE' },
@@ -632,10 +585,7 @@
             let accumulatedTime = 0;
             for (let i = 0; i < songList.length; i++) {
                 if (elapsedTime < accumulatedTime + songList[i].duration) {
-                    return {
-                        songIndex: i,
-                        seekTo: elapsedTime - accumulatedTime
-                    };
+                    return { songIndex: i, seekTo: elapsedTime - accumulatedTime };
                 }
                 accumulatedTime += songList[i].duration;
             }
@@ -673,16 +623,11 @@
                     'enablejsapi': 1,
                     'iv_load_policy': 3,
                     'fs': 0,
+                    'cc_load_policy': 0,
                     'start': Math.floor(state.seekTo)
                 },
                 events: {
-                    'onReady': () => { 
-                        isPlayerReady = true; 
-                        if (document.activeElement) {
-                            document.activeElement.blur();
-                        }
-                        forceScrollTop();
-                    },
+                    'onReady': () => { isPlayerReady = true; },
                     'onStateChange': onPlayerStateChange
                 }
             });
@@ -742,18 +687,20 @@
             }
         }
 
-        function handleUserClick() {
+        function triggerDiamondBlast() {
             const blast = document.getElementById('blast-wave');
             blast.classList.remove('blast-active');
             void blast.offsetWidth;
             blast.classList.add('blast-active');
+        }
+
+        function handleUserClick() {
+            triggerDiamondBlast();
 
             const overlay = document.getElementById('start-overlay');
             overlay.style.opacity = '0';
             overlay.style.pointerEvents = 'none';
-            setTimeout(() => { 
-                overlay.style.display = 'none'; 
-            }, 500);
+            setTimeout(() => { overlay.style.display = 'none'; }, 400);
 
             const startPlaying = () => {
                 const state = getCurrentStreamState();
@@ -762,9 +709,7 @@
                 updateTrackLabels(state.songIndex);
                 currentLoadedVideoId = targetSong.id;
 
-                if (typeof player.unMute === 'function') {
-                    player.unMute();
-                }
+                if (typeof player.unMute === 'function') player.unMute();
 
                 player.loadVideoById({
                     videoId: targetSong.id,
@@ -794,25 +739,43 @@
             handleUserClick();
         });
 
+        /* YENİ BUTON İŞLEVLERİ */
+        document.getElementById('cc-btn').addEventListener('click', function() {
+            if (!player || typeof player.loadModule !== 'function') return;
+            ccEnabled = !ccEnabled;
+            if (ccEnabled) {
+                player.loadModule('captions');
+                player.setOption('captions', 'track', {'languageCode': 'en'});
+                this.classList.add('active');
+            } else {
+                player.unloadModule('captions');
+                this.classList.remove('active');
+            }
+        });
+
+        document.getElementById('sync-btn').addEventListener('click', function() {
+            triggerDiamondBlast();
+            syncToLiveStream();
+        });
+
+        document.getElementById('bling-btn').addEventListener('click', function() {
+            triggerDiamondBlast();
+        });
+
         const volumeRange = document.getElementById('volume-range');
         const muteBtn = document.getElementById('mute-btn');
         let isMuted = false;
 
         volumeRange.addEventListener('input', (e) => {
             const val = Number(e.target.value);
-            
             if (player && typeof player.setVolume === 'function') {
                 player.setVolume(val);
-                
                 if (val === 0) {
                     player.mute();
                     muteBtn.innerText = '🔇';
                     isMuted = true;
                 } else {
-                    if (isMuted || (typeof player.isMuted === 'function' && player.isMuted())) {
-                        player.unMute();
-                        isMuted = false;
-                    }
+                    if (isMuted) { player.unMute(); isMuted = false; }
                     muteBtn.innerText = '🔊';
                 }
             }
@@ -824,16 +787,9 @@
             if (isMuted) {
                 player.unMute();
                 muteBtn.innerText = '🔊';
-                
-                let currentVol = Number(volumeRange.value);
-                if (currentVol === 0) {
-                    currentVol = 100;
-                    volumeRange.value = 100;
-                }
-                
-                if (typeof player.setVolume === 'function') {
-                    player.setVolume(currentVol);
-                }
+                let currentVol = Number(volumeRange.value) || 100;
+                volumeRange.value = currentVol;
+                if (typeof player.setVolume === 'function') player.setVolume(currentVol);
                 isMuted = false;
             } else {
                 player.mute();
@@ -850,7 +806,7 @@
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
         
-        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: !isMobileDevice, powerPreference: "high-performance" });
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: "high-performance" });
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
         globeContainer.appendChild(renderer.domElement);
 
@@ -860,15 +816,7 @@
             if (width === 0 || height === 0) return;
 
             camera.aspect = width / height;
-
-            if (window.innerWidth <= 400) {
-                camera.position.z = 5.5;
-            } else if (window.innerWidth <= 600) {
-                camera.position.z = 5.1;
-            } else {
-                camera.position.z = 4.7;
-            }
-
+            camera.position.z = window.innerWidth <= 600 ? 5.0 : 4.6;
             camera.updateProjectionMatrix();
             renderer.setSize(width, height);
         }
@@ -876,9 +824,8 @@
         const textureLoader = new THREE.TextureLoader();
         const earthTexture = textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_atmos_2048.jpg');
 
-        const baseRadius = 1.65;
-        const segments = isMobileDevice ? 36 : 64;
-        const geometry = new THREE.SphereGeometry(baseRadius, segments, segments);
+        const baseRadius = 1.55;
+        const geometry = new THREE.SphereGeometry(baseRadius, 48, 48);
         const material = new THREE.MeshStandardMaterial({
             map: earthTexture,
             roughness: 0.3,
@@ -904,7 +851,6 @@
 
             ctx.fillStyle = 'transparent';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillStyle = '#ffffff';
@@ -916,10 +862,7 @@
             ctx.fillText("✦ 7/24 ICE CULTURE ✦ RAW HIP-HOP ✦", canvas.width / 2, 170);
 
             const ringTex = new THREE.CanvasTexture(canvas);
-            ringTex.minFilter = THREE.LinearFilter;
-            ringTex.magFilter = THREE.LinearFilter;
-
-            const ringGeo = new THREE.CylinderGeometry(baseRadius + 0.28, baseRadius + 0.28, 0.95, isMobileDevice ? 32 : 64, 1, true);
+            const ringGeo = new THREE.CylinderGeometry(baseRadius + 0.28, baseRadius + 0.28, 0.9, 48, 1, true);
             const ringMat = new THREE.MeshBasicMaterial({
                 map: ringTex,
                 transparent: true,
@@ -932,9 +875,7 @@
             scene.add(ringMesh);
         }
 
-        document.fonts.ready.then(() => {
-            createOrbitRingText();
-        });
+        document.fonts.ready.then(() => { createOrbitRingText(); });
 
         let bassAngle = 0;
         const ambientGlowEl = document.getElementById('ambient-glow');
@@ -945,7 +886,6 @@
 
             const deltaTime = (currentTime - lastTime) / 1000; 
             lastTime = currentTime;
-
             if (isNaN(deltaTime) || deltaTime > 0.1) return;
 
             const globeSpeed = isPlayingState ? 0.45 : 0.15;
@@ -956,11 +896,9 @@
 
             if (isPlayingState) {
                 bassAngle += 6.0 * deltaTime;
-                const bassScale = 1 + Math.pow(Math.sin(bassAngle), 6) * 0.055;
+                const bassScale = 1 + Math.pow(Math.sin(bassAngle), 6) * 0.05;
                 globeMesh.scale.set(bassScale, bassScale, bassScale);
-
-                const glowScale = 1 + Math.sin(bassAngle) * 0.08;
-                ambientGlowEl.style.transform = `translate(-50%, -50%) scale(${glowScale})`;
+                ambientGlowEl.style.transform = `translate(-50%, -50%) scale(${1 + Math.sin(bassAngle) * 0.08})`;
             } else {
                 globeMesh.scale.lerp(new THREE.Vector3(1, 1, 1), 10 * deltaTime);
                 ambientGlowEl.style.transform = `translate(-50%, -50%) scale(1)`;
@@ -986,9 +924,7 @@
         handleResize();
 
         class DiamondParticle {
-            constructor() {
-                this.reset();
-            }
+            constructor() { this.reset(); }
 
             reset() {
                 this.x = Math.random() * canvas.width;
@@ -1033,8 +969,7 @@
             }
         }
 
-        const particleCount = isMobileDevice ? 25 : 55;
-        for (let i = 0; i < particleCount; i++) particlesArray.push(new DiamondParticle());
+        for (let i = 0; i < 40; i++) particlesArray.push(new DiamondParticle());
 
         function animateParticles() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -1067,12 +1002,11 @@
             document.getElementById('listener-count').innerText = snap.numChildren();
         });
 
-        /* VISUALIZER (MONOCHROME ICE EQUALIZER) */
+        /* VISUALIZER */
         const vCanvas = document.getElementById('visualizer-canvas');
         const vCtx = vCanvas.getContext('2d');
-        const numBars = isMobileDevice ? 28 : 50; 
+        const numBars = 36; 
         let barHeights = new Array(numBars).fill(3);
-        let peakHeights = new Array(numBars).fill(3);
 
         function drawVisualizer() {
             vCanvas.width = vCanvas.offsetWidth;
@@ -1084,30 +1018,19 @@
 
             for (let i = 0; i < numBars; i++) {
                 if (isPlayingState) {
-                    const target = Math.random() * (vCanvas.height - 6) + 4;
-                    barHeights[i] += (target - barHeights[i]) * 0.18;
+                    const target = Math.random() * (vCanvas.height - 4) + 3;
+                    barHeights[i] += (target - barHeights[i]) * 0.2;
                 } else {
-                    barHeights[i] += (3 - barHeights[i]) * 0.12;
+                    barHeights[i] += (3 - barHeights[i]) * 0.15;
                 }
-
-                if (barHeights[i] > peakHeights[i]) {
-                    peakHeights[i] = barHeights[i];
-                } else {
-                    peakHeights[i] -= 0.35;
-                }
-                if (peakHeights[i] < 3) peakHeights[i] = 3;
 
                 const x = i * (barWidth + gap);
                 const y = vCanvas.height - barHeights[i];
 
                 vCtx.fillStyle = '#ffffff';
-                vCtx.shadowColor = 'rgba(255, 255, 255, 0.6)';
-                vCtx.shadowBlur = 6;
+                vCtx.shadowColor = 'rgba(255, 255, 255, 0.5)';
+                vCtx.shadowBlur = 4;
                 vCtx.fillRect(x, y, barWidth, barHeights[i]);
-                
-                vCtx.fillStyle = '#ffffff';
-                vCtx.shadowBlur = 0;
-                vCtx.fillRect(x, vCanvas.height - peakHeights[i] - 2, barWidth, 1.5);
             }
             requestAnimationFrame(drawVisualizer);
         }

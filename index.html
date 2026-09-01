@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>EA$Y FM | CANLI</title>
+    <title>EA$Y FM | CANLI TRAPHOUSE</title>
     
     <!-- Pırlanta & Hip-Hop Estetiği Fontları -->
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;900&family=Syne:wght@800;900&family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
@@ -108,8 +108,8 @@
             text-align: center;
             position: relative;
             width: 100%;
-            max-width: 360px;
-            height: clamp(140px, 24vh, 220px);
+            max-width: 380px;
+            height: clamp(160px, 26vh, 250px);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -120,8 +120,8 @@
 
         @media (min-width: 769px) {
             .logo-container {
-                max-width: 520px;
-                height: clamp(200px, 28vh, 300px);
+                max-width: 600px;
+                height: clamp(240px, 32vh, 340px);
             }
         }
 
@@ -241,8 +241,8 @@
             position: relative;
             width: 100%;
             flex: 1 1 auto;
-            min-height: 140px;
-            max-height: 38vh;
+            min-height: 130px;
+            max-height: 35vh;
             border-radius: 14px;
             overflow: hidden;
             box-shadow: 0 10px 35px rgba(0, 0, 0, 0.95);
@@ -327,7 +327,6 @@
             overflow: hidden;
         }
 
-        /* CARD PARILTI EFEKTİ */
         .now-playing-card::before {
             content: '';
             position: absolute;
@@ -756,11 +755,11 @@
             updateAudioVisualState();
         });
 
-        /* THREE.JS DÜNYA & DİNAMİK ICE/EQUALIZER HALKASI (SIĞDIRMA AYARLI) */
+        /* THREE.JS DÜNYA & DİNAMİK ICE/EQUALIZER HALKASI (FOV VE KAMERA DENGELİ) */
         const globeContainer = document.getElementById('globe-3d-container');
         
         const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
+        const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 1000);
         
         const isMobileDevice = window.innerWidth <= 768;
         const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: !isMobileDevice, powerPreference: "high-performance" });
@@ -774,15 +773,15 @@
 
             camera.aspect = width / height;
 
-            /* KAMERA MESAFESİ UFAKÇE GERİYE ÇEKİLEREK KESİLMELER SIFIRLANDI */
+            /* KAMERA DÜNYANIN HEYBETİNİ KORUYACAK ŞEKİLDE AYARLANDI */
             if (window.innerWidth > 768) {
-                camera.position.z = 5.6;
+                camera.position.z = 5.2;
             } else if (window.innerHeight <= 650) {
-                camera.position.z = 7.2;
+                camera.position.z = 5.8;
             } else if (window.innerWidth <= 600) {
-                camera.position.z = 6.8;
+                camera.position.z = 5.5;
             } else {
-                camera.position.z = 6.2;
+                camera.position.z = 5.0;
             }
 
             camera.updateProjectionMatrix();
@@ -845,7 +844,6 @@
             ctx.textBaseline = 'middle';
             ctx.fillStyle = '#ffffff';
 
-            /* METİNLERE DOKUNULMADI */
             ctx.font = '900 68px "Montserrat", sans-serif';
             ctx.fillText("EA$Y FM", canvas.width / 2, 85);
 
@@ -856,8 +854,7 @@
             ringTex.minFilter = THREE.LinearFilter;
             ringTex.magFilter = THREE.LinearFilter;
 
-            /* HALKA ÇAPI HASSAS KÜÇÜLTÜLDÜ */
-            const ringGeo = new THREE.CylinderGeometry(baseRadius + 0.25, baseRadius + 0.25, 0.85, isMobileDevice ? 32 : 64, 1, true);
+            const ringGeo = new THREE.CylinderGeometry(baseRadius + 0.35, baseRadius + 0.35, 0.75, isMobileDevice ? 32 : 64, 1, true);
             const ringMat = new THREE.MeshBasicMaterial({
                 map: ringTex,
                 transparent: true,

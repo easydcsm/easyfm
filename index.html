@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>EA$Y FM | CANLI</title>
-    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;900&family=Syne:wght@800;900&display=swap" rel="stylesheet">
     
     <style>
         * {
@@ -20,7 +21,7 @@
             height: 100%;
             background-color: #000000;
             color: #fff;
-            font-family: 'Montserrat', sans-serif;
+            font-family: 'Space Grotesk', sans-serif;
             overflow-x: hidden;
             scroll-behavior: auto !important;
             overscroll-behavior-y: none;
@@ -45,7 +46,7 @@
             pointer-events: none;
         }
 
-        /* DİNAMİK ARKA PLAN AMBİYANSI */
+        /* DİNAMİK NEON AMBİYANS */
         .ambient-glow {
             position: fixed;
             top: 50%;
@@ -53,12 +54,12 @@
             transform: translate(-50%, -50%);
             width: 85vw;
             height: 85vh;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.12) 0%, rgba(100, 100, 100, 0.03) 45%, rgba(0, 0, 0, 0) 70%);
+            background: radial-gradient(circle, rgba(0, 255, 102, 0.15) 0%, rgba(138, 43, 226, 0.05) 50%, rgba(0, 0, 0, 0) 75%);
             z-index: 2;
             pointer-events: none;
-            transition: transform 0.2s cubic-bezier(0.1, 0.9, 0.2, 1), opacity 0.5s ease;
-            will-change: transform;
-            filter: blur(20px);
+            transition: transform 0.1s ease, opacity 0.1s ease;
+            will-change: transform, opacity;
+            filter: blur(30px);
         }
 
         .main-wrapper {
@@ -89,17 +90,17 @@
             margin: 0 auto;
         }
 
-        /* PIRLANTA PATLAMA EFEKTİ */
+        /* NEON / ŞİMŞEK PATLAMA EFEKTİ */
         .blast-wave {
             position: absolute;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%) scale(0.6);
-            width: 220px;
-            height: 220px;
+            transform: translate(-50%, -50%) scale(0.5);
+            width: 240px;
+            height: 240px;
             border-radius: 50%;
-            border: 3px solid rgba(255, 255, 255, 1);
-            box-shadow: 0 0 90px rgba(255, 255, 255, 1), inset 0 0 50px rgba(255, 255, 255, 0.8);
+            border: 2px solid #00FF66;
+            box-shadow: 0 0 80px #00FF66, inset 0 0 50px #00FF66, 0 0 140px #8A2BE2;
             opacity: 0;
             pointer-events: none;
             z-index: 5;
@@ -107,19 +108,24 @@
         }
 
         .blast-active {
-            animation: fastExplode 0.45s cubic-bezier(0.0, 0.9, 0.2, 1) forwards;
+            animation: trapExplode 0.5s cubic-bezier(0.0, 0.9, 0.2, 1) forwards;
         }
 
-        @keyframes fastExplode {
+        @keyframes trapExplode {
             0% {
-                transform: translate(-50%, -50%) scale(0.6);
+                transform: translate(-50%, -50%) scale(0.5);
                 opacity: 1;
-                border-width: 10px;
+                border-width: 12px;
+                filter: hue-rotate(0deg);
+            }
+            50% {
+                filter: hue-rotate(180deg);
             }
             100% {
-                transform: translate(-50%, -50%) scale(2.8);
+                transform: translate(-50%, -50%) scale(3.2);
                 opacity: 0;
                 border-width: 1px;
+                filter: hue-rotate(360deg);
             }
         }
 
@@ -152,36 +158,36 @@
         }
 
         .badge {
-            background: rgba(20, 20, 20, 0.8);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(12, 12, 12, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 255, 102, 0.3);
             padding: 8px 18px;
-            border-radius: 30px;
+            border-radius: 6px;
             font-size: 10px;
-            font-weight: 800;
+            font-weight: 900;
             letter-spacing: 2px;
             display: flex;
             align-items: center;
             gap: 8px;
             text-transform: uppercase;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8);
             position: relative;
             overflow: hidden;
             transition: border-color 0.3s;
         }
 
         .badge:hover {
-            border-color: rgba(255, 255, 255, 0.4);
+            border-color: #00FF66;
         }
 
         .live-dot {
             width: 8px;
             height: 8px;
-            background-color: #ffffff;
+            background-color: #00FF66;
             border-radius: 50%;
-            box-shadow: 0 0 12px #ffffff;
-            animation: pulse 1.4s infinite;
+            box-shadow: 0 0 12px #00FF66;
+            animation: pulse 1.2s infinite;
         }
 
         @keyframes pulse {
@@ -195,20 +201,20 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            background: rgba(20, 20, 20, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(12, 12, 12, 0.85);
+            border: 1px solid rgba(0, 255, 102, 0.3);
             padding: 6px 16px;
-            border-radius: 30px;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+            border-radius: 6px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8);
             transition: border-color 0.3s;
             position: relative;
             overflow: hidden;
         }
 
         .volume-control-box:hover {
-            border-color: rgba(255, 255, 255, 0.4);
+            border-color: #00FF66;
         }
 
         .volume-btn {
@@ -236,7 +242,7 @@
             width: 75px;
             height: 4px;
             border-radius: 2px;
-            background: rgba(255, 255, 255, 0.25);
+            background: rgba(255, 255, 255, 0.2);
             outline: none;
             cursor: pointer;
             position: relative;
@@ -249,14 +255,14 @@
             width: 12px;
             height: 12px;
             border-radius: 50%;
-            background: #ffffff;
-            box-shadow: 0 0 10px #ffffff;
+            background: #00FF66;
+            box-shadow: 0 0 10px #00FF66;
             cursor: pointer;
             transition: transform 0.15s;
         }
 
         .volume-slider::-webkit-slider-thumb:hover {
-            transform: scale(1.2);
+            transform: scale(1.3);
         }
 
         /* VİDEO ÇERÇEVESİ VE ÖZEL REKLAM MASKESİ */
@@ -265,18 +271,18 @@
             width: 100%;
             padding-bottom: 52%;
             height: 0;
-            border-radius: 20px;
+            border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.95);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             transition: border-color 0.5s, box-shadow 0.5s;
             background: #000;
             margin: 0;
         }
 
         .video-container.playing-border {
-            border-color: rgba(255, 255, 255, 0.65);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9), 0 0 45px rgba(255, 255, 255, 0.2);
+            border-color: rgba(0, 255, 102, 0.8);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9), 0 0 35px rgba(0, 255, 102, 0.3);
         }
 
         #youtube-player {
@@ -326,7 +332,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle, rgba(20, 20, 20, 0.92) 0%, rgba(0, 0, 0, 0.98) 100%);
+            background: radial-gradient(circle, rgba(15, 15, 15, 0.94) 0%, rgba(0, 0, 0, 0.98) 100%);
             z-index: 30;
             display: flex;
             flex-direction: column;
@@ -339,17 +345,17 @@
         }
 
         .start-btn {
-            background: #ffffff;
+            background: #00FF66;
             color: #000;
-            font-family: 'Montserrat', sans-serif;
+            font-family: 'Syne', sans-serif;
             font-weight: 900;
-            font-size: 12px;
-            padding: 14px 36px;
+            font-size: 13px;
+            padding: 16px 40px;
             border: none;
-            border-radius: 50px;
+            border-radius: 4px;
             cursor: pointer;
-            letter-spacing: 2px;
-            box-shadow: 0 0 30px rgba(255, 255, 255, 0.7);
+            letter-spacing: 3px;
+            box-shadow: 0 0 30px rgba(0, 255, 102, 0.6);
             transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s, background-color 0.3s;
             position: relative;
             overflow: hidden;
@@ -357,8 +363,9 @@
 
         .start-btn:hover {
             transform: scale(1.05);
-            box-shadow: 0 0 50px rgba(255, 255, 255, 0.95);
-            background-color: #f8f8f8;
+            box-shadow: 0 0 50px rgba(0, 255, 102, 0.95);
+            background-color: #ffffff;
+            color: #000;
         }
 
         .start-btn:active {
@@ -368,23 +375,23 @@
         /* NOW PLAYING CARD */
         .now-playing-card {
             width: 100%;
-            background: rgba(20, 20, 20, 0.8);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 16px;
+            background: rgba(12, 12, 12, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
             padding: 16px 22px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.75);
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.8);
             margin: 0;
             position: relative;
             transition: border-color 0.3s ease;
         }
 
         .now-playing-card:hover {
-            border-color: rgba(255, 255, 255, 0.45);
+            border-color: rgba(0, 255, 102, 0.5);
         }
 
         .track-info {
@@ -399,7 +406,7 @@
             font-size: 9px;
             font-weight: 900;
             letter-spacing: 2.5px;
-            color: #888;
+            color: #777;
             text-transform: uppercase;
             display: flex;
             align-items: center;
@@ -407,13 +414,14 @@
         }
 
         .track-title {
-            font-size: 14px;
+            font-family: 'Syne', sans-serif;
+            font-size: 15px;
             font-weight: 900;
             color: #fff;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            text-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
         }
 
         .next-track {
@@ -441,7 +449,7 @@
 
         .wave-bar {
             width: 2px;
-            background: #fff;
+            background: #00FF66;
             border-radius: 1px;
             animation: waveAnim 0.8s ease-in-out infinite alternate;
         }
@@ -477,7 +485,7 @@
 
             .video-container {
                 padding-bottom: 56%;
-                border-radius: 16px;
+                border-radius: 10px;
             }
 
             .yt-shield-bottom-left {
@@ -486,12 +494,12 @@
 
             .now-playing-card {
                 padding: 12px 16px;
-                border-radius: 14px;
+                border-radius: 8px;
             }
 
             .start-btn {
                 font-size: 11px;
-                padding: 12px 28px;
+                padding: 14px 30px;
             }
         }
     </style>
@@ -517,7 +525,7 @@
                 <span>CANLI YAYIN</span>
             </div>
             <div class="badge">
-                <span>🎧 DİNLEYİCİ: <strong id="listener-count" style="color: #ffffff; text-shadow: 0 0 8px #fff;">0</strong></span>
+                <span>🎧 DİNLEYİCİ: <strong id="listener-count" style="color: #00FF66; text-shadow: 0 0 8px #00FF66;">0</strong></span>
             </div>
             <div class="volume-control-box">
                 <button class="volume-btn" id="mute-btn" title="Sesi Kapat/Aç">🔊</button>
@@ -539,7 +547,7 @@
         <div class="now-playing-card">
             <div class="track-info">
                 <span class="track-label">
-                    <span style="display:inline-block; width:5px; height:5px; background:#fff; border-radius:50%;"></span>
+                    <span style="display:inline-block; width:5px; height:5px; background:#00FF66; border-radius:50%; box-shadow:0 0 6px #00FF66;"></span>
                     ŞU AN YAYINDA
                     <div class="wave-bars" id="wave-bars" style="opacity: 0;">
                         <div class="wave-bar"></div>
@@ -855,14 +863,13 @@
             updateAudioVisualState();
         });
 
-        /* THREE.JS 3D DÜNYA VE HALKA EFEKTİ (OPTIMIZED) */
+        /* THREE.JS 3D DÜNYA VE YÖRÜNGE YAZISI */
         const globeContainer = document.getElementById('globe-3d-container');
         
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
         
         const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: !isMobileDevice, powerPreference: "high-performance" });
-        // Mobilde GPU aşırı yükünü önlemek için piksel oranını 1.5 ile sınırlıyoruz
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
         globeContainer.appendChild(renderer.domElement);
 
@@ -889,7 +896,6 @@
         const earthTexture = textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_atmos_2048.jpg');
 
         const baseRadius = 1.65;
-        // Poligon sayısını mobil uyumlu seviyeye çektik (36x36)
         const segments = isMobileDevice ? 36 : 64;
         const geometry = new THREE.SphereGeometry(baseRadius, segments, segments);
         const material = new THREE.MeshStandardMaterial({
@@ -900,7 +906,7 @@
         const globeMesh = new THREE.Mesh(geometry, material);
         scene.add(globeMesh);
 
-        const ambientLight = new THREE.AmbientLight(0xffffff, 1.6);
+        const ambientLight = new THREE.AmbientLight(0xffffff, 1.4);
         scene.add(ambientLight);
 
         const dirLight = new THREE.DirectionalLight(0xffffff, 2.2);
@@ -911,7 +917,7 @@
 
         function createOrbitRingText() {
             const canvas = document.createElement('canvas');
-            canvas.width = 1024; // Mobilde bellek harcamaması için 1024'e optimize edildi
+            canvas.width = 1024;
             canvas.height = 256;
             const ctx = canvas.getContext('2d');
 
@@ -920,14 +926,15 @@
 
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillStyle = '#ffffff';
-
-            // shadowBlur GPU katili olduğu için kaldırıldı
-            ctx.font = '900 80px "Anton", sans-serif';
+            
+            // Trap Estetiği Font ve Renkleri
+            ctx.fillStyle = '#00FF66';
+            ctx.font = '900 82px "Syne", sans-serif';
             ctx.fillText("EA$Y FM", canvas.width / 2, 80);
 
-            ctx.font = '900 32px "Montserrat", sans-serif';
-            ctx.fillText("7/24 YÜZDE YÜZ MÜZİK", canvas.width / 2, 170);
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '700 28px "Space Grotesk", sans-serif';
+            ctx.fillText("7/24 TRAP / HIP-HOP HEAVYWEIGHT", canvas.width / 2, 170);
 
             const ringTex = new THREE.CanvasTexture(canvas);
             ringTex.minFilter = THREE.LinearFilter;
@@ -970,14 +977,20 @@
 
             if (isPlayingState) {
                 bassAngle += 6.0 * deltaTime;
-                const bassScale = 1 + Math.pow(Math.sin(bassAngle), 6) * 0.055;
+                const bassScale = 1 + Math.pow(Math.sin(bassAngle), 6) * 0.07;
                 globeMesh.scale.set(bassScale, bassScale, bassScale);
 
-                const glowScale = 1 + Math.sin(bassAngle) * 0.08;
+                // Dış Işık ve Ambiyans Patlaması
+                dirLight.intensity = 2.0 + Math.pow(Math.sin(bassAngle), 6) * 3.0;
+
+                const glowScale = 1 + Math.sin(bassAngle) * 0.1;
                 ambientGlowEl.style.transform = `translate(-50%, -50%) scale(${glowScale})`;
+                ambientGlowEl.style.opacity = (0.5 + Math.pow(Math.sin(bassAngle), 4) * 0.5).toString();
             } else {
                 globeMesh.scale.lerp(new THREE.Vector3(1, 1, 1), 10 * deltaTime);
+                dirLight.intensity = 2.2;
                 ambientGlowEl.style.transform = `translate(-50%, -50%) scale(1)`;
+                ambientGlowEl.style.opacity = '0.5';
             }
 
             renderer.render(scene, camera);
@@ -986,7 +999,7 @@
         resizeThreeJS();
         requestAnimationFrame(animateGlobe);
 
-        /* PIRLANTA SPARKLE PARÇACIK ANIMASYONU (OPTIMIZED) */
+        /* PARÇACIK ANIMASYONU & GLITCH SPARKLES */
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
         let particlesArray = [];
@@ -1011,7 +1024,7 @@
                 this.speedX = (Math.random() - 0.5) * 0.3;
                 this.speedY = (Math.random() - 0.5) * 0.3;
                 this.opacity = Math.random() * 0.7 + 0.2;
-                this.isSparkle = Math.random() > 0.7;
+                this.isGlitch = Math.random() > 0.7; // Neon Yeşil Glitched Parçacık
                 this.pulseSpeed = Math.random() * 0.03 + 0.015;
             }
 
@@ -1029,10 +1042,11 @@
             }
 
             draw() {
-                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
-                ctx.strokeStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                const color = this.isGlitch ? `rgba(0, 255, 102, ${this.opacity})` : `rgba(255, 255, 255, ${this.opacity})`;
+                ctx.fillStyle = color;
+                ctx.strokeStyle = color;
 
-                if (this.isSparkle) {
+                if (this.isGlitch) {
                     const len = this.size * 2.5;
                     ctx.beginPath();
                     ctx.moveTo(this.x - len, this.y);
@@ -1047,7 +1061,6 @@
             }
         }
 
-        // Parçacık sayısı mobilde 25, masaüstünde 50 olacak şekilde düşürüldü
         const particleCount = isMobileDevice ? 25 : 50;
         for (let i = 0; i < particleCount; i++) particlesArray.push(new DiamondParticle());
 
@@ -1085,7 +1098,7 @@
         /* VISUALIZER */
         const vCanvas = document.getElementById('visualizer-canvas');
         const vCtx = vCanvas.getContext('2d');
-        const numBars = isMobileDevice ? 24 : 44; // Mobilde bar sayısı yarıya düşürüldü
+        const numBars = isMobileDevice ? 24 : 44;
         let barHeights = new Array(numBars).fill(3);
         let peakHeights = new Array(numBars).fill(3);
 
@@ -1115,8 +1128,9 @@
                 const x = i * (barWidth + gap);
                 const y = vCanvas.height - barHeights[i];
 
-                vCtx.fillStyle = '#ffffff';
+                vCtx.fillStyle = '#00FF66';
                 vCtx.fillRect(x, y, barWidth, barHeights[i]);
+                vCtx.fillStyle = '#ffffff';
                 vCtx.fillRect(x, vCanvas.height - peakHeights[i] - 2, barWidth, 1.5);
             }
             requestAnimationFrame(drawVisualizer);

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>EA$Y FM | CANLI</title>
     
+    <!-- Pırlanta & Hip-Hop Estetiği Fontları -->
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;900&family=Syne:wght@800;900&family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     
     <style>
@@ -47,23 +48,6 @@
             pointer-events: none;
             opacity: 0.6;
         }
-
-        /* TRAP HUD KÖŞE SÜSLERİ */
-        .hud-corner {
-            position: fixed;
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 8px;
-            font-weight: 900;
-            letter-spacing: 2px;
-            color: rgba(255, 255, 255, 0.3);
-            z-index: 40;
-            pointer-events: none;
-            text-transform: uppercase;
-        }
-        .hud-tl { top: 12px; left: 12px; }
-        .hud-tr { top: 12px; right: 12px; }
-        .hud-bl { bottom: 12px; left: 12px; }
-        .hud-br { bottom: 12px; right: 12px; }
 
         #bg-canvas {
             position: fixed;
@@ -199,13 +183,7 @@
             text-transform: uppercase;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8), inset 0 0 10px rgba(255, 255, 255, 0.05);
             white-space: nowrap;
-            transition: transform 0.1s ease, border-color 0.1s ease;
-        }
-
-        .badge-bass-pulse {
-            transform: scale(1.04);
-            border-color: #ffffff;
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+            transition: transform 0.1s ease, border-color 0.1s ease, box-shadow 0.1s ease;
         }
 
         .live-dot {
@@ -234,6 +212,14 @@
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+            transition: transform 0.1s ease, border-color 0.1s ease, box-shadow 0.1s ease;
+        }
+
+        /* BASS İLE ORTAK PARLAMA & BÜYÜME SIFINIF */
+        .badge-bass-pulse {
+            transform: scale(1.04);
+            border-color: #ffffff !important;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.4) !important;
         }
 
         .volume-btn {
@@ -468,11 +454,6 @@
 </head>
 <body>
 
-    <div class="hud-corner hud-tl">┌ EA$Y_SYS v2.6</div>
-    <div class="hud-corner hud-tr">TRAP_MODE // ACTIVE ┐</div>
-    <div class="hud-corner hud-bl">└ 808_BASS_STATION</div>
-    <div class="hud-corner hud-br">ICE_GLOW_ON ┘</div>
-
     <canvas id="bg-canvas"></canvas>
     <div id="lightning-flash"></div>
     <div class="ambient-glow" id="ambient-glow"></div>
@@ -490,7 +471,7 @@
             <div class="badge" id="badge-listener">
                 <span>🎧 DİNLEYİCİ: <strong id="listener-count" style="color: #ffffff; text-shadow:0 0 6px #fff;">0</strong></span>
             </div>
-            <div class="volume-control-box">
+            <div class="volume-control-box" id="volume-box">
                 <button class="volume-btn" id="mute-btn">🔊</button>
                 <input type="range" class="volume-slider" id="volume-range" min="0" max="100" value="100">
             </div>
@@ -917,6 +898,7 @@
         const lightningEl = document.getElementById('lightning-flash');
         const badgeLiveEl = document.getElementById('badge-live');
         const badgeListenerEl = document.getElementById('badge-listener');
+        const volumeBoxEl = document.getElementById('volume-box');
         const videoBoxEl = document.getElementById('video-box');
         let lastTime = performance.now();
 
@@ -952,13 +934,15 @@
                 /* VİDEO KUTUSU BASS TİTREŞİMİ */
                 videoBoxEl.style.transform = `scale(${1 + bassPower * 0.015})`;
 
-                /* BADGE GLITCH RİTİM EFEKTİ */
+                /* BADGE VE SES BARI GLITCH RİTİM EFEKTİ */
                 if (bassPower > 0.6) {
                     badgeLiveEl.classList.add('badge-bass-pulse');
                     badgeListenerEl.classList.add('badge-bass-pulse');
+                    volumeBoxEl.classList.add('badge-bass-pulse');
                 } else {
                     badgeLiveEl.classList.remove('badge-bass-pulse');
                     badgeListenerEl.classList.remove('badge-bass-pulse');
+                    volumeBoxEl.classList.remove('badge-bass-pulse');
                 }
 
                 /* BAS VURDUĞUNDA ŞARTSIZ BEYAZ ŞİMŞEK ÇAKMA */
@@ -985,6 +969,7 @@
                 videoBoxEl.style.transform = `scale(1)`;
                 badgeLiveEl.classList.remove('badge-bass-pulse');
                 badgeListenerEl.classList.remove('badge-bass-pulse');
+                volumeBoxEl.classList.remove('badge-bass-pulse');
 
                 ringBarMeshes.forEach((bar) => {
                     bar.scale.set(1, 0.4, 1);
@@ -998,11 +983,10 @@
         resizeThreeJS();
         requestAnimationFrame(animateGlobe);
 
-        /* SADECE DÖNEN NOKTALAR VE İMLEÇ DUMAN/BUZ EFEKTİ */
+        /* SADECE DÖNEN NOKTALAR PARÇACIK EFEKTİ */
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
         let particlesArray = [];
-        let cursorParticles = [];
 
         function handleResize() {
             canvas.width = window.innerWidth;
@@ -1040,48 +1024,12 @@
             }
         }
 
-        class CursorParticle {
-            constructor(x, y) {
-                this.x = x;
-                this.y = y;
-                this.size = Math.random() * 3 + 1;
-                this.speedX = (Math.random() - 0.5) * 1.5;
-                this.speedY = (Math.random() - 0.5) * 1.5;
-                this.life = 1.0;
-            }
-            update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
-                this.life -= 0.03;
-            }
-            draw() {
-                ctx.fillStyle = `rgba(255, 255, 255, ${this.life})`;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-            }
-        }
-
-        window.addEventListener('pointermove', (e) => {
-            for (let i = 0; i < 2; i++) {
-                cursorParticles.push(new CursorParticle(e.clientX, e.clientY));
-            }
-        });
-
         const particleCount = isMobileDevice ? 30 : 65;
         for (let i = 0; i < particleCount; i++) particlesArray.push(new CleanDotParticle());
 
         function animateParticles() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             particlesArray.forEach(p => { p.update(); p.draw(); });
-            
-            for (let i = cursorParticles.length - 1; i >= 0; i--) {
-                const cp = cursorParticles[i];
-                cp.update();
-                cp.draw();
-                if (cp.life <= 0) cursorParticles.splice(i, 1);
-            }
-
             requestAnimationFrame(animateParticles);
         }
         animateParticles();

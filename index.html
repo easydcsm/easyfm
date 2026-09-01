@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>EA$Y FM | CANLI</title>
     
     <!-- Pırlanta & Hip-Hop Estetiği Fontları -->
@@ -15,18 +15,18 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* KAYDIRMAYI (SCROLL) TAMAMEN KİLİTLEYEN GÖVDE DÜZENİ */
+        /* MOBİL DVH UYUMLU KİLİTLİ GÖVDE */
         html, body {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
-            max-height: 100vh;
+            height: 100dvh; /* Dynamic Viewport Height */
             background-color: #000000;
             color: #fff;
             font-family: 'Space Grotesk', sans-serif;
-            overflow: hidden !important; /* Kaydırmayı kapatır */
-            touch-action: none; /* Mobilde çekip kaydırmayı engeller */
+            overflow: hidden !important;
+            touch-action: none;
             position: fixed;
         }
 
@@ -37,7 +37,6 @@
             justify-content: center;
         }
 
-        /* ARKA PLAN CANVAS */
         #bg-canvas {
             position: fixed;
             top: 0;
@@ -48,7 +47,6 @@
             pointer-events: none;
         }
 
-        /* DİNAMİK PIRLANTA AMBİYANS */
         .ambient-glow {
             position: fixed;
             top: 50%;
@@ -64,49 +62,46 @@
             filter: blur(25px);
         }
 
-        /* TEK BLOK KOMPAKT ANA KAPSAYICI */
+        /* TAM SIĞAN DİNAMİK ANA KAPSAYICI */
         .main-wrapper {
             position: relative;
             z-index: 10;
             width: 100%;
-            max-width: 620px;
-            height: 100vh;
-            max-height: 100vh;
+            max-width: 600px;
+            height: 100%;
+            height: 100dvh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: space-between;
-            padding: 12px 16px;
-            gap: 8px;
+            padding: calc(8px + env(safe-area-inset-top)) 12px calc(8px + env(safe-area-inset-bottom)) 12px;
+            gap: 6px;
             margin: 0 auto;
             box-sizing: border-box;
         }
 
-        /* LOGO & 3D DÜNYA ALANI */
+        /* DÜNYA LOGOSU (MOBİL KÜÇÜLME ORANI ARTIRILDI) */
         .logo-container {
             text-align: center;
             position: relative;
             width: 100%;
-            max-width: 380px;
-            height: 22vh;
-            min-height: 140px;
-            max-height: 210px;
+            max-width: 320px;
+            height: clamp(90px, 18vh, 180px);
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: visible;
             margin: 0 auto;
-            flex-shrink: 0;
+            flex-shrink: 1;
         }
 
-        /* PIRLANTA PATLAMA EFEKTİ */
         .blast-wave {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%) scale(0.6);
-            width: 180px;
-            height: 180px;
+            width: 140px;
+            height: 140px;
             border-radius: 50%;
             border: 3px solid rgba(255, 255, 255, 1);
             box-shadow: 0 0 90px rgba(255, 255, 255, 1), inset 0 0 50px rgba(255, 255, 255, 0.8);
@@ -149,10 +144,10 @@
             outline: none;
         }
 
-        /* STATUS BAR (BADGES & VOLUME) */
+        /* STATUS BAR */
         .status-bar {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             flex-wrap: nowrap;
             justify-content: center;
             align-items: center;
@@ -165,32 +160,25 @@
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.25);
-            padding: 6px 14px;
+            padding: 5px 10px;
             border-radius: 30px;
-            font-size: 9px;
+            font-size: 8px;
             font-weight: 800;
-            letter-spacing: 1.5px;
+            letter-spacing: 1px;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
             text-transform: uppercase;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
-            position: relative;
-            overflow: hidden;
-            transition: border-color 0.3s;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
             white-space: nowrap;
         }
 
-        .badge:hover {
-            border-color: rgba(255, 255, 255, 0.6);
-        }
-
         .live-dot {
-            width: 7px;
-            height: 7px;
+            width: 6px;
+            height: 6px;
             background-color: #ffffff;
             border-radius: 50%;
-            box-shadow: 0 0 10px #ffffff;
+            box-shadow: 0 0 8px #ffffff;
             animation: pulse 1.4s infinite;
         }
 
@@ -200,25 +188,17 @@
             100% { opacity: 1; transform: scale(1); }
         }
 
-        /* SES KONTROL ÇUBUĞU */
         .volume-control-box {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             background: rgba(20, 20, 20, 0.85);
             border: 1px solid rgba(255, 255, 255, 0.25);
-            padding: 5px 12px;
+            padding: 4px 10px;
             border-radius: 30px;
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
-            transition: border-color 0.3s;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .volume-control-box:hover {
-            border-color: rgba(255, 255, 255, 0.6);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
         }
 
         .volume-btn {
@@ -226,31 +206,22 @@
             border: none;
             color: #fff;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 11px;
             padding: 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.2s;
-            position: relative;
-            z-index: 2;
-        }
-
-        .volume-btn:active {
-            transform: scale(0.85);
         }
 
         .volume-slider {
             -webkit-appearance: none;
             appearance: none;
-            width: 60px;
+            width: 45px;
             height: 3px;
             border-radius: 2px;
             background: rgba(255, 255, 255, 0.25);
             outline: none;
             cursor: pointer;
-            position: relative;
-            z-index: 2;
         }
 
         .volume-slider::-webkit-slider-thumb {
@@ -261,32 +232,27 @@
             border-radius: 50%;
             background: #ffffff;
             box-shadow: 0 0 8px #ffffff;
-            cursor: pointer;
-            transition: transform 0.15s;
         }
 
-        .volume-slider::-webkit-slider-thumb:hover {
-            transform: scale(1.2);
-        }
-
-        /* ESNEK VİDEO ÇERÇEVESİ */
+        /* ESNEK VİDEO KUTUSU */
         .video-container {
             position: relative;
             width: 100%;
-            flex: 1;
-            max-height: 48vh;
-            border-radius: 16px;
+            flex: 1 1 auto;
+            min-height: 160px;
+            max-height: 40vh;
+            border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.95);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.95);
             border: 1px solid rgba(255, 255, 255, 0.2);
             transition: border-color 0.5s, box-shadow 0.5s;
             background: #000;
-            margin: 0;
+            margin: 2px 0;
         }
 
         .video-container.playing-border {
             border-color: rgba(255, 255, 255, 0.85);
-            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.9), 0 0 35px rgba(255, 255, 255, 0.35);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9), 0 0 25px rgba(255, 255, 255, 0.35);
         }
 
         #youtube-player {
@@ -299,7 +265,6 @@
             pointer-events: auto;
         }
 
-        /* TAM KİLİT MASKELERİ */
         .yt-shield-top-main {
             position: absolute;
             top: 0;
@@ -353,26 +318,13 @@
             color: #000;
             font-family: 'Syne', sans-serif;
             font-weight: 900;
-            font-size: 11px;
-            padding: 14px 34px;
+            font-size: 10px;
+            padding: 12px 28px;
             border: none;
             border-radius: 50px;
             cursor: pointer;
-            letter-spacing: 2px;
-            box-shadow: 0 0 25px rgba(255, 255, 255, 0.7);
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s, background-color 0.3s;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .start-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 40px rgba(255, 255, 255, 0.95);
-            background-color: #f8f8f8;
-        }
-
-        .start-btn:active {
-            transform: scale(0.97);
+            letter-spacing: 1.5px;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.7);
         }
 
         /* NOW PLAYING CARD */
@@ -382,20 +334,13 @@
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
-            padding: 10px 16px;
+            border-radius: 10px;
+            padding: 8px 12px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.75);
-            margin: 0;
-            position: relative;
-            transition: border-color 0.3s ease;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.75);
             flex-shrink: 0;
-        }
-
-        .now-playing-card:hover {
-            border-color: rgba(255, 255, 255, 0.5);
         }
 
         .track-info {
@@ -403,36 +348,35 @@
             flex-direction: column;
             gap: 2px;
             overflow: hidden;
-            max-width: 55%;
+            max-width: 58%;
         }
 
         .track-label {
-            font-size: 8px;
+            font-size: 7px;
             font-weight: 900;
-            letter-spacing: 2px;
+            letter-spacing: 1.5px;
             color: #888;
             text-transform: uppercase;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 4px;
         }
 
         .track-title {
             font-family: 'Syne', sans-serif;
-            font-size: 13px;
+            font-size: 11px;
             font-weight: 900;
             color: #fff;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
         }
 
         .next-track {
-            font-size: 9px;
+            font-size: 8px;
             color: #aaa;
             text-align: right;
-            max-width: 42%;
+            max-width: 40%;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -441,14 +385,12 @@
             gap: 2px;
         }
 
-        /* DİNAMİK SES DALGASI ANIMASYONU */
         .wave-bars {
             display: flex;
             align-items: flex-end;
             gap: 2px;
-            height: 10px;
-            margin-left: 4px;
-            transition: opacity 0.3s ease;
+            height: 8px;
+            margin-left: 3px;
         }
 
         .wave-bar {
@@ -468,20 +410,14 @@
             100% { transform: scaleY(1); }
         }
 
+        /* VISUALIZER KANVASI SIĞDIRMA */
         #visualizer-canvas {
             width: 100%;
-            height: 20px;
+            height: 14px;
+            min-height: 12px;
             margin: 0;
             flex-shrink: 0;
-            transition: opacity 1s ease;
-        }
-
-        /* MOBİL UYUM VE SIĞDIRMA DÜZENLEMELERİ */
-        @media (max-height: 680px) {
-            .logo-container { height: 18vh; min-height: 110px; }
-            .main-wrapper { padding: 8px 12px; gap: 6px; }
-            .track-title { font-size: 12px; }
-            #visualizer-canvas { height: 14px; }
+            display: block;
         }
     </style>
 
@@ -503,13 +439,13 @@
         <div class="status-bar">
             <div class="badge">
                 <span class="live-dot"></span>
-                <span>CANLI YAYIN</span>
+                <span>CANLI</span>
             </div>
             <div class="badge">
-                <span>🎧 DİNLEYİCİ: <strong id="listener-count" style="color: #ffffff; text-shadow: 0 0 8px #fff;">0</strong></span>
+                <span>🎧 DİNLEYİCİ: <strong id="listener-count" style="color: #ffffff;">0</strong></span>
             </div>
             <div class="volume-control-box">
-                <button class="volume-btn" id="mute-btn" title="Sesi Kapat/Aç">🔊</button>
+                <button class="volume-btn" id="mute-btn">🔊</button>
                 <input type="range" class="volume-slider" id="volume-range" min="0" max="100" value="100">
             </div>
         </div>
@@ -528,8 +464,8 @@
         <div class="now-playing-card">
             <div class="track-info">
                 <span class="track-label">
-                    <span style="display:inline-block; width:4px; height:4px; background:#fff; border-radius:50%; box-shadow:0 0 6px #fff;"></span>
-                    ŞU AN YAYINDA
+                    <span style="display:inline-block; width:3px; height:3px; background:#fff; border-radius:50%;"></span>
+                    YAYINDA
                     <div class="wave-bars" id="wave-bars" style="opacity: 0;">
                         <div class="wave-bar"></div>
                         <div class="wave-bar"></div>
@@ -549,7 +485,6 @@
     </div>
 
     <script>
-        // Kaydırmayı engelleyici ekstra güvenlik
         document.addEventListener('touchmove', function(e) { e.preventDefault(); }, { passive: false });
 
         let player = null;
@@ -667,9 +602,7 @@
                 events: {
                     'onReady': () => { 
                         isPlayerReady = true; 
-                        if (document.activeElement) {
-                            document.activeElement.blur();
-                        }
+                        if (document.activeElement) document.activeElement.blur();
                     },
                     'onStateChange': onPlayerStateChange
                 }
@@ -739,9 +672,7 @@
             const overlay = document.getElementById('start-overlay');
             overlay.style.opacity = '0';
             overlay.style.pointerEvents = 'none';
-            setTimeout(() => { 
-                overlay.style.display = 'none'; 
-            }, 500);
+            setTimeout(() => { overlay.style.display = 'none'; }, 500);
 
             const startPlaying = () => {
                 const state = getCurrentStreamState();
@@ -750,9 +681,7 @@
                 updateTrackLabels(state.songIndex);
                 currentLoadedVideoId = targetSong.id;
 
-                if (typeof player.unMute === 'function') {
-                    player.unMute();
-                }
+                if (typeof player.unMute === 'function') player.unMute();
 
                 player.loadVideoById({
                     videoId: targetSong.id,
@@ -791,7 +720,6 @@
             
             if (player && typeof player.setVolume === 'function') {
                 player.setVolume(val);
-                
                 if (val === 0) {
                     player.mute();
                     muteBtn.innerText = '🔇';
@@ -812,16 +740,12 @@
             if (isMuted) {
                 player.unMute();
                 muteBtn.innerText = '🔊';
-                
                 let currentVol = Number(volumeRange.value);
                 if (currentVol === 0) {
                     currentVol = 100;
                     volumeRange.value = 100;
                 }
-                
-                if (typeof player.setVolume === 'function') {
-                    player.setVolume(currentVol);
-                }
+                if (typeof player.setVolume === 'function') player.setVolume(currentVol);
                 isMuted = false;
             } else {
                 player.mute();
@@ -832,7 +756,7 @@
             updateAudioVisualState();
         });
 
-        /* THREE.JS 3D DÜNYA */
+        /* THREE.JS DÜNYA (MOBİL KAMERA VE BOYUT OPTİMİZASYONU) */
         const globeContainer = document.getElementById('globe-3d-container');
         
         const scene = new THREE.Scene();
@@ -849,12 +773,13 @@
 
             camera.aspect = width / height;
 
+            /* MOBİL EKRAN TİPİNE GÖRE SIKIŞTIRMA MIKTARI */
             if (window.innerHeight <= 650) {
-                camera.position.z = 5.8;
+                camera.position.z = 6.2;
             } else if (window.innerWidth <= 600) {
-                camera.position.z = 5.2;
+                camera.position.z = 5.6;
             } else {
-                camera.position.z = 4.6;
+                camera.position.z = 4.8;
             }
 
             camera.updateProjectionMatrix();
@@ -865,7 +790,7 @@
         const earthTexture = textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_atmos_2048.jpg');
 
         const baseRadius = 1.6;
-        const segments = isMobileDevice ? 36 : 64;
+        const segments = isMobileDevice ? 32 : 64;
         const geometry = new THREE.SphereGeometry(baseRadius, segments, segments);
         const material = new THREE.MeshStandardMaterial({
             map: earthTexture,
@@ -920,9 +845,7 @@
             scene.add(ringMesh);
         }
 
-        document.fonts.ready.then(() => {
-            createOrbitRingText();
-        });
+        document.fonts.ready.then(() => { createOrbitRingText(); });
 
         let bassAngle = 0;
         const ambientGlowEl = document.getElementById('ambient-glow');
@@ -965,7 +888,7 @@
         resizeThreeJS();
         requestAnimationFrame(animateGlobe);
 
-        /* PIRLANTA PARÇACIK ANIMASYONU */
+        /* PARÇACIKLAR */
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
         let particlesArray = [];
@@ -979,40 +902,30 @@
         handleResize();
 
         class DiamondParticle {
-            constructor() {
-                this.reset();
-            }
-
+            constructor() { this.reset(); }
             reset() {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 2.5 + 1;
-                this.speedX = (Math.random() - 0.5) * 0.3;
-                this.speedY = (Math.random() - 0.5) * 0.3;
+                this.size = Math.random() * 2 + 0.8;
+                this.speedX = (Math.random() - 0.5) * 0.2;
+                this.speedY = (Math.random() - 0.5) * 0.2;
                 this.opacity = Math.random() * 0.7 + 0.2;
-                this.isSparkle = Math.random() > 0.7;
+                this.isSparkle = Math.random() > 0.75;
                 this.pulseSpeed = Math.random() * 0.03 + 0.015;
             }
-
             update() {
                 this.x += this.speedX;
                 this.y += this.speedY;
-
                 this.opacity += Math.sin(Date.now() * this.pulseSpeed) * 0.015;
                 if (this.opacity < 0.1) this.opacity = 0.1;
-                if (this.opacity > 0.95) this.opacity = 0.95;
-
-                if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) {
-                    this.reset();
-                }
+                if (this.opacity > 0.9) this.opacity = 0.9;
+                if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) this.reset();
             }
-
             draw() {
                 ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
                 ctx.strokeStyle = `rgba(255, 255, 255, ${this.opacity})`;
-
                 if (this.isSparkle) {
-                    const len = this.size * 2.5;
+                    const len = this.size * 2;
                     ctx.beginPath();
                     ctx.moveTo(this.x - len, this.y);
                     ctx.lineTo(this.x + len, this.y);
@@ -1026,7 +939,7 @@
             }
         }
 
-        const particleCount = isMobileDevice ? 25 : 45;
+        const particleCount = isMobileDevice ? 20 : 40;
         for (let i = 0; i < particleCount; i++) particlesArray.push(new DiamondParticle());
 
         function animateParticles() {
@@ -1036,7 +949,7 @@
         }
         animateParticles();
 
-        /* FIREBASE SAYAÇ */
+        /* FIREBASE */
         const firebaseConfig = {
             apiKey: "AIzaSyBaTlb6V6e4FMLTYNXAPBgdzsgiclL8Qw8",
             authDomain: "easyfm-37b9e.firebaseapp.com",
@@ -1063,7 +976,7 @@
         /* VISUALIZER */
         const vCanvas = document.getElementById('visualizer-canvas');
         const vCtx = vCanvas.getContext('2d');
-        const numBars = isMobileDevice ? 24 : 44;
+        const numBars = isMobileDevice ? 24 : 40;
         let barHeights = new Array(numBars).fill(2);
         let peakHeights = new Array(numBars).fill(2);
 
@@ -1072,21 +985,21 @@
             vCanvas.height = vCanvas.offsetHeight;
             vCtx.clearRect(0, 0, vCanvas.width, vCanvas.height);
 
-            const gap = 3;
+            const gap = 2;
             const barWidth = (vCanvas.width / numBars) - gap;
 
             for (let i = 0; i < numBars; i++) {
                 if (isPlayingState) {
-                    const target = Math.random() * (vCanvas.height - 4) + 2;
-                    barHeights[i] += (target - barHeights[i]) * 0.18;
+                    const target = Math.random() * (vCanvas.height - 2) + 2;
+                    barHeights[i] += (target - barHeights[i]) * 0.2;
                 } else {
-                    barHeights[i] += (2 - barHeights[i]) * 0.12;
+                    barHeights[i] += (2 - barHeights[i]) * 0.15;
                 }
 
                 if (barHeights[i] > peakHeights[i]) {
                     peakHeights[i] = barHeights[i];
                 } else {
-                    peakHeights[i] -= 0.35;
+                    peakHeights[i] -= 0.3;
                 }
                 if (peakHeights[i] < 2) peakHeights[i] = 2;
 
@@ -1095,7 +1008,7 @@
 
                 vCtx.fillStyle = '#ffffff';
                 vCtx.fillRect(x, y, barWidth, barHeights[i]);
-                vCtx.fillRect(x, vCanvas.height - peakHeights[i] - 1.5, barWidth, 1);
+                vCtx.fillRect(x, vCanvas.height - peakHeights[i] - 1, barWidth, 1);
             }
             requestAnimationFrame(drawVisualizer);
         }

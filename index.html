@@ -57,6 +57,7 @@
             z-index: 2;
             pointer-events: none;
             transition: transform 0.2s cubic-bezier(0.1, 0.9, 0.2, 1), opacity 0.5s ease;
+            will-change: transform;
             filter: blur(20px);
         }
 
@@ -102,6 +103,7 @@
             opacity: 0;
             pointer-events: none;
             z-index: 5;
+            will-change: transform, opacity;
         }
 
         .blast-active {
@@ -130,7 +132,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.25));
         }
 
         #globe-3d-container canvas {
@@ -151,9 +152,9 @@
         }
 
         .badge {
-            background: rgba(20, 20, 20, 0.65);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            background: rgba(20, 20, 20, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             padding: 8px 18px;
             border-radius: 30px;
@@ -164,7 +165,7 @@
             align-items: center;
             gap: 8px;
             text-transform: uppercase;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
             position: relative;
             overflow: hidden;
             transition: border-color 0.3s;
@@ -172,24 +173,6 @@
 
         .badge:hover {
             border-color: rgba(255, 255, 255, 0.4);
-        }
-
-        .badge::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(60deg, transparent 30%, rgba(255,255,255,0.15) 50%, transparent 70%);
-            transform: rotate(30deg);
-            animation: shine 4s infinite;
-        }
-
-        @keyframes shine {
-            0% { transform: translateX(-100%) rotate(30deg); }
-            20% { transform: translateX(100%) rotate(30deg); }
-            100% { transform: translateX(100%) rotate(30deg); }
         }
 
         .live-dot {
@@ -202,9 +185,9 @@
         }
 
         @keyframes pulse {
-            0% { opacity: 1; transform: scale(1); box-shadow: 0 0 12px #ffffff; }
-            50% { opacity: 0.3; transform: scale(0.7); box-shadow: 0 0 2px #ffffff; }
-            100% { opacity: 1; transform: scale(1); box-shadow: 0 0 12px #ffffff; }
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.3; transform: scale(0.7); }
+            100% { opacity: 1; transform: scale(1); }
         }
 
         /* SES KONTROL ÇUBUĞU */
@@ -212,13 +195,13 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            background: rgba(20, 20, 20, 0.65);
+            background: rgba(20, 20, 20, 0.8);
             border: 1px solid rgba(255, 255, 255, 0.2);
             padding: 6px 16px;
             border-radius: 30px;
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
             transition: border-color 0.3s;
             position: relative;
             overflow: hidden;
@@ -226,19 +209,6 @@
 
         .volume-control-box:hover {
             border-color: rgba(255, 255, 255, 0.4);
-        }
-
-        .volume-control-box::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(60deg, transparent 30%, rgba(255,255,255,0.15) 50%, transparent 70%);
-            transform: rotate(30deg);
-            animation: shine 4s infinite;
-            pointer-events: none;
         }
 
         .volume-btn {
@@ -297,7 +267,7 @@
             height: 0;
             border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.95), 0 0 30px rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.95);
             border: 1px solid rgba(255, 255, 255, 0.2);
             transition: border-color 0.5s, box-shadow 0.5s;
             background: #000;
@@ -398,16 +368,16 @@
         /* NOW PLAYING CARD */
         .now-playing-card {
             width: 100%;
-            background: rgba(20, 20, 20, 0.65);
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
+            background: rgba(20, 20, 20, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 16px;
             padding: 16px 22px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.75);
             margin: 0;
             position: relative;
             transition: border-color 0.3s ease;
@@ -491,7 +461,6 @@
             height: 28px;
             margin: 0;
             transition: opacity 1s ease;
-            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.4));
         }
 
         /* MOBİL UYUM DÜZENLEMELERİ */
@@ -591,7 +560,6 @@
     </div>
 
     <script>
-        // Scroll Kilidi Sürecini Optimize Etme
         if ('scrollRestoration' in history) {
             history.scrollRestoration = 'manual';
         }
@@ -613,6 +581,8 @@
         let currentLoadedVideoId = null;
         let syncCheckInterval = null;
 
+        const isMobileDevice = window.innerWidth <= 768;
+
         const baseSongList = [
             { id: '1IEg_3x35go', duration: 120, title: 'FRANCHISE' },
             { id: 'qAlF70MdfwU', duration: 207, title: 'OUT WEST' }, 
@@ -632,538 +602,4 @@
             { id: 'bHDWrnlIqfQ', duration: 173, title: 'POPPIN/TALIBAN' },
             { id: 'KPz33BLkvho', duration: 165, title: 'ESCAPE PLAN' },
             { id: 'B9synWjqBn8', duration: 209, title: 'FE!N' },
-            { id: 'MKPEZlXY49Q', duration: 244, title: 'JENGA' },
-            { id: 'SpXw0qiy3Wo', duration: 314, title: 'X' },
-            { id: 'GErG9femMQk', duration: 174, title: 'WE PAID' },
-            { id: 'leJNDpm_G10', duration: 308, title: 'HOT' },
-            { id: 'PXxbEfhtDiM', duration: 169, title: 'DEAD FRESH' },
-            { id: '81LJJFASh-I', duration: 185, title: '24/7' },
-            { id: 'H6v_UYs01gA', duration: 167, title: 'PEMBE YALANLAR' },
-            { id: 'p6DHMNX-TO4', duration: 191, title: 'INSANË' },
-            { id: 'OBVx0Jmg88g', duration: 212, title: 'HBA' }
-        ];
-
-        const STREAM_START_TIME = 1700000000; 
-
-        function getDeterministicShuffledList(array, seed) {
-            let shuffled = [...array];
-            let m = shuffled.length, t, i;
-            let pseudoRandom = function() {
-                let z = (seed += 0x6D2B79F5);
-                z = Math.imul(z ^ (z >>> 15), z | 1);
-                z ^= z + Math.imul(z ^ (z >>> 7), z | 61);
-                return ((z ^ (z >>> 14)) >>> 0) / 4294967296;
-            };
-
-            while (m) {
-                i = Math.floor(pseudoRandom() * m--);
-                t = shuffled[m];
-                shuffled[m] = shuffled[i];
-                shuffled[i] = t;
-            }
-            return shuffled;
-        }
-
-        const songList = getDeterministicShuffledList(baseSongList, STREAM_START_TIME);
-        const totalPlaylistDuration = songList.reduce((acc, song) => acc + song.duration, 0);
-
-        function getCurrentStreamState() {
-            const nowInSeconds = Math.floor(Date.now() / 1000);
-            const elapsedTime = (nowInSeconds - STREAM_START_TIME) % totalPlaylistDuration;
-            let accumulatedTime = 0;
-            for (let i = 0; i < songList.length; i++) {
-                if (elapsedTime < accumulatedTime + songList[i].duration) {
-                    return {
-                        songIndex: i,
-                        seekTo: elapsedTime - accumulatedTime
-                    };
-                }
-                accumulatedTime += songList[i].duration;
-            }
-            return { songIndex: 0, seekTo: 0 };
-        }
-
-        function updateTrackLabels(currentIndex) {
-            const currentSong = songList[currentIndex];
-            const nextIndex = (currentIndex + 1) % songList.length;
-            const nextSong = songList[nextIndex];
-
-            document.getElementById('current-track-name').innerText = currentSong.title;
-            document.getElementById('next-track-name').innerText = nextSong.title;
-        }
-
-        const initialState = getCurrentStreamState();
-        updateTrackLabels(initialState.songIndex);
-
-        const tag = document.createElement('script');
-        tag.src = "https://www.youtube.com/iframe_api";
-        document.head.appendChild(tag);
-
-        function onYouTubeIframeAPIReady() {
-            const state = getCurrentStreamState();
-            const targetSong = songList[state.songIndex];
-            currentLoadedVideoId = targetSong.id;
-
-            player = new YT.Player('youtube-player', {
-                videoId: targetSong.id,
-                playerVars: {
-                    'autoplay': 0,
-                    'controls': 1,
-                    'rel': 0,
-                    'playsinline': 1,
-                    'enablejsapi': 1,
-                    'iv_load_policy': 3,
-                    'fs': 0,
-                    'start': Math.floor(state.seekTo)
-                },
-                events: {
-                    'onReady': () => { 
-                        isPlayerReady = true; 
-                        if (document.activeElement) {
-                            document.activeElement.blur();
-                        }
-                        forceScrollTop();
-                    },
-                    'onStateChange': onPlayerStateChange
-                }
-            });
-        }
-
-        function updateAudioVisualState() {
-            const vBox = document.getElementById('video-box');
-            const waveBars = document.getElementById('wave-bars');
-            const vol = Number(volumeRange.value);
-
-            if (vol === 0 || isMuted || !actualPlayerStatePlaying) {
-                isPlayingState = false;
-                vBox.classList.remove('playing-border');
-                waveBars.style.opacity = '0';
-            } else {
-                isPlayingState = true;
-                vBox.classList.add('playing-border');
-                waveBars.style.opacity = '1';
-            }
-        }
-
-        function onPlayerStateChange(event) {
-            if (event.data === YT.PlayerState.PLAYING) {
-                actualPlayerStatePlaying = true;
-            } else {
-                actualPlayerStatePlaying = false;
-            }
-            updateAudioVisualState();
-        }
-
-        function syncToLiveStream() {
-            if (!isPlayerReady || !player) return;
-
-            const state = getCurrentStreamState();
-            const targetSong = songList[state.songIndex];
-
-            updateTrackLabels(state.songIndex);
-
-            if (currentLoadedVideoId !== targetSong.id) {
-                currentLoadedVideoId = targetSong.id;
-                player.loadVideoById({
-                    videoId: targetSong.id,
-                    startSeconds: Math.floor(state.seekTo)
-                });
-                player.playVideo();
-                return;
-            }
-
-            if (typeof player.getCurrentTime === 'function') {
-                const currentTime = player.getCurrentTime();
-                const timeDiff = Math.abs(currentTime - state.seekTo);
-                
-                if (timeDiff > 1.8) {
-                    player.seekTo(state.seekTo, true);
-                    player.playVideo();
-                }
-            }
-        }
-
-        function handleUserClick() {
-            const blast = document.getElementById('blast-wave');
-            blast.classList.remove('blast-active');
-            void blast.offsetWidth;
-            blast.classList.add('blast-active');
-
-            const overlay = document.getElementById('start-overlay');
-            overlay.style.opacity = '0';
-            overlay.style.pointerEvents = 'none';
-            setTimeout(() => { 
-                overlay.style.display = 'none'; 
-            }, 500);
-
-            const startPlaying = () => {
-                const state = getCurrentStreamState();
-                const targetSong = songList[state.songIndex];
-
-                updateTrackLabels(state.songIndex);
-                currentLoadedVideoId = targetSong.id;
-
-                if (typeof player.unMute === 'function') {
-                    player.unMute();
-                }
-
-                player.loadVideoById({
-                    videoId: targetSong.id,
-                    startSeconds: Math.floor(state.seekTo)
-                });
-                player.playVideo();
-
-                if (syncCheckInterval) clearInterval(syncCheckInterval);
-                syncCheckInterval = setInterval(syncToLiveStream, 1000);
-            };
-
-            if (isPlayerReady && player) {
-                startPlaying();
-            } else {
-                const checkReady = setInterval(() => {
-                    if (isPlayerReady && player) {
-                        clearInterval(checkReady);
-                        startPlaying();
-                    }
-                }, 100);
-            }
-        }
-
-        document.getElementById('start-overlay').addEventListener('click', handleUserClick);
-        document.getElementById('start-btn-el').addEventListener('click', (e) => {
-            e.stopPropagation();
-            handleUserClick();
-        });
-
-        // SES VE BUTON SENKRON KONTROLÜ
-        const volumeRange = document.getElementById('volume-range');
-        const muteBtn = document.getElementById('mute-btn');
-        let isMuted = false;
-
-        volumeRange.addEventListener('input', (e) => {
-            const val = Number(e.target.value);
-            
-            if (player && typeof player.setVolume === 'function') {
-                player.setVolume(val);
-                
-                if (val === 0) {
-                    player.mute();
-                    muteBtn.innerText = '🔇';
-                    isMuted = true;
-                } else {
-                    if (isMuted || (typeof player.isMuted === 'function' && player.isMuted())) {
-                        player.unMute();
-                        isMuted = false;
-                    }
-                    muteBtn.innerText = '🔊';
-                }
-            }
-            updateAudioVisualState();
-        });
-
-        muteBtn.addEventListener('click', () => {
-            if (!player) return;
-            if (isMuted) {
-                player.unMute();
-                muteBtn.innerText = '🔊';
-                
-                let currentVol = Number(volumeRange.value);
-                if (currentVol === 0) {
-                    currentVol = 100;
-                    volumeRange.value = 100;
-                }
-                
-                if (typeof player.setVolume === 'function') {
-                    player.setVolume(currentVol);
-                }
-                isMuted = false;
-            } else {
-                player.mute();
-                muteBtn.innerText = '🔇';
-                volumeRange.value = 0;
-                isMuted = true;
-            }
-            updateAudioVisualState();
-        });
-
-        // THREE.JS 3D DÜNYA VE HALKA EFEKTİ
-        const globeContainer = document.getElementById('globe-3d-container');
-        
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
-        
-        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        globeContainer.appendChild(renderer.domElement);
-
-        function resizeThreeJS() {
-            const width = globeContainer.clientWidth;
-            const height = globeContainer.clientHeight;
-            if (width === 0 || height === 0) return;
-
-            camera.aspect = width / height;
-
-            if (window.innerWidth <= 400) {
-                camera.position.z = 5.5;
-            } else if (window.innerWidth <= 600) {
-                camera.position.z = 5.1;
-            } else {
-                camera.position.z = 4.7;
-            }
-
-            camera.updateProjectionMatrix();
-            renderer.setSize(width, height);
-        }
-
-        const textureLoader = new THREE.TextureLoader();
-        const earthTexture = textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_atmos_2048.jpg');
-
-        const baseRadius = 1.65;
-        const geometry = new THREE.SphereGeometry(baseRadius, 64, 64);
-        const material = new THREE.MeshStandardMaterial({
-            map: earthTexture,
-            roughness: 0.3,
-            metalness: 0.5
-        });
-        const globeMesh = new THREE.Mesh(geometry, material);
-        scene.add(globeMesh);
-
-        const ambientLight = new THREE.AmbientLight(0xffffff, 1.6);
-        scene.add(ambientLight);
-
-        const dirLight = new THREE.DirectionalLight(0xffffff, 2.2);
-        dirLight.position.set(5, 4, 5);
-        scene.add(dirLight);
-
-        let ringMesh = null;
-
-        function createOrbitRingText() {
-            const canvas = document.createElement('canvas');
-            canvas.width = 2048;
-            canvas.height = 512;
-            const ctx = canvas.getContext('2d');
-
-            ctx.fillStyle = 'transparent';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillStyle = '#ffffff';
-
-            ctx.shadowColor = '#ffffff';
-            ctx.shadowBlur = 35;
-
-            ctx.font = '900 160px "Anton", sans-serif';
-            ctx.fillText("EA$Y FM", canvas.width / 2, 160);
-
-            ctx.font = '900 65px "Montserrat", sans-serif';
-            ctx.letterSpacing = '6px';
-            ctx.fillText("7/24 YÜZDE YÜZ MÜZİK", canvas.width / 2, 340);
-
-            const ringTex = new THREE.CanvasTexture(canvas);
-            ringTex.minFilter = THREE.LinearFilter;
-            ringTex.magFilter = THREE.LinearFilter;
-            ringTex.anisotropy = renderer.capabilities.getMaxAnisotropy();
-
-            const ringGeo = new THREE.CylinderGeometry(baseRadius + 0.28, baseRadius + 0.28, 0.95, 64, 1, true);
-            const ringMat = new THREE.MeshBasicMaterial({
-                map: ringTex,
-                transparent: true,
-                side: THREE.DoubleSide,
-                depthWrite: false
-            });
-
-            ringMesh = new THREE.Mesh(ringGeo, ringMat);
-            ringMesh.rotation.z = 0.08;
-            scene.add(ringMesh);
-        }
-
-        document.fonts.ready.then(() => {
-            createOrbitRingText();
-        });
-
-        let bassAngle = 0;
-        const ambientGlowEl = document.getElementById('ambient-glow');
-        let lastTime = performance.now();
-
-        function animateGlobe(currentTime) {
-            requestAnimationFrame(animateGlobe);
-
-            const deltaTime = (currentTime - lastTime) / 1000; 
-            lastTime = currentTime;
-
-            if (isNaN(deltaTime) || deltaTime > 0.1) return;
-
-            const globeSpeed = isPlayingState ? 0.45 : 0.15;
-            const ringSpeed = isPlayingState ? 0.65 : 0.22;
-
-            globeMesh.rotation.y += globeSpeed * deltaTime;
-            if (ringMesh) ringMesh.rotation.y -= ringSpeed * deltaTime;
-
-            if (isPlayingState) {
-                bassAngle += 6.0 * deltaTime;
-                const bassScale = 1 + Math.pow(Math.sin(bassAngle), 6) * 0.055;
-                globeMesh.scale.set(bassScale, bassScale, bassScale);
-
-                const glowScale = 1 + Math.sin(bassAngle) * 0.08;
-                ambientGlowEl.style.transform = `translate(-50%, -50%) scale(${glowScale})`;
-            } else {
-                globeMesh.scale.lerp(new THREE.Vector3(1, 1, 1), 10 * deltaTime);
-                ambientGlowEl.style.transform = `translate(-50%, -50%) scale(1)`;
-            }
-
-            renderer.render(scene, camera);
-        }
-        
-        resizeThreeJS();
-        requestAnimationFrame(animateGlobe);
-
-        // PIRLANTA SPARKLE PARÇACIK ANIMASYONU
-        const canvas = document.getElementById('bg-canvas');
-        const ctx = canvas.getContext('2d');
-        let particlesArray = [];
-
-        function handleResize() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            resizeThreeJS();
-        }
-        window.addEventListener('resize', handleResize);
-        handleResize();
-
-        class DiamondParticle {
-            constructor() {
-                this.reset();
-            }
-
-            reset() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 3.0 + 1;
-                this.speedX = (Math.random() - 0.5) * 0.3;
-                this.speedY = (Math.random() - 0.5) * 0.3;
-                this.opacity = Math.random() * 0.7 + 0.2;
-                this.isSparkle = Math.random() > 0.65;
-                this.pulseSpeed = Math.random() * 0.03 + 0.015;
-            }
-
-            update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
-
-                this.opacity += Math.sin(Date.now() * this.pulseSpeed) * 0.015;
-                if (this.opacity < 0.1) this.opacity = 0.1;
-                if (this.opacity > 0.95) this.opacity = 0.95;
-
-                if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) {
-                    this.reset();
-                }
-            }
-
-            draw() {
-                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
-                ctx.strokeStyle = `rgba(255, 255, 255, ${this.opacity})`;
-
-                if (this.isSparkle) {
-                    const len = this.size * 2.8;
-                    ctx.beginPath();
-                    ctx.moveTo(this.x - len, this.y);
-                    ctx.lineTo(this.x + len, this.y);
-                    ctx.moveTo(this.x, this.y - len);
-                    ctx.lineTo(this.x, this.y + len);
-                    ctx.lineWidth = 0.8;
-                    ctx.stroke();
-                } else {
-                    ctx.beginPath();
-                    ctx.moveTo(this.x, this.y - this.size);
-                    ctx.lineTo(this.x + this.size, this.y);
-                    ctx.lineTo(this.x, this.y + this.size);
-                    ctx.lineTo(this.x - this.size, this.y);
-                    ctx.closePath();
-                    ctx.fill();
-                }
-            }
-        }
-
-        for (let i = 0; i < 65; i++) particlesArray.push(new DiamondParticle());
-
-        function animateParticles() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particlesArray.forEach(p => { p.update(); p.draw(); });
-            requestAnimationFrame(animateParticles);
-        }
-        animateParticles();
-
-        // FIREBASE SAYAÇ (DİNLEYİCİ SAYISI)
-        const firebaseConfig = {
-            apiKey: "AIzaSyBaTlb6V6e4FMLTYNXAPBgdzsgiclL8Qw8",
-            authDomain: "easyfm-37b9e.firebaseapp.com",
-            databaseURL: "https://easyfm-37b9e-default-rtdb.firebaseio.com",
-            projectId: "easyfm-37b9e",
-            storageBucket: "easyfm-37b9e.firebasestorage.app",
-            messagingSenderId: "869244564550",
-            appId: "1:869244564550:web:f0824148dbcae6b7024647"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
-        const myConnectionsRef = db.ref('online_listeners');
-        db.ref('.info/connected').on('value', (snap) => {
-            if (snap.val() === true) {
-                const con = myConnectionsRef.push();
-                con.onDisconnect().remove();
-                con.set(true);
-            }
-        });
-        myConnectionsRef.on('value', (snap) => {
-            document.getElementById('listener-count').innerText = snap.numChildren();
-        });
-
-        // HİBRİT KRİSTAL VISUALIZER
-        const vCanvas = document.getElementById('visualizer-canvas');
-        const vCtx = vCanvas.getContext('2d');
-        const numBars = 44;
-        let barHeights = new Array(numBars).fill(3);
-        let peakHeights = new Array(numBars).fill(3);
-
-        function drawVisualizer() {
-            vCanvas.width = vCanvas.offsetWidth;
-            vCanvas.height = vCanvas.offsetHeight;
-            vCtx.clearRect(0, 0, vCanvas.width, vCanvas.height);
-
-            const gap = 3;
-            const barWidth = (vCanvas.width / numBars) - gap;
-
-            for (let i = 0; i < numBars; i++) {
-                if (isPlayingState) {
-                    const target = Math.random() * (vCanvas.height - 6) + 4;
-                    barHeights[i] += (target - barHeights[i]) * 0.18;
-                } else {
-                    barHeights[i] += (3 - barHeights[i]) * 0.12;
-                }
-
-                if (barHeights[i] > peakHeights[i]) {
-                    peakHeights[i] = barHeights[i];
-                } else {
-                    peakHeights[i] -= 0.35;
-                }
-                if (peakHeights[i] < 3) peakHeights[i] = 3;
-
-                const x = i * (barWidth + gap);
-                const y = vCanvas.height - barHeights[i];
-
-                const grad = vCtx.createLinearGradient(0, vCanvas.height, 0, y);
-                grad.addColorStop(0, 'rgba(80, 80, 80, 0.15)');
-                grad.addColorStop(1, '#ffffff');
-
-                vCtx.fillStyle = grad;
-                vCtx.fillRect(x, y, barWidth, barHeights[i]);
-
-                vCtx.fillStyle = '#ffffff';
-                vCtx.fillRect(x, vCanvas.height - peakHeights[i] - 2, barWidth, 1.5);
-            }
-            requestAnimationFrame(drawVisualizer);
-        }
-        drawVisualizer();
-    </script>
-</body>
-</html>
+            { id: 'MKPEZlXY49Q', duration:

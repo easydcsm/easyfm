@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>EA$Y FM | CANLI TRAPHOUSE</title>
     
+    <!-- Pırlanta & Hip-Hop Estetiği Fontları -->
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;900&family=Syne:wght@800;900&family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     
     <style>
@@ -755,7 +756,7 @@
             updateAudioVisualState();
         });
 
-        /* THREE.JS DÜNYA & DİNAMİK ICE/EQUALIZER HALKASI */
+        /* THREE.JS DÜNYA & DİNAMİK ICE/EQUALIZER HALKASI (SIĞDIRMA AYARLI) */
         const globeContainer = document.getElementById('globe-3d-container');
         
         const scene = new THREE.Scene();
@@ -773,14 +774,15 @@
 
             camera.aspect = width / height;
 
+            /* KAMERA MESAFESİ UFAKÇE GERİYE ÇEKİLEREK KESİLMELER SIFIRLANDI */
             if (window.innerWidth > 768) {
-                camera.position.z = 4.6;
+                camera.position.z = 5.6;
             } else if (window.innerHeight <= 650) {
-                camera.position.z = 6.2;
+                camera.position.z = 7.2;
             } else if (window.innerWidth <= 600) {
-                camera.position.z = 5.8;
+                camera.position.z = 6.8;
             } else {
-                camera.position.z = 5.2;
+                camera.position.z = 6.2;
             }
 
             camera.updateProjectionMatrix();
@@ -790,7 +792,7 @@
         const textureLoader = new THREE.TextureLoader();
         const earthTexture = textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_atmos_2048.jpg');
 
-        const baseRadius = 1.6;
+        const baseRadius = 1.5;
         const segments = isMobileDevice ? 32 : 64;
         const geometry = new THREE.SphereGeometry(baseRadius, segments, segments);
         const material = new THREE.MeshStandardMaterial({
@@ -801,18 +803,18 @@
         const globeMesh = new THREE.Mesh(geometry, material);
         scene.add(globeMesh);
 
-        /* 3D ARKA PLAN DİNAMİK EKOLAYZIR HALKASI (ŞOV EFEKTİ) */
+        /* 3D ARKA PLAN DİNAMİK EKOLAYZIR HALKASI */
         const ringBarsCount = isMobileDevice ? 36 : 64;
         const ringBarsGroup = new THREE.Group();
         const ringBarMeshes = [];
 
         for (let i = 0; i < ringBarsCount; i++) {
-            const barGeo = new THREE.BoxGeometry(0.04, 0.4, 0.04);
+            const barGeo = new THREE.BoxGeometry(0.035, 0.32, 0.035);
             const barMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.6 });
             const bar = new THREE.Mesh(barGeo, barMat);
             
             const angle = (i / ringBarsCount) * Math.PI * 2;
-            const radius = baseRadius + 0.35;
+            const radius = baseRadius + 0.3;
             bar.position.set(Math.cos(angle) * radius, Math.sin(angle) * radius, -0.2);
             bar.rotation.z = angle - Math.PI / 2;
             
@@ -854,7 +856,8 @@
             ringTex.minFilter = THREE.LinearFilter;
             ringTex.magFilter = THREE.LinearFilter;
 
-            const ringGeo = new THREE.CylinderGeometry(baseRadius + 0.28, baseRadius + 0.28, 0.95, isMobileDevice ? 32 : 64, 1, true);
+            /* HALKA ÇAPI HASSAS KÜÇÜLTÜLDÜ */
+            const ringGeo = new THREE.CylinderGeometry(baseRadius + 0.25, baseRadius + 0.25, 0.85, isMobileDevice ? 32 : 64, 1, true);
             const ringMat = new THREE.MeshBasicMaterial({
                 map: ringTex,
                 transparent: true,
@@ -893,7 +896,7 @@
                 
                 /* TRAP BASS PUNCH & PULSE */
                 const bassPower = Math.pow(Math.sin(bassAngle), 6);
-                const bassScale = 1 + bassPower * 0.045;
+                const bassScale = 1 + bassPower * 0.04;
                 globeMesh.scale.set(bassScale, bassScale, bassScale);
 
                 dirLight.intensity = 2.2 + bassPower * 3.5;
@@ -905,7 +908,7 @@
                 /* DİNAMİK EKOLAYZIR HALKASI ANİMASYONU */
                 ringBarMeshes.forEach((bar, idx) => {
                     const rnd = Math.sin(bassAngle * 2 + idx) * 0.5 + 0.5;
-                    const scaleY = 0.5 + rnd * 2.2 * (bassPower + 0.3);
+                    const scaleY = 0.5 + rnd * 1.8 * (bassPower + 0.3);
                     bar.scale.set(1, scaleY, 1);
                     bar.material.opacity = 0.3 + rnd * 0.7;
                 });

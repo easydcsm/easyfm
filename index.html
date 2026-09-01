@@ -16,24 +16,25 @@
         html, body {
             margin: 0;
             padding: 0;
-            width: 100vw;
-            height: 100vh;
+            width: 100%;
+            height: 100%;
             background-color: #000000;
             color: #fff;
             font-family: 'Montserrat', sans-serif;
-            overflow: hidden !important;
-            position: fixed;
-            top: 0;
-            left: 0;
+            overflow-x: hidden;
+            scroll-behavior: auto !important;
+            overscroll-behavior-y: none;
         }
 
         body {
+            min-height: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
         }
 
+        /* ARKA PLAN CANVAS */
         #bg-canvas {
             position: fixed;
             top: 0;
@@ -44,6 +45,7 @@
             pointer-events: none;
         }
 
+        /* DİNAMİK ARKA PLAN AMBİYANSI */
         .ambient-glow {
             position: fixed;
             top: 50%;
@@ -51,48 +53,50 @@
             transform: translate(-50%, -50%);
             width: 85vw;
             height: 85vh;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, rgba(120, 120, 120, 0.03) 45%, rgba(0, 0, 0, 0) 70%);
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.12) 0%, rgba(100, 100, 100, 0.03) 45%, rgba(0, 0, 0, 0) 70%);
             z-index: 2;
             pointer-events: none;
-            transition: transform 0.05s linear;
+            transition: transform 0.2s cubic-bezier(0.1, 0.9, 0.2, 1), opacity 0.5s ease;
             will-change: transform;
-            filter: blur(25px);
+            filter: blur(20px);
         }
 
         .main-wrapper {
             position: relative;
             z-index: 10;
             width: 100%;
-            max-width: 620px;
-            height: 100vh;
+            max-width: 680px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: space-evenly;
-            padding: 10px 16px;
+            justify-content: flex-start;
+            padding: 15px 16px 30px 16px;
+            gap: 16px;
             margin: 0 auto;
         }
 
+        /* LOGO & 3D DÜNYA ALANI */
         .logo-container {
             text-align: center;
             position: relative;
             width: 100%;
-            max-width: 480px;
+            max-width: 440px;
             height: 250px;
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: visible !important;
+            overflow: visible;
             margin: 0 auto;
         }
 
+        /* PIRLANTA PATLAMA EFEKTİ */
         .blast-wave {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%) scale(0.6);
-            width: 200px;
-            height: 200px;
+            width: 220px;
+            height: 220px;
             border-radius: 50%;
             border: 3px solid rgba(255, 255, 255, 1);
             box-shadow: 0 0 90px rgba(255, 255, 255, 1), inset 0 0 50px rgba(255, 255, 255, 0.8);
@@ -124,7 +128,7 @@
             height: 100%;
             position: relative;
             z-index: 2;
-            overflow: visible !important;
+            overflow: visible;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -133,24 +137,26 @@
         #globe-3d-container canvas {
             display: block;
             outline: none;
-            overflow: visible !important;
         }
 
+        /* STATUS BAR (BADGES & VOLUME) */
         .status-bar {
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
             justify-content: center;
             align-items: center;
+            margin-top: 2px;
+            margin-bottom: 2px;
             width: 100%;
         }
 
         .badge {
-            background: rgba(20, 20, 20, 0.85);
+            background: rgba(20, 20, 20, 0.8);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 7px 16px;
+            padding: 8px 18px;
             border-radius: 30px;
             font-size: 10px;
             font-weight: 800;
@@ -160,10 +166,14 @@
             gap: 8px;
             text-transform: uppercase;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+            position: relative;
+            overflow: hidden;
             transition: border-color 0.3s;
         }
 
-        .badge:hover { border-color: rgba(255, 255, 255, 0.5); }
+        .badge:hover {
+            border-color: rgba(255, 255, 255, 0.4);
+        }
 
         .live-dot {
             width: 8px;
@@ -180,21 +190,26 @@
             100% { opacity: 1; transform: scale(1); }
         }
 
+        /* SES KONTROL ÇUBUĞU */
         .volume-control-box {
             display: flex;
             align-items: center;
             gap: 10px;
-            background: rgba(20, 20, 20, 0.85);
+            background: rgba(20, 20, 20, 0.8);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 5px 14px;
+            padding: 6px 16px;
             border-radius: 30px;
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
             transition: border-color 0.3s;
+            position: relative;
+            overflow: hidden;
         }
 
-        .volume-control-box:hover { border-color: rgba(255, 255, 255, 0.5); }
+        .volume-control-box:hover {
+            border-color: rgba(255, 255, 255, 0.4);
+        }
 
         .volume-btn {
             background: none;
@@ -207,19 +222,25 @@
             align-items: center;
             justify-content: center;
             transition: transform 0.2s;
+            position: relative;
+            z-index: 2;
         }
 
-        .volume-btn:active { transform: scale(0.85); }
+        .volume-btn:active {
+            transform: scale(0.85);
+        }
 
         .volume-slider {
             -webkit-appearance: none;
             appearance: none;
-            width: 70px;
+            width: 75px;
             height: 4px;
             border-radius: 2px;
             background: rgba(255, 255, 255, 0.25);
             outline: none;
             cursor: pointer;
+            position: relative;
+            z-index: 2;
         }
 
         .volume-slider::-webkit-slider-thumb {
@@ -234,24 +255,28 @@
             transition: transform 0.15s;
         }
 
-        .volume-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
+        .volume-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
 
+        /* VİDEO ÇERÇEVESİ VE ÖZEL REKLAM MASKESİ */
         .video-container {
             position: relative;
             width: 100%;
-            padding-bottom: 50%;
+            padding-bottom: 52%;
             height: 0;
-            border-radius: 18px;
+            border-radius: 20px;
             overflow: hidden;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.95);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: border-color 0.1s ease, box-shadow 0.1s ease, transform 0.05s ease;
+            transition: border-color 0.5s, box-shadow 0.5s;
             background: #000;
+            margin: 0;
         }
 
         .video-container.playing-border {
-            border-color: rgba(255, 255, 255, 0.7);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9), 0 0 45px rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.65);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9), 0 0 45px rgba(255, 255, 255, 0.2);
         }
 
         #youtube-player {
@@ -264,9 +289,36 @@
             pointer-events: auto;
         }
 
-        .yt-shield-top-main { position: absolute; top: 0; left: 0; width: 100%; height: 82%; z-index: 15; background: transparent; }
-        .yt-shield-bottom-left { position: absolute; bottom: 0; left: 0; width: 78%; height: 18%; z-index: 15; background: transparent; }
-        .yt-shield-bottom-edge { position: absolute; bottom: 0; right: 0; width: 2%; height: 18%; z-index: 15; background: transparent; }
+        /* TAM KİLİT MASKELERİ */
+        .yt-shield-top-main {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 82%;
+            z-index: 15;
+            background: transparent;
+        }
+
+        .yt-shield-bottom-left {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 78%;
+            height: 18%;
+            z-index: 15;
+            background: transparent;
+        }
+
+        .yt-shield-bottom-edge {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 2%;
+            height: 18%;
+            z-index: 15;
+            background: transparent;
+        }
 
         #start-overlay {
             position: absolute;
@@ -291,42 +343,54 @@
             color: #000;
             font-family: 'Montserrat', sans-serif;
             font-weight: 900;
-            font-size: 11px;
-            padding: 13px 34px;
+            font-size: 12px;
+            padding: 14px 36px;
             border: none;
             border-radius: 50px;
             cursor: pointer;
             letter-spacing: 2px;
             box-shadow: 0 0 30px rgba(255, 255, 255, 0.7);
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s, background-color 0.3s;
+            position: relative;
+            overflow: hidden;
         }
 
         .start-btn:hover {
             transform: scale(1.05);
             box-shadow: 0 0 50px rgba(255, 255, 255, 0.95);
+            background-color: #f8f8f8;
         }
 
+        .start-btn:active {
+            transform: scale(0.97);
+        }
+
+        /* NOW PLAYING CARD */
         .now-playing-card {
             width: 100%;
-            background: rgba(20, 20, 20, 0.85);
+            background: rgba(20, 20, 20, 0.8);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 14px;
-            padding: 14px 20px;
+            border-radius: 16px;
+            padding: 16px 22px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             box-shadow: 0 10px 35px rgba(0, 0, 0, 0.75);
+            margin: 0;
+            position: relative;
             transition: border-color 0.3s ease;
         }
 
-        .now-playing-card:hover { border-color: rgba(255, 255, 255, 0.45); }
+        .now-playing-card:hover {
+            border-color: rgba(255, 255, 255, 0.45);
+        }
 
         .track-info {
             display: flex;
             flex-direction: column;
-            gap: 3px;
+            gap: 4px;
             overflow: hidden;
             max-width: 55%;
         }
@@ -362,9 +426,10 @@
             text-overflow: ellipsis;
             display: flex;
             flex-direction: column;
-            gap: 3px;
+            gap: 4px;
         }
 
+        /* DİNAMİK SES DALGASI ANIMASYONU */
         .wave-bars {
             display: flex;
             align-items: flex-end;
@@ -393,18 +458,41 @@
 
         #visualizer-canvas {
             width: 100%;
-            height: 24px;
+            height: 28px;
             margin: 0;
             transition: opacity 1s ease;
         }
 
+        /* MOBİL UYUM DÜZENLEMELERİ */
         @media (max-width: 600px) {
-            .main-wrapper { padding: 8px 12px; }
-            .logo-container { height: 200px; }
-            .video-container { padding-bottom: 54%; border-radius: 14px; }
-            .yt-shield-bottom-left { width: 68%; }
-            .now-playing-card { padding: 10px 14px; border-radius: 12px; }
-            .start-btn { font-size: 10px; padding: 11px 26px; }
+            .main-wrapper {
+                padding: 10px 12px 25px 12px;
+                gap: 12px;
+            }
+
+            .logo-container {
+                height: 200px;
+                width: 100%;
+            }
+
+            .video-container {
+                padding-bottom: 56%;
+                border-radius: 16px;
+            }
+
+            .yt-shield-bottom-left {
+                width: 68%;
+            }
+
+            .now-playing-card {
+                padding: 12px 16px;
+                border-radius: 14px;
+            }
+
+            .start-btn {
+                font-size: 11px;
+                padding: 12px 28px;
+            }
         }
     </style>
 
@@ -472,8 +560,19 @@
     </div>
 
     <script>
-        window.addEventListener('scroll', () => window.scrollTo(0, 0));
-        document.body.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+
+        function forceScrollTop() {
+            if (window.scrollY !== 0 || document.documentElement.scrollTop !== 0) {
+                window.scrollTo(0, 0);
+            }
+        }
+
+        forceScrollTop();
+        window.addEventListener('DOMContentLoaded', forceScrollTop);
+        window.addEventListener('load', forceScrollTop);
 
         let player = null;
         let isPlayerReady = false;
@@ -484,35 +583,34 @@
 
         const isMobileDevice = window.innerWidth <= 768;
 
-        /* Half-time (Ana bas vuruşu) optimizasyonu yapılmış BPM listesi */
         const baseSongList = [
-            { id: '1IEg_3x35go', duration: 120, title: 'FRANCHISE', bpm: 78 },
-            { id: 'qAlF70MdfwU', duration: 207, title: 'OUT WEST', bpm: 70 }, 
-            { id: 'L_BpiSsIBFM', duration: 236, title: 'BROTHER STONE', bpm: 70 }, 
-            { id: 'cTGQrA5HHIU', duration: 204, title: 'WITH THAT', bpm: 65 }, 
-            { id: 'ftaXMKV3ffE', duration: 160, title: 'BACKR00MS', bpm: 71 },
-            { id: 'LPTlvQ1Zet0', duration: 188, title: 'RIC FLAIR DRIP', bpm: 100 },
-            { id: 'EfHNIPXTxy0', duration: 276, title: 'ZEZE', bpm: 98 },
-            { id: 'yST9RwZNZDw', duration: 169, title: 'VURURUM KAFANDAN', bpm: 65 },
-            { id: 'JrPBResAG2s', duration: 175, title: 'KÖPEKBALIKLARI BURDA', bpm: 68 },
-            { id: '-q-XvhV7GFA', duration: 165, title: 'HARBİDEN ŞEKERMİŞ', bpm: 120 },
-            { id: 'N4nfjhJN6SA', duration: 197, title: 'TAKE IT TO TRIAL', bpm: 73 },
-            { id: 'kC2nGcgKeX0', duration: 167, title: 'GOSTOSO', bpm: 65 },
-            { id: 'LcKC9YG-TQY', duration: 150, title: 'MOB GUYS', bpm: 69 },
-            { id: '-yElvysKMCY', duration: 164, title: 'TRIMSKI', bpm: 70 },
-            { id: 'pfjy7PhVtMo', duration: 135, title: 'POTATO LOADED', bpm: 66 },
-            { id: 'bHDWrnlIqfQ', duration: 173, title: 'POPPIN/TALIBAN', bpm: 68 },
-            { id: 'KPz33BLkvho', duration: 165, title: 'ESCAPE PLAN', bpm: 77 },
-            { id: 'B9synWjqBn8', duration: 209, title: 'FE!N', bpm: 74 },
-            { id: 'MKPEZlXY49Q', duration: 244, title: 'JENGA', bpm: 65 },
-            { id: 'SpXw0qiy3Wo', duration: 314, title: 'X', bpm: 75 },
-            { id: 'GErG9femMQk', duration: 174, title: 'WE PAID', bpm: 68 },
-            { id: 'leJNDpm_G10', duration: 308, title: 'HOT', bpm: 112 },
-            { id: 'PXxbEfhtDiM', duration: 169, title: 'DEAD FRESH', bpm: 70 },
-            { id: '81LJJFASh-I', duration: 185, title: '24/7', bpm: 65 },
-            { id: 'H6v_UYs01gA', duration: 167, title: 'PEMBE YALANLAR', bpm: 65 },
-            { id: 'p6DHMNX-TO4', duration: 191, title: 'INSANË', bpm: 70 },
-            { id: 'OBVx0Jmg88g', duration: 212, title: 'HBA', bpm: 70 }
+            { id: '1IEg_3x35go', duration: 120, title: 'FRANCHISE' },
+            { id: 'qAlF70MdfwU', duration: 207, title: 'OUT WEST' }, 
+            { id: 'L_BpiSsIBFM', duration: 236, title: 'BROTHER STONE' }, 
+            { id: 'cTGQrA5HHIU', duration: 204, title: 'WITH THAT' }, 
+            { id: 'ftaXMKV3ffE', duration: 160, title: 'BACKR00MS' },
+            { id: 'LPTlvQ1Zet0', duration: 188, title: 'RIC FLAIR DRIP' },
+            { id: 'EfHNIPXTxy0', duration: 276, title: 'ZEZE' },
+            { id: 'yST9RwZNZDw', duration: 169, title: 'VURURUM KAFANDAN' },
+            { id: 'JrPBResAG2s', duration: 175, title: 'KÖPEKBALIKLARI BURDA' },
+            { id: '-q-XvhV7GFA', duration: 165, title: 'HARBİDEN ŞEKERMİŞ' },
+            { id: 'N4nfjhJN6SA', duration: 197, title: 'TAKE IT TO TRIAL' },
+            { id: 'kC2nGcgKeX0', duration: 167, title: 'GOSTOSO' },
+            { id: 'LcKC9YG-TQY', duration: 150, title: 'MOB GUYS' },
+            { id: '-yElvysKMCY', duration: 164, title: 'TRIMSKI' },
+            { id: 'pfjy7PhVtMo', duration: 135, title: 'POTATO LOADED' },
+            { id: 'bHDWrnlIqfQ', duration: 173, title: 'POPPIN/TALIBAN' },
+            { id: 'KPz33BLkvho', duration: 165, title: 'ESCAPE PLAN' },
+            { id: 'B9synWjqBn8', duration: 209, title: 'FE!N' },
+            { id: 'MKPEZlXY49Q', duration: 244, title: 'JENGA' },
+            { id: 'SpXw0qiy3Wo', duration: 314, title: 'X' },
+            { id: 'GErG9femMQk', duration: 174, title: 'WE PAID' },
+            { id: 'leJNDpm_G10', duration: 308, title: 'HOT' },
+            { id: 'PXxbEfhtDiM', duration: 169, title: 'DEAD FRESH' },
+            { id: '81LJJFASh-I', duration: 185, title: '24/7' },
+            { id: 'H6v_UYs01gA', duration: 167, title: 'PEMBE YALANLAR' },
+            { id: 'p6DHMNX-TO4', duration: 191, title: 'INSANË' },
+            { id: 'OBVx0Jmg88g', duration: 212, title: 'HBA' }
         ];
 
         const STREAM_START_TIME = 1700000000; 
@@ -539,15 +637,16 @@
         const songList = getDeterministicShuffledList(baseSongList, STREAM_START_TIME);
         const totalPlaylistDuration = songList.reduce((acc, song) => acc + song.duration, 0);
 
-        let currentSongBpm = 70;
-
         function getCurrentStreamState() {
             const nowInSeconds = Math.floor(Date.now() / 1000);
             const elapsedTime = (nowInSeconds - STREAM_START_TIME) % totalPlaylistDuration;
             let accumulatedTime = 0;
             for (let i = 0; i < songList.length; i++) {
                 if (elapsedTime < accumulatedTime + songList[i].duration) {
-                    return { songIndex: i, seekTo: elapsedTime - accumulatedTime };
+                    return {
+                        songIndex: i,
+                        seekTo: elapsedTime - accumulatedTime
+                    };
                 }
                 accumulatedTime += songList[i].duration;
             }
@@ -558,8 +657,6 @@
             const currentSong = songList[currentIndex];
             const nextIndex = (currentIndex + 1) % songList.length;
             const nextSong = songList[nextIndex];
-
-            currentSongBpm = currentSong.bpm || 70;
 
             document.getElementById('current-track-name').innerText = currentSong.title;
             document.getElementById('next-track-name').innerText = nextSong.title;
@@ -590,7 +687,13 @@
                     'start': Math.floor(state.seekTo)
                 },
                 events: {
-                    'onReady': () => { isPlayerReady = true; },
+                    'onReady': () => { 
+                        isPlayerReady = true; 
+                        if (document.activeElement) {
+                            document.activeElement.blur();
+                        }
+                        forceScrollTop();
+                    },
                     'onStateChange': onPlayerStateChange
                 }
             });
@@ -613,26 +716,37 @@
         }
 
         function onPlayerStateChange(event) {
-            actualPlayerStatePlaying = (event.data === YT.PlayerState.PLAYING);
+            if (event.data === YT.PlayerState.PLAYING) {
+                actualPlayerStatePlaying = true;
+            } else {
+                actualPlayerStatePlaying = false;
+            }
             updateAudioVisualState();
         }
 
         function syncToLiveStream() {
             if (!isPlayerReady || !player) return;
+
             const state = getCurrentStreamState();
             const targetSong = songList[state.songIndex];
+
             updateTrackLabels(state.songIndex);
 
             if (currentLoadedVideoId !== targetSong.id) {
                 currentLoadedVideoId = targetSong.id;
-                player.loadVideoById({ videoId: targetSong.id, startSeconds: Math.floor(state.seekTo) });
+                player.loadVideoById({
+                    videoId: targetSong.id,
+                    startSeconds: Math.floor(state.seekTo)
+                });
                 player.playVideo();
                 return;
             }
 
             if (typeof player.getCurrentTime === 'function') {
                 const currentTime = player.getCurrentTime();
-                if (Math.abs(currentTime - state.seekTo) > 1.8) {
+                const timeDiff = Math.abs(currentTime - state.seekTo);
+                
+                if (timeDiff > 1.8) {
                     player.seekTo(state.seekTo, true);
                     player.playVideo();
                 }
@@ -648,16 +762,25 @@
             const overlay = document.getElementById('start-overlay');
             overlay.style.opacity = '0';
             overlay.style.pointerEvents = 'none';
-            setTimeout(() => { overlay.style.display = 'none'; }, 500);
+            setTimeout(() => { 
+                overlay.style.display = 'none'; 
+            }, 500);
 
             const startPlaying = () => {
                 const state = getCurrentStreamState();
                 const targetSong = songList[state.songIndex];
+
                 updateTrackLabels(state.songIndex);
                 currentLoadedVideoId = targetSong.id;
 
-                if (typeof player.unMute === 'function') player.unMute();
-                player.loadVideoById({ videoId: targetSong.id, startSeconds: Math.floor(state.seekTo) });
+                if (typeof player.unMute === 'function') {
+                    player.unMute();
+                }
+
+                player.loadVideoById({
+                    videoId: targetSong.id,
+                    startSeconds: Math.floor(state.seekTo)
+                });
                 player.playVideo();
 
                 if (syncCheckInterval) clearInterval(syncCheckInterval);
@@ -688,8 +811,10 @@
 
         volumeRange.addEventListener('input', (e) => {
             const val = Number(e.target.value);
+            
             if (player && typeof player.setVolume === 'function') {
                 player.setVolume(val);
+                
                 if (val === 0) {
                     player.mute();
                     muteBtn.innerText = '🔇';
@@ -710,9 +835,16 @@
             if (isMuted) {
                 player.unMute();
                 muteBtn.innerText = '🔊';
-                let currentVol = Number(volumeRange.value) || 100;
-                volumeRange.value = currentVol;
-                if (typeof player.setVolume === 'function') player.setVolume(currentVol);
+                
+                let currentVol = Number(volumeRange.value);
+                if (currentVol === 0) {
+                    currentVol = 100;
+                    volumeRange.value = 100;
+                }
+                
+                if (typeof player.setVolume === 'function') {
+                    player.setVolume(currentVol);
+                }
                 isMuted = false;
             } else {
                 player.mute();
@@ -723,12 +855,14 @@
             updateAudioVisualState();
         });
 
-        /* THREE.JS 3D DÜNYA */
+        /* THREE.JS 3D DÜNYA VE HALKA EFEKTİ (OPTIMIZED) */
         const globeContainer = document.getElementById('globe-3d-container');
+        
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
         
         const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: !isMobileDevice, powerPreference: "high-performance" });
+        // Mobilde GPU aşırı yükünü önlemek için piksel oranını 1.5 ile sınırlıyoruz
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
         globeContainer.appendChild(renderer.domElement);
 
@@ -738,8 +872,15 @@
             if (width === 0 || height === 0) return;
 
             camera.aspect = width / height;
-            /* Dünya kesilmesin diye kamera mesafesi geriye çekildi */
-            camera.position.z = window.innerWidth <= 400 ? 5.8 : (window.innerWidth <= 600 ? 5.4 : 5.0);
+
+            if (window.innerWidth <= 400) {
+                camera.position.z = 5.5;
+            } else if (window.innerWidth <= 600) {
+                camera.position.z = 5.1;
+            } else {
+                camera.position.z = 4.7;
+            }
+
             camera.updateProjectionMatrix();
             renderer.setSize(width, height);
         }
@@ -747,7 +888,8 @@
         const textureLoader = new THREE.TextureLoader();
         const earthTexture = textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_atmos_2048.jpg');
 
-        const baseRadius = 1.5;
+        const baseRadius = 1.65;
+        // Poligon sayısını mobil uyumlu seviyeye çektik (36x36)
         const segments = isMobileDevice ? 36 : 64;
         const geometry = new THREE.SphereGeometry(baseRadius, segments, segments);
         const material = new THREE.MeshStandardMaterial({
@@ -758,7 +900,7 @@
         const globeMesh = new THREE.Mesh(geometry, material);
         scene.add(globeMesh);
 
-        const ambientLight = new THREE.AmbientLight(0xffffff, 1.7);
+        const ambientLight = new THREE.AmbientLight(0xffffff, 1.6);
         scene.add(ambientLight);
 
         const dirLight = new THREE.DirectionalLight(0xffffff, 2.2);
@@ -769,16 +911,18 @@
 
         function createOrbitRingText() {
             const canvas = document.createElement('canvas');
-            canvas.width = 1024;
+            canvas.width = 1024; // Mobilde bellek harcamaması için 1024'e optimize edildi
             canvas.height = 256;
             const ctx = canvas.getContext('2d');
 
             ctx.fillStyle = 'transparent';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
+
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillStyle = '#ffffff';
 
+            // shadowBlur GPU katili olduğu için kaldırıldı
             ctx.font = '900 80px "Anton", sans-serif';
             ctx.fillText("EA$Y FM", canvas.width / 2, 80);
 
@@ -802,12 +946,13 @@
             scene.add(ringMesh);
         }
 
-        document.fonts.ready.then(() => { createOrbitRingText(); });
+        document.fonts.ready.then(() => {
+            createOrbitRingText();
+        });
 
+        let bassAngle = 0;
         const ambientGlowEl = document.getElementById('ambient-glow');
-        const videoBoxEl = document.getElementById('video-box');
         let lastTime = performance.now();
-        let currentBassIntensity = 0;
 
         function animateGlobe(currentTime) {
             requestAnimationFrame(animateGlobe);
@@ -824,29 +969,15 @@
             if (ringMesh) ringMesh.rotation.y -= ringSpeed * deltaTime;
 
             if (isPlayingState) {
-                const bps = currentSongBpm / 60;
-                const beatPhase = (Date.now() / 1000 * bps * Math.PI) % Math.PI;
-                
-                const rawBass = Math.pow(Math.sin(beatPhase), 8); 
-                currentBassIntensity = rawBass;
-
-                /* Büyüme çarpanı 0.05'e optimize edilerek taşma engellendi */
-                const bassScale = 1 + rawBass * 0.05;
+                bassAngle += 6.0 * deltaTime;
+                const bassScale = 1 + Math.pow(Math.sin(bassAngle), 6) * 0.055;
                 globeMesh.scale.set(bassScale, bassScale, bassScale);
 
-                const glowScale = 1 + rawBass * 0.1;
+                const glowScale = 1 + Math.sin(bassAngle) * 0.08;
                 ambientGlowEl.style.transform = `translate(-50%, -50%) scale(${glowScale})`;
-
-                if (rawBass > 0.85) {
-                    videoBoxEl.style.transform = `translate(${(Math.random() - 0.5) * 2}px, ${(Math.random() - 0.5) * 2}px)`;
-                } else {
-                    videoBoxEl.style.transform = `translate(0, 0)`;
-                }
             } else {
-                currentBassIntensity = 0;
                 globeMesh.scale.lerp(new THREE.Vector3(1, 1, 1), 10 * deltaTime);
                 ambientGlowEl.style.transform = `translate(-50%, -50%) scale(1)`;
-                videoBoxEl.style.transform = `translate(0, 0)`;
             }
 
             renderer.render(scene, camera);
@@ -855,7 +986,7 @@
         resizeThreeJS();
         requestAnimationFrame(animateGlobe);
 
-        /* PIRLANTA PARÇACIK ANIMASYONU */
+        /* PIRLANTA SPARKLE PARÇACIK ANIMASYONU (OPTIMIZED) */
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
         let particlesArray = [];
@@ -869,7 +1000,9 @@
         handleResize();
 
         class DiamondParticle {
-            constructor() { this.reset(); }
+            constructor() {
+                this.reset();
+            }
 
             reset() {
                 this.x = Math.random() * canvas.width;
@@ -914,6 +1047,7 @@
             }
         }
 
+        // Parçacık sayısı mobilde 25, masaüstünde 50 olacak şekilde düşürüldü
         const particleCount = isMobileDevice ? 25 : 50;
         for (let i = 0; i < particleCount; i++) particlesArray.push(new DiamondParticle());
 
@@ -951,7 +1085,7 @@
         /* VISUALIZER */
         const vCanvas = document.getElementById('visualizer-canvas');
         const vCtx = vCanvas.getContext('2d');
-        const numBars = isMobileDevice ? 24 : 44;
+        const numBars = isMobileDevice ? 24 : 44; // Mobilde bar sayısı yarıya düşürüldü
         let barHeights = new Array(numBars).fill(3);
         let peakHeights = new Array(numBars).fill(3);
 
@@ -965,15 +1099,8 @@
 
             for (let i = 0; i < numBars; i++) {
                 if (isPlayingState) {
-                    let target = 3;
-                    if (i < numBars * 0.3) {
-                        target = (currentBassIntensity * (vCanvas.height - 4)) + Math.random() * 4;
-                    } else {
-                        const randMelody = Math.sin(Date.now() * 0.01 + i) * 0.5 + 0.5;
-                        target = (randMelody * (vCanvas.height - 8)) * (0.4 + currentBassIntensity * 0.6);
-                    }
-
-                    barHeights[i] += (target - barHeights[i]) * 0.25;
+                    const target = Math.random() * (vCanvas.height - 6) + 4;
+                    barHeights[i] += (target - barHeights[i]) * 0.18;
                 } else {
                     barHeights[i] += (3 - barHeights[i]) * 0.12;
                 }
@@ -981,7 +1108,7 @@
                 if (barHeights[i] > peakHeights[i]) {
                     peakHeights[i] = barHeights[i];
                 } else {
-                    peakHeights[i] -= 0.4;
+                    peakHeights[i] -= 0.35;
                 }
                 if (peakHeights[i] < 3) peakHeights[i] = 3;
 

@@ -15,7 +15,7 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* MOBİL VE PC UYUMLU GÖVDE */
+        /* MOBİL VE PC UYUMLU KİLİTLİ GÖVDE */
         html, body {
             margin: 0;
             padding: 0;
@@ -80,26 +80,26 @@
             box-sizing: border-box;
         }
 
-        /* DÜNYA LOGOSU ALANI (PC VE MOBİL DİNAMİK BOYUTLU) */
+        /* DÜNYA LOGOSU ALANI (TAŞMALARI ENGELLEMEK İÇİN SIZDIRMAZ KAPSAYICI) */
         .logo-container {
             text-align: center;
             position: relative;
             width: 100%;
             max-width: 320px;
-            height: clamp(90px, 18vh, 180px);
+            height: clamp(90px, 18vh, 160px);
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: visible;
+            overflow: hidden; /* Dışarıya taşmayı engelleyen kritik ayar */
             margin: 0 auto;
-            flex-shrink: 1;
+            flex-shrink: 0;
         }
 
-        /* PC / MASAÜSTÜ İÇİN DÜNYA BOYUTUNU BÜYÜTME */
+        /* PC / MASAÜSTÜ İÇİN DÜNYA BOYUT ORANI */
         @media (min-width: 769px) {
             .logo-container {
-                max-width: 500px;
-                height: clamp(180px, 28vh, 320px);
+                max-width: 480px;
+                height: clamp(140px, 22vh, 240px);
             }
         }
 
@@ -141,7 +141,7 @@
             height: 100%;
             position: relative;
             z-index: 2;
-            overflow: visible;
+            overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -761,7 +761,7 @@
             updateAudioVisualState();
         });
 
-        /* THREE.JS DÜNYA (PC MASAUŞTU BÜYÜTME OPTİMİZASYONU) */
+        /* THREE.JS DÜNYA (HASSAS KAMERA AYARLI SIZDIRMAZ DÜNYA) */
         const globeContainer = document.getElementById('globe-3d-container');
         
         const scene = new THREE.Scene();
@@ -779,9 +779,9 @@
 
             camera.aspect = width / height;
 
-            /* EKRAN BOYUTUNA GÖRE KAMERA MESAFESİ (PC'DE YAKINLAŞTIRMA) */
+            /* KAMERA MESAFESİ DENGELENDİ (DÜNYANIN KUTU DIŞINA TAŞMASI ENGELLENDİ) */
             if (window.innerWidth > 768) {
-                camera.position.z = 3.6; // PC ekranlarında dünyayı büyük gösterir
+                camera.position.z = 4.2; // Dengeli büyüklük (kesilme yapmaz)
             } else if (window.innerHeight <= 650) {
                 camera.position.z = 6.2;
             } else if (window.innerWidth <= 600) {
@@ -875,7 +875,7 @@
 
             if (isPlayingState) {
                 bassAngle += 6.0 * deltaTime;
-                const bassScale = 1 + Math.pow(Math.sin(bassAngle), 6) * 0.05;
+                const bassScale = 1 + Math.pow(Math.sin(bassAngle), 6) * 0.04;
                 globeMesh.scale.set(bassScale, bassScale, bassScale);
 
                 dirLight.intensity = 2.2 + Math.pow(Math.sin(bassAngle), 6) * 2.5;

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>EA$Y FM | CANLI</title>
     
+    <!-- Pırlanta & Hip-Hop Estetiği Fontları -->
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;900&family=Syne:wght@800;900&family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     
     <style>
@@ -58,19 +59,19 @@
             pointer-events: none;
         }
 
-        /* DİNAMİK ŞİMŞEK ÇAKMA KATMANI */
+        /* BASS ŞİMŞEK ÇAKMA KATMANI (NET VE BELİRGİN) */
         #lightning-flash {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.45) 0%, rgba(200, 230, 255, 0.15) 50%, rgba(0, 0, 0, 0) 90%);
+            background: rgba(255, 255, 255, 0.85);
             z-index: 2;
             pointer-events: none;
             opacity: 0;
-            mix-blend-mode: screen;
-            transition: opacity 0.05s ease-out;
+            mix-blend-mode: overlay;
+            will-change: opacity;
         }
 
         /* ICE / AMBIENT GLOW */
@@ -770,7 +771,7 @@
             updateAudioVisualState();
         });
 
-        /* THREE.JS DÜNYA & DİNAMİK ICE/EQUALIZER HALKASI (FOV VE KAMERA DENGELİ) */
+        /* THREE.JS DÜNYA & DİNAMİK ICE/EQUALIZER HALKASI */
         const globeContainer = document.getElementById('globe-3d-container');
         
         const scene = new THREE.Scene();
@@ -908,18 +909,18 @@
                 
                 /* TRAP BASS PUNCH & PULSE */
                 const bassPower = Math.pow(Math.sin(bassAngle), 6);
-                const bassScale = 1 + bassPower * 0.04;
+                const bassScale = 1 + bassPower * 0.05;
                 globeMesh.scale.set(bassScale, bassScale, bassScale);
 
-                dirLight.intensity = 2.2 + bassPower * 3.5;
+                dirLight.intensity = 2.2 + bassPower * 4.0;
 
-                const glowScale = 1 + Math.sin(bassAngle) * 0.12;
+                const glowScale = 1 + Math.sin(bassAngle) * 0.15;
                 ambientGlowEl.style.transform = `translate(-50%, -50%) scale(${glowScale})`;
                 ambientGlowEl.style.opacity = (0.45 + bassPower * 0.55).toString();
 
-                /* ŞARKIYLA UYUMLU ŞİMŞEK ÇAKMA KONTROLÜ */
-                if (bassPower > 0.88) {
-                    lightningEl.style.opacity = (0.3 + (bassPower - 0.88) * 4).toString();
+                /* BAS VURDUĞUNDA ŞARTSIZ BEYAZ ŞİMŞEK ÇAKMA (VERY BRIGHT LIGHTNING STROBE) */
+                if (bassPower > 0.75) {
+                    lightningEl.style.opacity = (Math.random() > 0.3 ? (0.6 + (bassPower - 0.75) * 1.6) : 0).toString();
                 } else {
                     lightningEl.style.opacity = '0';
                 }
@@ -951,7 +952,7 @@
         resizeThreeJS();
         requestAnimationFrame(animateGlobe);
 
-        /* SADECE DÖNEN NOKTALAR - ARTI VE PIRLANTA EFEKTLERİ KALDIRILDI */
+        /* SADECE DÖNEN NOKTALAR - SADE PARÇACIKLAR */
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
         let particlesArray = [];

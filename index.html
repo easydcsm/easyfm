@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>EA$Y FM | CANLI</title>
     
-    <!-- Pırlanta Estetiği Fontları -->
+    <!-- Pırlanta & Hip-Hop Estetiği Fontları -->
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;900&family=Syne:wght@800;900&family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     
     <style>
@@ -15,7 +15,7 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* MOBİL VE PC UYUMLU GÖVDE */
+        /* MOBİL VE PC UYUMLU KİLİTLİ GÖVDE */
         html, body {
             margin: 0;
             padding: 0;
@@ -90,7 +90,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden; /* Dışarıya taşmayı engelleyen kritik ayar */
+            overflow: hidden;
             margin: 0 auto;
             flex-shrink: 0;
         }
@@ -761,7 +761,7 @@
             updateAudioVisualState();
         });
 
-        /* THREE.JS DÜNYA (HASSAS KAMERA AYARLI SIZDIRMAZ DÜNYA) */
+        /* THREE.JS DÜNYA (GÜVENLİ VE SIZDIRMAZ KAMERA ORANI) */
         const globeContainer = document.getElementById('globe-3d-container');
         
         const scene = new THREE.Scene();
@@ -779,15 +779,15 @@
 
             camera.aspect = width / height;
 
-            /* KAMERA MESAFESİ DENGELENDİ (DÜNYANIN KUTU DIŞINA TAŞMASI ENGELLENDİ) */
+            /* KAMERA GERİYE ÇEKİLEREK SIĞMA KONTROLÜ SAĞLANDI */
             if (window.innerWidth > 768) {
-                camera.position.z = 4.2; // Dengeli büyüklük (kesilme yapmaz)
-            } else if (window.innerHeight <= 650) {
-                camera.position.z = 6.2;
-            } else if (window.innerWidth <= 600) {
-                camera.position.z = 5.6;
-            } else {
                 camera.position.z = 4.8;
+            } else if (window.innerHeight <= 650) {
+                camera.position.z = 6.8;
+            } else if (window.innerWidth <= 600) {
+                camera.position.z = 6.2;
+            } else {
+                camera.position.z = 5.4;
             }
 
             camera.updateProjectionMatrix();
@@ -875,7 +875,9 @@
 
             if (isPlayingState) {
                 bassAngle += 6.0 * deltaTime;
-                const bassScale = 1 + Math.pow(Math.sin(bassAngle), 6) * 0.04;
+                
+                /* BAS BÜYÜME HASSASİYETİ TAŞMAYACAK ŞEKİLDE DÜŞÜRÜLDÜ */
+                const bassScale = 1 + Math.pow(Math.sin(bassAngle), 6) * 0.015;
                 globeMesh.scale.set(bassScale, bassScale, bassScale);
 
                 dirLight.intensity = 2.2 + Math.pow(Math.sin(bassAngle), 6) * 2.5;

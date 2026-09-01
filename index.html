@@ -77,12 +77,12 @@
             text-align: center;
             position: relative;
             width: 100%;
-            max-width: 400px;
-            height: 210px;
+            max-width: 480px;
+            height: 250px;
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: visible;
+            overflow: visible !important;
             margin: 0 auto;
         }
 
@@ -124,7 +124,7 @@
             height: 100%;
             position: relative;
             z-index: 2;
-            overflow: visible;
+            overflow: visible !important;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -133,6 +133,7 @@
         #globe-3d-container canvas {
             display: block;
             outline: none;
+            overflow: visible !important;
         }
 
         .status-bar {
@@ -399,7 +400,7 @@
 
         @media (max-width: 600px) {
             .main-wrapper { padding: 8px 12px; }
-            .logo-container { height: 170px; }
+            .logo-container { height: 200px; }
             .video-container { padding-bottom: 54%; border-radius: 14px; }
             .yt-shield-bottom-left { width: 68%; }
             .now-playing-card { padding: 10px 14px; border-radius: 12px; }
@@ -483,34 +484,35 @@
 
         const isMobileDevice = window.innerWidth <= 768;
 
+        /* Half-time (Ana bas vuruşu) optimizasyonu yapılmış BPM listesi */
         const baseSongList = [
-            { id: '1IEg_3x35go', duration: 120, title: 'FRANCHISE', bpm: 156 },
-            { id: 'qAlF70MdfwU', duration: 207, title: 'OUT WEST', bpm: 139 }, 
-            { id: 'L_BpiSsIBFM', duration: 236, title: 'BROTHER STONE', bpm: 140 }, 
-            { id: 'cTGQrA5HHIU', duration: 204, title: 'WITH THAT', bpm: 130 }, 
-            { id: 'ftaXMKV3ffE', duration: 160, title: 'BACKR00MS', bpm: 142 },
+            { id: '1IEg_3x35go', duration: 120, title: 'FRANCHISE', bpm: 78 },
+            { id: 'qAlF70MdfwU', duration: 207, title: 'OUT WEST', bpm: 70 }, 
+            { id: 'L_BpiSsIBFM', duration: 236, title: 'BROTHER STONE', bpm: 70 }, 
+            { id: 'cTGQrA5HHIU', duration: 204, title: 'WITH THAT', bpm: 65 }, 
+            { id: 'ftaXMKV3ffE', duration: 160, title: 'BACKR00MS', bpm: 71 },
             { id: 'LPTlvQ1Zet0', duration: 188, title: 'RIC FLAIR DRIP', bpm: 100 },
             { id: 'EfHNIPXTxy0', duration: 276, title: 'ZEZE', bpm: 98 },
-            { id: 'yST9RwZNZDw', duration: 169, title: 'VURURUM KAFANDAN', bpm: 130 },
-            { id: 'JrPBResAG2s', duration: 175, title: 'KÖPEKBALIKLARI BURDA', bpm: 135 },
-            { id: '-q-XvhV7GFA', duration: 165, title: 'HARBİDEN ŞEKERMİŞ', bpm: 140 },
-            { id: 'N4nfjhJN6SA', duration: 197, title: 'TAKE IT TO TRIAL', bpm: 145 },
-            { id: 'kC2nGcgKeX0', duration: 167, title: 'GOSTOSO', bpm: 130 },
-            { id: 'LcKC9YG-TQY', duration: 150, title: 'MOB GUYS', bpm: 138 },
-            { id: '-yElvysKMCY', duration: 164, title: 'TRIMSKI', bpm: 140 },
-            { id: 'pfjy7PhVtMo', duration: 135, title: 'POTATO LOADED', bpm: 132 },
-            { id: 'bHDWrnlIqfQ', duration: 173, title: 'POPPIN/TALIBAN', bpm: 136 },
-            { id: 'KPz33BLkvho', duration: 165, title: 'ESCAPE PLAN', bpm: 154 },
-            { id: 'B9synWjqBn8', duration: 209, title: 'FE!N', bpm: 148 },
-            { id: 'MKPEZlXY49Q', duration: 244, title: 'JENGA', bpm: 130 },
-            { id: 'SpXw0qiy3Wo', duration: 314, title: 'X', bpm: 149 },
-            { id: 'GErG9femMQk', duration: 174, title: 'WE PAID', bpm: 135 },
+            { id: 'yST9RwZNZDw', duration: 169, title: 'VURURUM KAFANDAN', bpm: 65 },
+            { id: 'JrPBResAG2s', duration: 175, title: 'KÖPEKBALIKLARI BURDA', bpm: 68 },
+            { id: '-q-XvhV7GFA', duration: 165, title: 'HARBİDEN ŞEKERMİŞ', bpm: 120 },
+            { id: 'N4nfjhJN6SA', duration: 197, title: 'TAKE IT TO TRIAL', bpm: 73 },
+            { id: 'kC2nGcgKeX0', duration: 167, title: 'GOSTOSO', bpm: 65 },
+            { id: 'LcKC9YG-TQY', duration: 150, title: 'MOB GUYS', bpm: 69 },
+            { id: '-yElvysKMCY', duration: 164, title: 'TRIMSKI', bpm: 70 },
+            { id: 'pfjy7PhVtMo', duration: 135, title: 'POTATO LOADED', bpm: 66 },
+            { id: 'bHDWrnlIqfQ', duration: 173, title: 'POPPIN/TALIBAN', bpm: 68 },
+            { id: 'KPz33BLkvho', duration: 165, title: 'ESCAPE PLAN', bpm: 77 },
+            { id: 'B9synWjqBn8', duration: 209, title: 'FE!N', bpm: 74 },
+            { id: 'MKPEZlXY49Q', duration: 244, title: 'JENGA', bpm: 65 },
+            { id: 'SpXw0qiy3Wo', duration: 314, title: 'X', bpm: 75 },
+            { id: 'GErG9femMQk', duration: 174, title: 'WE PAID', bpm: 68 },
             { id: 'leJNDpm_G10', duration: 308, title: 'HOT', bpm: 112 },
-            { id: 'PXxbEfhtDiM', duration: 169, title: 'DEAD FRESH', bpm: 140 },
-            { id: '81LJJFASh-I', duration: 185, title: '24/7', bpm: 130 },
-            { id: 'H6v_UYs01gA', duration: 167, title: 'PEMBE YALANLAR', bpm: 130 },
-            { id: 'p6DHMNX-TO4', duration: 191, title: 'INSANË', bpm: 140 },
-            { id: 'OBVx0Jmg88g', duration: 212, title: 'HBA', bpm: 140 }
+            { id: 'PXxbEfhtDiM', duration: 169, title: 'DEAD FRESH', bpm: 70 },
+            { id: '81LJJFASh-I', duration: 185, title: '24/7', bpm: 65 },
+            { id: 'H6v_UYs01gA', duration: 167, title: 'PEMBE YALANLAR', bpm: 65 },
+            { id: 'p6DHMNX-TO4', duration: 191, title: 'INSANË', bpm: 70 },
+            { id: 'OBVx0Jmg88g', duration: 212, title: 'HBA', bpm: 70 }
         ];
 
         const STREAM_START_TIME = 1700000000; 
@@ -537,7 +539,7 @@
         const songList = getDeterministicShuffledList(baseSongList, STREAM_START_TIME);
         const totalPlaylistDuration = songList.reduce((acc, song) => acc + song.duration, 0);
 
-        let currentSongBpm = 135; // Varsayılan trap BPM
+        let currentSongBpm = 70;
 
         function getCurrentStreamState() {
             const nowInSeconds = Math.floor(Date.now() / 1000);
@@ -557,7 +559,7 @@
             const nextIndex = (currentIndex + 1) % songList.length;
             const nextSong = songList[nextIndex];
 
-            currentSongBpm = currentSong.bpm || 135;
+            currentSongBpm = currentSong.bpm || 70;
 
             document.getElementById('current-track-name').innerText = currentSong.title;
             document.getElementById('next-track-name').innerText = nextSong.title;
@@ -736,7 +738,8 @@
             if (width === 0 || height === 0) return;
 
             camera.aspect = width / height;
-            camera.position.z = window.innerWidth <= 400 ? 5.3 : (window.innerWidth <= 600 ? 4.9 : 4.5);
+            /* Dünya kesilmesin diye kamera mesafesi geriye çekildi */
+            camera.position.z = window.innerWidth <= 400 ? 5.8 : (window.innerWidth <= 600 ? 5.4 : 5.0);
             camera.updateProjectionMatrix();
             renderer.setSize(width, height);
         }
@@ -744,7 +747,7 @@
         const textureLoader = new THREE.TextureLoader();
         const earthTexture = textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_atmos_2048.jpg');
 
-        const baseRadius = 1.65;
+        const baseRadius = 1.5;
         const segments = isMobileDevice ? 36 : 64;
         const geometry = new THREE.SphereGeometry(baseRadius, segments, segments);
         const material = new THREE.MeshStandardMaterial({
@@ -804,7 +807,7 @@
         const ambientGlowEl = document.getElementById('ambient-glow');
         const videoBoxEl = document.getElementById('video-box');
         let lastTime = performance.now();
-        let currentBassIntensity = 0; // Bas şiddeti global değişkeni
+        let currentBassIntensity = 0;
 
         function animateGlobe(currentTime) {
             requestAnimationFrame(animateGlobe);
@@ -820,23 +823,22 @@
             globeMesh.rotation.y += globeSpeed * deltaTime;
             if (ringMesh) ringMesh.rotation.y -= ringSpeed * deltaTime;
 
-            // BASS SENKRONİZASYONU (Sarki BPM'ine gore tam beat hesabi)
             if (isPlayingState) {
-                const bps = currentSongBpm / 60; // Beat Per Second
+                const bps = currentSongBpm / 60;
                 const beatPhase = (Date.now() / 1000 * bps * Math.PI) % Math.PI;
                 
-                // Bas vurus şiddetini simüle et
                 const rawBass = Math.pow(Math.sin(beatPhase), 8); 
                 currentBassIntensity = rawBass;
 
-                const bassScale = 1 + rawBass * 0.075;
+                /* Büyüme çarpanı 0.05'e optimize edilerek taşma engellendi */
+                const bassScale = 1 + rawBass * 0.05;
                 globeMesh.scale.set(bassScale, bassScale, bassScale);
 
-                const glowScale = 1 + rawBass * 0.12;
+                const glowScale = 1 + rawBass * 0.1;
                 ambientGlowEl.style.transform = `translate(-50%, -50%) scale(${glowScale})`;
 
                 if (rawBass > 0.85) {
-                    videoBoxEl.style.transform = `translate(${(Math.random() - 0.5) * 3}px, ${(Math.random() - 0.5) * 3}px)`;
+                    videoBoxEl.style.transform = `translate(${(Math.random() - 0.5) * 2}px, ${(Math.random() - 0.5) * 2}px)`;
                 } else {
                     videoBoxEl.style.transform = `translate(0, 0)`;
                 }
@@ -946,7 +948,7 @@
             document.getElementById('listener-count').innerText = snap.numChildren();
         });
 
-        /* VISUALIZER - TAM BASS & NOTA RİTİM SENKRONİZASYONU */
+        /* VISUALIZER */
         const vCanvas = document.getElementById('visualizer-canvas');
         const vCtx = vCanvas.getContext('2d');
         const numBars = isMobileDevice ? 24 : 44;
@@ -963,13 +965,10 @@
 
             for (let i = 0; i < numBars; i++) {
                 if (isPlayingState) {
-                    // Sol barlar BASS frekansı, orta-sağ barlar MELODİ/NOTALAR
                     let target = 3;
                     if (i < numBars * 0.3) {
-                        // Bas vuruşu bölgesi: Dünya ile birebir aynı an patlar
                         target = (currentBassIntensity * (vCanvas.height - 4)) + Math.random() * 4;
                     } else {
-                        // Mid/Treble Melodi barları
                         const randMelody = Math.sin(Date.now() * 0.01 + i) * 0.5 + 0.5;
                         target = (randMelody * (vCanvas.height - 8)) * (0.4 + currentBassIntensity * 0.6);
                     }

@@ -80,17 +80,17 @@
             box-sizing: border-box;
         }
 
-        /* DÜNYA LOGOSU ALANI (TAŞMALARI ENGELLEMEK İÇİN SIZDIRMAZ KAPSAYICI) */
+        /* DÜNYA LOGOSU ALANI */
         .logo-container {
             text-align: center;
             position: relative;
             width: 100%;
-            max-width: 320px;
-            height: clamp(90px, 18vh, 160px);
+            max-width: 360px;
+            height: clamp(100px, 20vh, 180px);
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
+            overflow: hidden; /* Taşmayı kilitler */
             margin: 0 auto;
             flex-shrink: 0;
         }
@@ -98,21 +98,22 @@
         /* PC / MASAÜSTÜ İÇİN DÜNYA BOYUT ORANI */
         @media (min-width: 769px) {
             .logo-container {
-                max-width: 480px;
-                height: clamp(140px, 22vh, 240px);
+                max-width: 520px;
+                height: clamp(160px, 25vh, 260px);
             }
         }
 
+        /* PATLAMA EFEKTİ (KUTU İÇİNDE KALACAK ŞEKİLDE AYARLANDI) */
         .blast-wave {
             position: absolute;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%) scale(0.6);
-            width: 160px;
-            height: 160px;
+            transform: translate(-50%, -50%) scale(0.2);
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
             border: 3px solid rgba(255, 255, 255, 1);
-            box-shadow: 0 0 90px rgba(255, 255, 255, 1), inset 0 0 50px rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 50px rgba(255, 255, 255, 1), inset 0 0 30px rgba(255, 255, 255, 0.8);
             opacity: 0;
             pointer-events: none;
             z-index: 5;
@@ -125,12 +126,12 @@
 
         @keyframes fastExplode {
             0% {
-                transform: translate(-50%, -50%) scale(0.6);
+                transform: translate(-50%, -50%) scale(0.2);
                 opacity: 1;
-                border-width: 10px;
+                border-width: 8px;
             }
             100% {
-                transform: translate(-50%, -50%) scale(2.8);
+                transform: translate(-50%, -50%) scale(1.6);
                 opacity: 0;
                 border-width: 1px;
             }
@@ -761,7 +762,7 @@
             updateAudioVisualState();
         });
 
-        /* THREE.JS DÜNYA (GÜVENLİ VE SIZDIRMAZ KAMERA ORANI) */
+        /* THREE.JS DÜNYA */
         const globeContainer = document.getElementById('globe-3d-container');
         
         const scene = new THREE.Scene();
@@ -779,15 +780,15 @@
 
             camera.aspect = width / height;
 
-            /* KAMERA GERİYE ÇEKİLEREK SIĞMA KONTROLÜ SAĞLANDI */
+            /* KAMERA DÜNYANIN TAM VE BÜYÜK GÖRÜNMESİ İÇİN ESKİ DENGELİ DEĞERİNE GETİRİLDİ */
             if (window.innerWidth > 768) {
-                camera.position.z = 4.8;
+                camera.position.z = 4.0;
             } else if (window.innerHeight <= 650) {
-                camera.position.z = 6.8;
+                camera.position.z = 5.6;
             } else if (window.innerWidth <= 600) {
-                camera.position.z = 6.2;
+                camera.position.z = 5.0;
             } else {
-                camera.position.z = 5.4;
+                camera.position.z = 4.5;
             }
 
             camera.updateProjectionMatrix();
@@ -876,8 +877,8 @@
             if (isPlayingState) {
                 bassAngle += 6.0 * deltaTime;
                 
-                /* BAS BÜYÜME HASSASİYETİ TAŞMAYACAK ŞEKİLDE DÜŞÜRÜLDÜ */
-                const bassScale = 1 + Math.pow(Math.sin(bassAngle), 6) * 0.015;
+                /* BAS VURUSLARI ESKİ GÜÇLÜ VE BELİRGİN HALİNE GETİRİLDİ */
+                const bassScale = 1 + Math.pow(Math.sin(bassAngle), 6) * 0.038;
                 globeMesh.scale.set(bassScale, bassScale, bassScale);
 
                 dirLight.intensity = 2.2 + Math.pow(Math.sin(bassAngle), 6) * 2.5;

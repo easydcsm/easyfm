@@ -15,10 +15,10 @@
         }
 
         :root {
-            --accent-color: #39ff14;
-            --glow-color: rgba(57, 255, 20, 0.6);
-            --bg-glow: rgba(0, 255, 50, 0.12);
-            --border-glow: rgba(57, 255, 20, 0.4);
+            --accent-color: #ffffff;
+            --glow-color: rgba(255, 255, 255, 0.55);
+            --bg-glow: rgba(180, 220, 255, 0.1);
+            --border-glow: rgba(255, 255, 255, 0.35);
         }
 
         html, body {
@@ -287,8 +287,8 @@
             100% { transform: scale(1); }
         }
 
-        .theme-slime { background: #39ff14; box-shadow: 0 0 14px #39ff14; }
         .theme-ice { background: #ffffff; box-shadow: 0 0 14px #fff; }
+        .theme-slime { background: #39ff14; box-shadow: 0 0 14px #39ff14; }
         .theme-opium { background: #ff0000; box-shadow: 0 0 14px #ff0000; }
         .theme-purple { background: #a855f7; box-shadow: 0 0 14px #a855f7; }
         .theme-gold { background: #ffd700; box-shadow: 0 0 14px #ffd700; }
@@ -567,8 +567,8 @@
                 <span>🎧 DİNLEYİCİ: <strong id="listener-count" style="color: #ffffff; text-shadow:0 0 10px #fff;">0</strong></span>
             </div>
             <div class="theme-selector" id="theme-selector-box">
-                <div class="theme-btn theme-slime" onclick="setRadioTheme('SLIME')" title="SLIME Green"></div>
                 <div class="theme-btn theme-ice" onclick="setRadioTheme('ICE')" title="ICE White"></div>
+                <div class="theme-btn theme-slime" onclick="setRadioTheme('SLIME')" title="SLIME Green"></div>
                 <div class="theme-btn theme-opium" onclick="setRadioTheme('OPIUM')" title="OPIUM Red"></div>
                 <div class="theme-btn theme-purple" onclick="setRadioTheme('PURPLE')" title="LEAN Purple"></div>
                 <div class="theme-btn theme-gold" onclick="setRadioTheme('GOLD')" title="CHAMPAGNE Gold"></div>
@@ -617,10 +617,10 @@
         document.addEventListener('touchmove', function(e) { e.preventDefault(); }, { passive: false });
 
         /* TEMA KONTROLÜ (SLIME / ICE / OPIUM / PURPLE / GOLD) */
-        let currentAccentColor = '#39ff14';
+        let currentAccentColor = '#ffffff';
         const THEMES = {
-            SLIME: { accent: '#39ff14', glow: 'rgba(57, 255, 20, 0.6)', bgGlow: 'rgba(0, 255, 50, 0.12)', borderGlow: 'rgba(57, 255, 20, 0.4)' },
             ICE: { accent: '#ffffff', glow: 'rgba(255, 255, 255, 0.55)', bgGlow: 'rgba(180, 220, 255, 0.1)', borderGlow: 'rgba(255, 255, 255, 0.35)' },
+            SLIME: { accent: '#39ff14', glow: 'rgba(57, 255, 20, 0.6)', bgGlow: 'rgba(0, 255, 50, 0.12)', borderGlow: 'rgba(57, 255, 20, 0.4)' },
             OPIUM: { accent: '#ff0000', glow: 'rgba(255, 0, 0, 0.65)', bgGlow: 'rgba(255, 0, 0, 0.12)', borderGlow: 'rgba(255, 0, 0, 0.4)' },
             PURPLE: { accent: '#a855f7', glow: 'rgba(168, 85, 247, 0.65)', bgGlow: 'rgba(168, 85, 247, 0.12)', borderGlow: 'rgba(168, 85, 247, 0.4)' },
             GOLD: { accent: '#ffd700', glow: 'rgba(255, 215, 0, 0.65)', bgGlow: 'rgba(255, 215, 0, 0.12)', borderGlow: 'rgba(255, 215, 0, 0.4)' }
@@ -970,7 +970,7 @@
 
         for (let i = 0; i < ringBarsCount; i++) {
             const barGeo = new THREE.BoxGeometry(0.04, 0.45, 0.04);
-            const barMat = new THREE.MeshBasicMaterial({ color: 0x39ff14, transparent: true, opacity: 0.85 });
+            const barMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.85 });
             const bar = new THREE.Mesh(barGeo, barMat);
             
             const angle = (i / ringBarsCount) * Math.PI * 2;

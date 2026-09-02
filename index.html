@@ -200,6 +200,7 @@
             padding: 3px 6px;
             border-radius: 30px;
             backdrop-filter: blur(12px);
+            transition: transform 0.1s ease, border-color 0.1s ease, box-shadow 0.1s ease;
         }
 
         .theme-btn {
@@ -484,7 +485,7 @@
             <div class="badge" id="badge-listener">
                 <span>🎧 DİNLEYİCİ: <strong id="listener-count" style="color: #ffffff; text-shadow:0 0 6px #fff;">0</strong></span>
             </div>
-            <div class="theme-selector">
+            <div class="theme-selector" id="theme-selector-box">
                 <div class="theme-btn theme-ice" onclick="setRadioTheme('ICE')"></div>
                 <div class="theme-btn theme-slime" onclick="setRadioTheme('SLIME')"></div>
                 <div class="theme-btn theme-opium" onclick="setRadioTheme('OPIUM')"></div>
@@ -944,6 +945,7 @@
         const lightningEl = document.getElementById('lightning-flash');
         const badgeLiveEl = document.getElementById('badge-live');
         const badgeListenerEl = document.getElementById('badge-listener');
+        const themeSelectorEl = document.getElementById('theme-selector-box');
         const volumeBoxEl = document.getElementById('volume-box');
         const videoBoxEl = document.getElementById('video-box');
         let lastTime = performance.now();
@@ -981,10 +983,12 @@
                 if (bassPower > 0.6) {
                     badgeLiveEl.classList.add('badge-bass-pulse');
                     badgeListenerEl.classList.add('badge-bass-pulse');
+                    themeSelectorEl.classList.add('badge-bass-pulse');
                     volumeBoxEl.classList.add('badge-bass-pulse');
                 } else {
                     badgeLiveEl.classList.remove('badge-bass-pulse');
                     badgeListenerEl.classList.remove('badge-bass-pulse');
+                    themeSelectorEl.classList.remove('badge-bass-pulse');
                     volumeBoxEl.classList.remove('badge-bass-pulse');
                 }
 
@@ -1010,6 +1014,7 @@
                 videoBoxEl.style.transform = `scale(1)`;
                 badgeLiveEl.classList.remove('badge-bass-pulse');
                 badgeListenerEl.classList.remove('badge-bass-pulse');
+                themeSelectorEl.classList.remove('badge-bass-pulse');
                 volumeBoxEl.classList.remove('badge-bass-pulse');
 
                 ringBarMeshes.forEach((bar) => {

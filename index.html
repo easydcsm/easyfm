@@ -54,45 +54,6 @@
             opacity: 0.6;
         }
 
-        /* HUD OVERLAY (REC & TIME) */
-        .hud-layer {
-            position: fixed;
-            top: 12px;
-            left: 15px;
-            right: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 45;
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 10px;
-            font-weight: 800;
-            letter-spacing: 1.5px;
-            pointer-events: none;
-            opacity: 0.7;
-        }
-
-        .hud-rec {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            color: #ff0000;
-            text-shadow: 0 0 8px #ff0000;
-        }
-
-        .rec-dot {
-            width: 8px;
-            height: 8px;
-            background-color: #ff0000;
-            border-radius: 50%;
-            animation: recPulse 1s infinite;
-        }
-
-        @keyframes recPulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.2; transform: scale(0.7); }
-        }
-
         #bg-canvas {
             position: fixed;
             top: 0;
@@ -247,10 +208,21 @@
             border-radius: 50%;
             border: 1px solid rgba(255, 255, 255, 0.5);
             cursor: pointer;
-            transition: transform 0.2s ease;
+            transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.15s ease;
+            position: relative;
         }
 
-        .theme-btn:active { transform: scale(0.8); }
+        .theme-btn:active {
+            transform: scale(0.7);
+            animation: themeExplosion 0.3s ease-out;
+        }
+
+        @keyframes themeExplosion {
+            0% { transform: scale(0.8); }
+            50% { transform: scale(1.4); filter: brightness(1.8); }
+            100% { transform: scale(1); }
+        }
+
         .theme-ice { background: #ffffff; box-shadow: 0 0 6px #fff; }
         .theme-slime { background: #39ff14; box-shadow: 0 0 6px #39ff14; }
         .theme-opium { background: #ff0000; box-shadow: 0 0 6px #ff0000; }
@@ -495,11 +467,6 @@
 </head>
 <body>
 
-    <div class="hud-layer">
-        <div class="hud-rec"><span class="rec-dot"></span> REC</div>
-        <div id="hud-clock">00:00:00</div>
-    </div>
-
     <canvas id="bg-canvas"></canvas>
     <div id="lightning-flash"></div>
     <div class="ambient-glow" id="ambient-glow"></div>
@@ -564,15 +531,6 @@
 
     <script>
         document.addEventListener('touchmove', function(e) { e.preventDefault(); }, { passive: false });
-
-        /* HUD DİJİTAL SAAT KODU */
-        function updateHudClock() {
-            const now = new Date();
-            const timeStr = now.toTimeString().split(' ')[0];
-            document.getElementById('hud-clock').innerText = timeStr;
-        }
-        setInterval(updateHudClock, 1000);
-        updateHudClock();
 
         /* TEMA KONTROLÜ (ICE / SLIME / OPIUM) */
         let currentAccentColor = '#ffffff';

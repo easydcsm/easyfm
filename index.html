@@ -782,7 +782,8 @@
             const waveBars = document.getElementById('wave-bars');
             const vol = Number(volumeRange.value);
 
-            if (vol === 0 || isMuted || !actualPlayerStatePlaying) {
+            /* Kullanıcı butona basmadıysa, ses kapalıysa veya oynatıcı çalmıyorsa efektleri kapat */
+            if (!userHasClicked || vol === 0 || isMuted || !actualPlayerStatePlaying) {
                 isPlayingState = false;
                 vBox.classList.remove('playing-border');
                 waveBars.style.opacity = '0';
@@ -867,6 +868,7 @@
                 }
 
                 player.playVideo();
+                updateAudioVisualState();
 
                 if (syncCheckInterval) clearInterval(syncCheckInterval);
                 syncCheckInterval = setInterval(syncToLiveStream, 1000);

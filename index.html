@@ -41,12 +41,12 @@
             justify-content: center;
         }
 
-        /* AGRESİF CRT TARAMA & RGB NOISE */
+        /* HAFİFLETİLMİŞ CRT TARAMA & VIGNETTE */
         body::before {
             content: "";
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle, transparent 40%, #000 120%);
+            background: radial-gradient(circle, transparent 50%, #000 130%);
             z-index: 45;
             pointer-events: none;
         }
@@ -56,14 +56,14 @@
             display: block;
             position: absolute;
             top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.45) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.03), rgba(0, 0, 255, 0.06));
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
             z-index: 50;
             background-size: 100% 4px, 8px 100%;
             pointer-events: none;
-            opacity: 0.8;
+            opacity: 0.35; /* Okunabilirlik için düşürüldü */
         }
 
-        /* UNDERGROUND GOTİK / GRAFFITI BACKGROUND TEXTS */
+        /* ARKA PLAN GRAFFITI / GOTIK YAZILAR */
         .trap-bg-text {
             position: fixed;
             font-family: 'UnifrakturCook', cursive;
@@ -113,7 +113,7 @@
             pointer-events: none;
         }
 
-        /* HEAVY BASS STROBE FLASH */
+        /* HAFİF BASS FLASH */
         #lightning-flash {
             position: fixed;
             top: 0;
@@ -162,16 +162,15 @@
             transition: transform 0.05s ease, filter 0.05s ease;
         }
 
-        /* HEAVY TRAP BASS SHAKE & RGB SPLIT GLITCH */
+        /* DÜZELTİLEN YUMUŞAK BASS SHAKE (GLITCH SİLİNDİ, TİTREME HAFİFLETİLDİ) */
         .wrapper-shake {
-            animation: trapBassShake 0.06s ease-in-out infinite alternate;
-            filter: drop-shadow(-4px 0 0 rgba(255, 0, 0, 0.6)) drop-shadow(4px 0 0 rgba(0, 255, 255, 0.6));
+            animation: trapBassShake 0.08s ease-in-out infinite alternate;
         }
 
         @keyframes trapBassShake {
             0% { transform: scale(1) translate(0, 0); }
-            50% { transform: scale(1.015) translate(-4px, 3px); }
-            100% { transform: scale(0.985) translate(4px, -3px); }
+            50% { transform: scale(1.004) translate(-1px, 1px); }
+            100% { transform: scale(0.996) translate(1px, -1px); }
         }
 
         .logo-container {
@@ -308,9 +307,9 @@
         }
 
         .badge-bass-pulse {
-            transform: scale(1.08);
+            transform: scale(1.03); /* Vurgu daha hafif hale getirildi */
             border-color: var(--accent-color) !important;
-            box-shadow: 0 0 22px var(--glow-color) !important;
+            box-shadow: 0 0 15px var(--glow-color) !important;
         }
 
         .volume-btn {
@@ -367,7 +366,7 @@
 
         .video-container.playing-border {
             border-color: var(--accent-color);
-            box-shadow: 0 0 40px var(--glow-color), inset 0 0 25px var(--glow-color);
+            box-shadow: 0 0 30px var(--glow-color), inset 0 0 15px var(--glow-color);
         }
 
         #youtube-player {
@@ -461,7 +460,7 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            text-shadow: 0 0 14px rgba(255, 255, 255, 0.4);
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
             letter-spacing: 0.5px;
         }
 
@@ -889,7 +888,7 @@
             updateAudioVisualState();
         });
 
-        /* THREE.JS DÜNYA & AGRESİF TRAP HALKASI */
+        /* THREE.JS DÜNYA & TRAP HALKASI */
         const globeContainer = document.getElementById('globe-3d-container');
         
         const scene = new THREE.Scene();
@@ -935,7 +934,7 @@
         const globeMesh = new THREE.Mesh(geometry, material);
         scene.add(globeMesh);
 
-        /* 3D TRAP EKOLAYZIR HALKASI (DİNAMİK RİTİM SİPRALİ) */
+        /* 3D TRAP EKOLAYZIR HALKASI */
         const ringBarsCount = isMobileDevice ? 40 : 72;
         const ringBarsGroup = new THREE.Group();
         const ringBarMeshes = [];
@@ -1028,21 +1027,21 @@
             ringBarsGroup.rotation.z += (isPlayingState ? 0.45 : 0.05) * deltaTime;
 
             if (isPlayingState) {
-                bassAngle += 9.5 * deltaTime;
+                bassAngle += 8.0 * deltaTime;
                 
                 const bassPower = Math.pow(Math.sin(bassAngle), 5);
-                const bassScale = 1 + bassPower * 0.085;
+                const bassScale = 1 + bassPower * 0.05; // Küre zıplaması yumuşatıldı
                 globeMesh.scale.set(bassScale, bassScale, bassScale);
 
-                dirLight.intensity = 2.5 + bassPower * 5.0;
+                dirLight.intensity = 2.5 + bassPower * 3.0;
 
-                const glowScale = 1 + Math.sin(bassAngle) * 0.22;
+                const glowScale = 1 + Math.sin(bassAngle) * 0.15;
                 ambientGlowEl.style.transform = `translate(-50%, -50%) scale(${glowScale})`;
-                ambientGlowEl.style.opacity = (0.55 + bassPower * 0.45).toString();
+                ambientGlowEl.style.opacity = (0.45 + bassPower * 0.35).toString();
 
-                videoBoxEl.style.transform = `scale(${1 + bassPower * 0.02})`;
+                videoBoxEl.style.transform = `scale(${1 + bassPower * 0.01})`;
 
-                if (bassPower > 0.5) {
+                if (bassPower > 0.6) {
                     badgeLiveEl.classList.add('badge-bass-pulse');
                     badgeListenerEl.classList.add('badge-bass-pulse');
                     themeSelectorEl.classList.add('badge-bass-pulse');
@@ -1054,17 +1053,17 @@
                     volumeBoxEl.classList.remove('badge-bass-pulse');
                 }
 
-                if (bassPower > 0.68) {
-                    lightningEl.style.opacity = (Math.random() > 0.2 ? (0.7 + (bassPower - 0.68) * 1.8) : 0).toString();
+                if (bassPower > 0.85) {
+                    lightningEl.style.opacity = (Math.random() > 0.4 ? (0.3 + (bassPower - 0.85) * 1.2) : 0).toString();
                 } else {
                     lightningEl.style.opacity = '0';
                 }
 
                 ringBarMeshes.forEach((bar, idx) => {
                     const rnd = Math.sin(bassAngle * 3 + idx) * 0.5 + 0.5;
-                    const scaleY = 0.5 + rnd * 2.8 * (bassPower + 0.35);
+                    const scaleY = 0.5 + rnd * 2.2 * (bassPower + 0.35);
                     bar.scale.set(1, scaleY, 1);
-                    bar.material.opacity = 0.4 + rnd * 0.6;
+                    bar.material.opacity = 0.4 + rnd * 0.5;
                 });
 
             } else {
@@ -1091,7 +1090,7 @@
         resizeThreeJS();
         requestAnimationFrame(animateGlobe);
 
-        /* TRAP DUMAN & SPARKLE PARÇACIKLARI */
+        /* PARÇACIK EFEKTİ */
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
         let particlesArray = [];
@@ -1109,19 +1108,19 @@
             reset() {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 2.5 + 0.8;
-                this.speedX = (Math.random() - 0.5) * 0.45;
-                this.speedY = (Math.random() - 0.5) * 0.45;
-                this.opacity = Math.random() * 0.7 + 0.2;
-                this.pulseSpeed = Math.random() * 0.06 + 0.02;
+                this.size = Math.random() * 2.2 + 0.8;
+                this.speedX = (Math.random() - 0.5) * 0.4;
+                this.speedY = (Math.random() - 0.5) * 0.4;
+                this.opacity = Math.random() * 0.6 + 0.2;
+                this.pulseSpeed = Math.random() * 0.05 + 0.02;
             }
             update() {
-                const speedMult = isPlayingState ? 2.2 : 1.0;
+                const speedMult = isPlayingState ? 1.8 : 1.0;
                 this.x += this.speedX * speedMult;
                 this.y += this.speedY * speedMult;
-                this.opacity += Math.sin(Date.now() * this.pulseSpeed) * 0.025;
+                this.opacity += Math.sin(Date.now() * this.pulseSpeed) * 0.02;
                 if (this.opacity < 0.1) this.opacity = 0.1;
-                if (this.opacity > 0.9) this.opacity = 0.9;
+                if (this.opacity > 0.8) this.opacity = 0.8;
                 if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) this.reset();
             }
             draw() {
@@ -1134,7 +1133,7 @@
             }
         }
 
-        const particleCount = isMobileDevice ? 35 : 75;
+        const particleCount = isMobileDevice ? 30 : 60;
         for (let i = 0; i < particleCount; i++) particlesArray.push(new CleanDotParticle());
 
         function animateParticles() {

@@ -318,7 +318,16 @@
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.9);
-            transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+            transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, opacity 0.3s ease;
+            
+            /* DÜZELTME: Canlı yayın başlamadan önce tıklamayı ve etkileşimi engeller */
+            pointer-events: none;
+            opacity: 0.4;
+        }
+
+        .volume-control-box.active {
+            pointer-events: auto;
+            opacity: 1;
         }
 
         .badge-bass-pulse {
@@ -843,6 +852,10 @@
             if (userHasClicked) return;
             userHasClicked = true;
 
+            /* DÜZELTME: Katıl butonuna basıldığı an ses kontrollerini aktifleştir */
+            const volBox = document.getElementById('volume-box');
+            if (volBox) volBox.classList.add('active');
+
             const overlay = document.getElementById('start-overlay');
             overlay.style.opacity = '0';
             overlay.style.pointerEvents = 'none';
@@ -899,6 +912,7 @@
         let isMuted = false;
 
         volumeRange.addEventListener('input', (e) => {
+            if (!userHasClicked) return;
             const val = Number(e.target.value);
             
             if (player && typeof player.setVolume === 'function') {
@@ -919,7 +933,7 @@
         });
 
         muteBtn.addEventListener('click', () => {
-            if (!player) return;
+            if (!player || !userHasClicked) return;
             if (isMuted) {
                 player.unMute();
                 muteBtn.innerText = '🔊';

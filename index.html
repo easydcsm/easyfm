@@ -42,12 +42,12 @@
             justify-content: center;
         }
 
-        /* CRT TARAMA & VIGNETTE SİNEMATİK EFEKTİ */
+        /* CRT TARAMA & VIGNETTE SİNEMATİK EFEKTI */
         body::before {
             content: "";
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle, transparent 20%, #000000 120%);
+            background: radial-gradient(circle, transparent 25%, #000000 120%);
             z-index: 45;
             pointer-events: none;
         }
@@ -64,7 +64,7 @@
             opacity: 0.6;
         }
 
-        /* ARKA PLAN GRAFFITI / GOTİK ARKA PLAN YAZILARI */
+        /* ARKA PLAN GRAFFITI / GOTIK ARKA PLAN YAZILARI */
         .trap-bg-text {
             position: fixed;
             font-family: 'UnifrakturCook', cursive;
@@ -119,6 +119,7 @@
             pointer-events: none;
         }
 
+        /* DİNAMİK BASS LIGHTNING FLASH */
         #lightning-flash {
             position: fixed;
             top: 0;
@@ -133,6 +134,7 @@
             will-change: opacity;
         }
 
+        /* AMBIENT NEON GLOW */
         .ambient-glow {
             position: fixed;
             top: 50%;
@@ -170,6 +172,7 @@
             animation: trapBassShake 0.07s ease-in-out infinite alternate;
         }
 
+        /* TRAP BASS DROP GLITCH & SHAKE */
         .wrapper-glitch {
             filter: drop-shadow(-2px 0 0 rgba(255,0,0,0.6)) drop-shadow(2px 0 0 rgba(0,255,255,0.6));
         }
@@ -201,25 +204,6 @@
             }
         }
 
-        /* VINYL SPINNING DISC EFECTI */
-        .vinyl-disc {
-            position: absolute;
-            width: 220px;
-            height: 220px;
-            border-radius: 50%;
-            background: radial-gradient(circle, #111 20%, #000 70%, #222 100%);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            z-index: 1;
-            opacity: 0.35;
-            box-shadow: 0 0 35px var(--glow-color);
-            animation: spinVinyl 12s linear infinite;
-            pointer-events: none;
-        }
-
-        @keyframes spinVinyl {
-            100% { transform: rotate(360deg); }
-        }
-
         #globe-3d-container {
             width: 100%;
             height: 100%;
@@ -237,6 +221,7 @@
             filter: drop-shadow(0 0 40px var(--glow-color));
         }
 
+        /* KROM & GLASSMORPHISM STATUS BAR */
         .status-bar {
             display: flex;
             gap: 6px;
@@ -334,7 +319,7 @@
             -webkit-backdrop-filter: blur(25px);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.9);
             transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
-            pointer-events: none;
+            pointer-events: none; /* Başlangıçta görüntüsü değişmeden tıklanması engellendi */
         }
 
         .badge-bass-pulse {
@@ -388,6 +373,7 @@
             .volume-slider { width: 38px; }
         }
 
+        /* VIDEO CONTAINER & CYBER BORDER */
         .video-container {
             position: relative;
             width: 100%;
@@ -454,6 +440,7 @@
             box-shadow: 0 0 65px var(--accent-color);
         }
 
+        /* NOW PLAYING CARD */
         .now-playing-card {
             width: 100%;
             background: rgba(12, 12, 12, 0.88);
@@ -549,71 +536,6 @@
             flex-shrink: 0;
             display: block;
         }
-
-        /* LIVE CHAT SIMULATION SIDEBAR */
-        .live-chat-box {
-            position: fixed;
-            right: 15px;
-            bottom: 25px;
-            width: 220px;
-            height: 160px;
-            background: rgba(5, 5, 5, 0.75);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--border-glow);
-            border-radius: 12px;
-            padding: 8px 10px;
-            z-index: 40;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.8);
-            pointer-events: none;
-            overflow: hidden;
-        }
-
-        .chat-title {
-            font-size: 8px;
-            font-weight: 900;
-            letter-spacing: 1.5px;
-            color: #666;
-            text-transform: uppercase;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            padding-bottom: 4px;
-        }
-
-        .chat-messages {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            justify-content: flex-end;
-            height: 100%;
-            overflow: hidden;
-        }
-
-        .chat-msg {
-            font-size: 9.5px;
-            color: #ddd;
-            line-height: 1.2;
-            animation: fadeInMsg 0.3s ease-out;
-        }
-
-        .chat-user {
-            font-weight: 800;
-            color: var(--accent-color);
-            margin-right: 4px;
-        }
-
-        @keyframes fadeInMsg {
-            from { opacity: 0; transform: translateY(6px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @media (max-width: 1024px) {
-            .live-chat-box {
-                display: none; /* Mobilde görünümü sade tutmak için korundu */
-            }
-        }
     </style>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -632,17 +554,8 @@
     <div id="lightning-flash"></div>
     <div class="ambient-glow" id="ambient-glow"></div>
 
-    <div class="live-chat-box">
-        <div class="chat-title">⚡ CANLI SOHBET AKIŞI</div>
-        <div class="chat-messages" id="chat-messages">
-            <div class="chat-msg"><span class="chat-user">slime_99:</span> bass fena vuruyor 🔥</div>
-            <div class="chat-msg"><span class="chat-user">carti_fan:</span> EA$Y FM 7/24 ON FIRE 🐍</div>
-        </div>
-    </div>
-
     <div class="main-wrapper" id="main-wrapper">
         <div class="logo-container">
-            <div class="vinyl-disc"></div>
             <div id="globe-3d-container"></div>
         </div>
 
@@ -655,11 +568,11 @@
                 <span>🎧 DİNLEYİCİ: <strong id="listener-count" style="color: #ffffff; text-shadow:0 0 10px #fff;">0</strong></span>
             </div>
             <div class="theme-selector" id="theme-selector-box">
-                <div class="theme-btn theme-ice" onclick="setRadioTheme('ICE')" title="ICE White [Key: 1]"></div>
-                <div class="theme-btn theme-slime" onclick="setRadioTheme('SLIME')" title="SLIME Green [Key: 2]"></div>
-                <div class="theme-btn theme-opium" onclick="setRadioTheme('OPIUM')" title="OPIUM Red [Key: 3]"></div>
-                <div class="theme-btn theme-purple" onclick="setRadioTheme('PURPLE')" title="LEAN Purple [Key: 4]"></div>
-                <div class="theme-btn theme-gold" onclick="setRadioTheme('GOLD')" title="CHAMPAGNE Gold [Key: 5]"></div>
+                <div class="theme-btn theme-ice" onclick="setRadioTheme('ICE')" title="ICE White"></div>
+                <div class="theme-btn theme-slime" onclick="setRadioTheme('SLIME')" title="SLIME Green"></div>
+                <div class="theme-btn theme-opium" onclick="setRadioTheme('OPIUM')" title="OPIUM Red"></div>
+                <div class="theme-btn theme-purple" onclick="setRadioTheme('PURPLE')" title="LEAN Purple"></div>
+                <div class="theme-btn theme-gold" onclick="setRadioTheme('GOLD')" title="CHAMPAGNE Gold"></div>
             </div>
             <div class="volume-control-box" id="volume-box">
                 <button class="volume-btn" id="mute-btn">🔊</button>
@@ -716,7 +629,6 @@
 
         function setRadioTheme(mode) {
             const t = THEMES[mode];
-            if(!t) return;
             currentAccentColor = t.accent;
             document.documentElement.style.setProperty('--accent-color', t.accent);
             document.documentElement.style.setProperty('--glow-color', t.glow);
@@ -732,23 +644,6 @@
                 ringBarMeshes.forEach(b => b.material.color.setHex(hexColor));
             }
         }
-
-        /* KLAVYE KISAYOLLARI ENTEGRASYONU */
-        window.addEventListener('keydown', (e) => {
-            if(e.key === '1') setRadioTheme('ICE');
-            if(e.key === '2') setRadioTheme('SLIME');
-            if(e.key === '3') setRadioTheme('OPIUM');
-            if(e.key === '4') setRadioTheme('PURPLE');
-            if(e.key === '5') setRadioTheme('GOLD');
-            if(e.code === 'Space') {
-                e.preventDefault();
-                if(!userHasClicked) {
-                    handleUserClick();
-                } else {
-                    muteBtn.click();
-                }
-            }
-        });
 
         let player = null;
         let isPlayerReady = false;
@@ -888,6 +783,7 @@
             const waveBars = document.getElementById('wave-bars');
             const vol = Number(volumeRange.value);
 
+            /* Kullanıcı butona basmadıysa, ses kapalıysa veya oynatıcı çalmıyorsa efektleri kapat */
             if (!userHasClicked || vol === 0 || isMuted || !actualPlayerStatePlaying) {
                 isPlayingState = false;
                 vBox.classList.remove('playing-border');
@@ -910,6 +806,7 @@
             updateAudioVisualState();
         }
 
+        /* ANLIK SENKRONİZASYON MOTORU */
         function syncToLiveStream() {
             if (!isPlayerReady || !player || !userHasClicked) return;
 
@@ -932,6 +829,7 @@
                 const currentTime = player.getCurrentTime();
                 const timeDiff = Math.abs(currentTime - state.seekTo);
                 
+                // Senkron kayması 1.5 saniyeyi geçerse takılmadan düzelt
                 if (timeDiff > 1.5) {
                     player.seekTo(state.seekTo, true);
                     if (typeof player.getPlayerState === 'function' && player.getPlayerState() !== YT.PlayerState.PLAYING) {
@@ -946,6 +844,7 @@
             if (userHasClicked) return;
             userHasClicked = true;
 
+            /* Ses kutusunu canlı yayına katılındığı an tıklanabilir yap */
             document.getElementById('volume-box').style.pointerEvents = 'auto';
 
             const overlay = document.getElementById('start-overlay');
@@ -1055,8 +954,6 @@
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
         globeContainer.appendChild(renderer.domElement);
 
-        let initialCamZ = 5.2;
-
         function resizeThreeJS() {
             const width = globeContainer.clientWidth;
             const height = globeContainer.clientHeight;
@@ -1065,15 +962,14 @@
             camera.aspect = width / height;
 
             if (window.innerWidth > 768) {
-                initialCamZ = 5.2;
+                camera.position.z = 5.2;
             } else if (window.innerHeight <= 650) {
-                initialCamZ = 5.8;
+                camera.position.z = 5.8;
             } else if (window.innerWidth <= 600) {
-                initialCamZ = 5.5;
+                camera.position.z = 5.5;
             } else {
-                initialCamZ = 5.0;
+                camera.position.z = 5.0;
             }
-            camera.position.z = initialCamZ;
 
             camera.updateProjectionMatrix();
             renderer.setSize(width, height);
@@ -1093,6 +989,7 @@
         const globeMesh = new THREE.Mesh(geometry, material);
         scene.add(globeMesh);
 
+        /* 3D TRAP EKOLAYZIR HALKASI */
         const ringBarsCount = isMobileDevice ? 44 : 80;
         const ringBarsGroup = new THREE.Group();
         const ringBarMeshes = [];
@@ -1196,9 +1093,6 @@
                 const bassScale = 1 + bassPower * 0.05;
                 globeMesh.scale.set(bassScale, bassScale, bassScale);
 
-                // Kameraya mikro bass vuruşu derinliği ekleme
-                camera.position.z = initialCamZ - (bassPower * 0.08);
-
                 dirLight.intensity = 2.5 + bassPower * 3.0;
 
                 const glowScale = 1 + Math.sin(bassAngle) * 0.16;
@@ -1207,6 +1101,7 @@
 
                 videoBoxEl.style.transform = `scale(${1 + bassPower * 0.012})`;
 
+                /* GRAFFITI & TRAP TEXT BEAT PULSE */
                 if (tag1El && tag2El) {
                     tag1El.style.transform = `rotate(-25deg) scale(${1 + bassPower * 0.08})`;
                     tag2El.style.transform = `rotate(15deg) scale(${1 + bassPower * 0.08})`;
@@ -1231,6 +1126,7 @@
                     volumeBoxEl.classList.remove('badge-bass-pulse');
                 }
 
+                /* TRAP BASS DROP GLITCH EFFECT */
                 if (bassPower > 0.8) {
                     mainWrapper.classList.add('wrapper-glitch');
                 } else {
@@ -1252,7 +1148,6 @@
 
             } else {
                 globeMesh.scale.lerp(new THREE.Vector3(1, 1, 1), 10 * deltaTime);
-                camera.position.z = initialCamZ;
                 dirLight.intensity = 2.2;
                 ambientGlowEl.style.transform = `translate(-50%, -50%) scale(1)`;
                 ambientGlowEl.style.opacity = '0.4';
@@ -1288,7 +1183,7 @@
         resizeThreeJS();
         requestAnimationFrame(animateGlobe);
 
-        /* PARÇACIK EFEKTİ */
+        /* TRAP SPARKLE / PARÇACIK EFEKTİ */
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
         let particlesArray = [];
@@ -1341,7 +1236,7 @@
         }
         animateParticles();
 
-        /* FIREBASE DİNLEYİCİ TAKİBİ */
+        /* FIREBASE DINLEYICI TAKIBI */
         const firebaseConfig = {
             apiKey: "AIzaSyBaTlb6V6e4FMLTYNXAPBgdzsgiclL8Qw8",
             authDomain: "easyfm-37b9e.firebaseapp.com",
@@ -1365,7 +1260,7 @@
             document.getElementById('listener-count').innerText = snap.numChildren();
         });
 
-        /* VISUALIZER BARS */
+        /* TRAP CANLI VISUALIZER BARLARI */
         const vCanvas = document.getElementById('visualizer-canvas');
         const vCtx = vCanvas.getContext('2d');
         const numBars = isMobileDevice ? 32 : 60;
@@ -1415,26 +1310,6 @@
             requestAnimationFrame(drawVisualizer);
         }
         drawVisualizer();
-
-        /* CANLI CHAT SİMÜLASYONU SCRIPT */
-        const chatUsers = ['vamp_55', 'rage_mode', 'opium_boii', 'trapstar_01', 'slime_y', 'jackboy_99'];
-        const chatTexts = ['YAYIN YANIYOR 🚀', 'BASS DROP FENA', 'EA$Y FM #1 🔊', 'SLIME GREEN TEMA 🔥', 'SESI KÖPLET'];
-        const chatContainer = document.getElementById('chat-messages');
-
-        setInterval(() => {
-            if (!isPlayingState) return;
-            const user = chatUsers[Math.floor(Math.random() * chatUsers.length)];
-            const text = chatTexts[Math.floor(Math.random() * chatTexts.length)];
-            
-            const msgEl = document.createElement('div');
-            msgEl.className = 'chat-msg';
-            msgEl.innerHTML = `<span class="chat-user">${user}:</span> ${text}`;
-            
-            chatContainer.appendChild(msgEl);
-            if (chatContainer.children.length > 4) {
-                chatContainer.removeChild(chatContainer.children[0]);
-            }
-        }, 3500);
     </script>
 </body>
 </html>

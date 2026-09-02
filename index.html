@@ -41,7 +41,7 @@
             justify-content: center;
         }
 
-        /* HAFİFLETİLMİŞ CRT TARAMA & VIGNETTE */
+        /* CRT SCANLINE & VIGNETTE */
         body::before {
             content: "";
             position: fixed;
@@ -56,11 +56,17 @@
             display: block;
             position: absolute;
             top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
             z-index: 50;
             background-size: 100% 4px, 8px 100%;
             pointer-events: none;
-            opacity: 0.35;
+            opacity: 0.4;
+            animation: scanlineAnim 10s linear infinite;
+        }
+
+        @keyframes scanlineAnim {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 100%; }
         }
 
         /* ARKA PLAN GRAFFITI / GOTIK YAZILAR */
@@ -75,6 +81,7 @@
             white-space: nowrap;
             letter-spacing: -2px;
             text-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
+            transition: transform 0.08s ease, color 0.3s ease;
         }
 
         .trap-bg-text.top-left {
@@ -97,7 +104,7 @@
             font-size: 8vw;
             z-index: 1;
             pointer-events: none;
-            transition: color 0.3s ease, opacity 0.3s ease;
+            transition: color 0.3s ease, opacity 0.3s ease, transform 0.08s ease;
         }
 
         .spray-tag.tag1 { top: 40%; left: 2%; transform: rotate(-25deg); }
@@ -113,7 +120,7 @@
             pointer-events: none;
         }
 
-        /* HAFİF BASS FLASH */
+        /* BASS FLASH */
         #lightning-flash {
             position: fixed;
             top: 0;
@@ -168,8 +175,8 @@
 
         @keyframes trapBassShake {
             0% { transform: scale(1) translate(0, 0); }
-            50% { transform: scale(1.004) translate(-1px, 1px); }
-            100% { transform: scale(0.996) translate(1px, -1px); }
+            50% { transform: scale(1.006) translate(-1.5px, 1.5px); }
+            100% { transform: scale(0.994) translate(1.5px, -1.5px); }
         }
 
         .logo-container {
@@ -210,7 +217,7 @@
             filter: drop-shadow(0 0 25px var(--glow-color));
         }
 
-        /* DÜZELTİLEN DÜZENLİ DÜŞÜK TAŞMASIZ STATUS BAR */
+        /* STATUS BAR */
         .status-bar {
             display: flex;
             gap: 5px;
@@ -240,6 +247,27 @@
             box-shadow: 0 4px 25px rgba(0, 0, 0, 0.95), inset 0 0 12px rgba(255, 255, 255, 0.08);
             white-space: nowrap;
             transition: transform 0.1s ease, border-color 0.1s ease, box-shadow 0.1s ease;
+        }
+
+        .fx-btn {
+            background: rgba(20, 20, 20, 0.9);
+            border: 1px solid var(--accent-color);
+            color: #fff;
+            padding: 5px 9px;
+            border-radius: 30px;
+            font-size: 8px;
+            font-weight: 900;
+            cursor: pointer;
+            letter-spacing: 1px;
+            transition: transform 0.1s, background 0.2s, box-shadow 0.2s;
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.1);
+        }
+
+        .fx-btn:active {
+            transform: scale(0.88);
+            background: var(--accent-color);
+            color: #000;
+            box-shadow: 0 0 15px var(--accent-color);
         }
 
         .theme-selector {
@@ -311,7 +339,7 @@
         .badge-bass-pulse {
             transform: scale(1.02);
             border-color: var(--accent-color) !important;
-            box-shadow: 0 0 12px var(--glow-color) !important;
+            box-shadow: 0 0 14px var(--glow-color) !important;
         }
 
         .volume-btn {
@@ -350,7 +378,7 @@
             box-shadow: 0 0 10px var(--accent-color);
         }
 
-        /* MOBİL ÖZEL OPTİMİZASYON */
+        /* MOBİL UYUM */
         @media (max-width: 480px) {
             .status-bar {
                 gap: 4px;
@@ -376,7 +404,7 @@
             }
         }
 
-        /* VİDEO KUTUSU */
+        /* VİDEO CONTAINER */
         .video-container {
             position: relative;
             width: 100%;
@@ -394,7 +422,7 @@
 
         .video-container.playing-border {
             border-color: var(--accent-color);
-            box-shadow: 0 0 30px var(--glow-color), inset 0 0 15px var(--glow-color);
+            box-shadow: 0 0 35px var(--glow-color), inset 0 0 20px var(--glow-color);
         }
 
         #youtube-player {
@@ -533,8 +561,8 @@
 
         #visualizer-canvas {
             width: 100%;
-            height: 20px;
-            min-height: 16px;
+            height: 22px;
+            min-height: 18px;
             margin: 0;
             flex-shrink: 0;
             display: block;
@@ -547,8 +575,8 @@
 </head>
 <body>
 
-    <div class="trap-bg-text top-left">EA$Y WORLDWIDE</div>
-    <div class="trap-bg-text bottom-right">OPIUM 808</div>
+    <div class="trap-bg-text top-left" id="bg-text-1">EA$Y WORLDWIDE</div>
+    <div class="trap-bg-text bottom-right" id="bg-text-2">OPIUM 808</div>
 
     <div class="spray-tag tag1">YSL</div>
     <div class="spray-tag tag2">TRAPHOUSE</div>
@@ -570,6 +598,10 @@
             <div class="badge" id="badge-listener">
                 <span>🎧 DİNLEYİCİ: <strong id="listener-count" style="color: #ffffff; text-shadow:0 0 8px #fff;">0</strong></span>
             </div>
+
+            <button class="fx-btn" onclick="playTrapEffect('horn')">📢 HORN</button>
+            <button class="fx-btn" onclick="playTrapEffect('bass')">💥 808</button>
+
             <div class="theme-selector" id="theme-selector-box">
                 <div class="theme-btn theme-ice" onclick="setRadioTheme('ICE')"></div>
                 <div class="theme-btn theme-slime" onclick="setRadioTheme('SLIME')"></div>
@@ -617,6 +649,35 @@
 
     <script>
         document.addEventListener('touchmove', function(e) { e.preventDefault(); }, { passive: false });
+
+        /* SFX (Trap Effects) */
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playTrapEffect(type) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            if (type === 'bass') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(130, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(30, audioCtx.currentTime + 0.4);
+                gain.gain.setValueAtTime(0.8, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.4);
+            } else if (type === 'horn') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(460, audioCtx.currentTime);
+                osc.frequency.setValueAtTime(380, audioCtx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.35);
+            }
+        }
 
         /* TEMA KONTROLÜ (ICE / SLIME / OPIUM) */
         let currentAccentColor = '#ffffff';
@@ -1037,6 +1098,9 @@
         const themeSelectorEl = document.getElementById('theme-selector-box');
         const volumeBoxEl = document.getElementById('volume-box');
         const videoBoxEl = document.getElementById('video-box');
+        const bgText1 = document.getElementById('bg-text-1');
+        const bgText2 = document.getElementById('bg-text-2');
+
         let lastTime = performance.now();
 
         function animateGlobe(currentTime) {
@@ -1068,6 +1132,10 @@
                 ambientGlowEl.style.opacity = (0.45 + bassPower * 0.35).toString();
 
                 videoBoxEl.style.transform = `scale(${1 + bassPower * 0.01})`;
+
+                /* Gotik Yazılara Basa Göre Shake Ekledik */
+                bgText1.style.transform = `rotate(-8deg) scale(${1 + bassPower * 0.03})`;
+                bgText2.style.transform = `rotate(6deg) scale(${1 + bassPower * 0.03})`;
 
                 if (bassPower > 0.6) {
                     badgeLiveEl.classList.add('badge-bass-pulse');
@@ -1101,6 +1169,8 @@
                 ambientGlowEl.style.opacity = '0.4';
                 lightningEl.style.opacity = '0';
                 videoBoxEl.style.transform = `scale(1)`;
+                bgText1.style.transform = `rotate(-8deg) scale(1)`;
+                bgText2.style.transform = `rotate(6deg) scale(1)`;
                 badgeLiveEl.classList.remove('badge-bass-pulse');
                 badgeListenerEl.classList.remove('badge-bass-pulse');
                 themeSelectorEl.classList.remove('badge-bass-pulse');

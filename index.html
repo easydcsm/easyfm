@@ -415,7 +415,7 @@
             cursor: pointer;
             backdrop-filter: blur(18px);
             -webkit-backdrop-filter: blur(18px);
-            transition: opacity 0.5s ease, visibility 0.5s;
+            transition: opacity 0.3s ease, visibility 0.3s;
         }
 
         .start-btn {
@@ -616,7 +616,7 @@
     <script>
         document.addEventListener('touchmove', function(e) { e.preventDefault(); }, { passive: false });
 
-        /* TEMA KONTROLÜ (SLIME / ICE / OPIUM / PURPLE / GOLD) */
+        /* TEMA KONTROLÜ */
         let currentAccentColor = '#ffffff';
         const THEMES = {
             ICE: { accent: '#ffffff', glow: 'rgba(255, 255, 255, 0.55)', bgGlow: 'rgba(180, 220, 255, 0.1)', borderGlow: 'rgba(255, 255, 255, 0.35)' },
@@ -650,6 +650,7 @@
         let actualPlayerStatePlaying = false; 
         let currentLoadedVideoId = null;
         let syncCheckInterval = null;
+        let userHasClicked = false;
 
         const baseSongList = [
             { id: '1IEg_3x35go', duration: 120, title: 'FRANCHISE' },
@@ -752,19 +753,22 @@
             player = new YT.Player('youtube-player', {
                 videoId: targetSong.id,
                 playerVars: {
-                    'autoplay': 0,
+                    'autoplay': 1,
                     'controls': 1,
                     'rel': 0,
                     'playsinline': 1,
                     'enablejsapi': 1,
                     'iv_load_policy': 3,
                     'fs': 0,
-                    'start': Math.floor(state.seekTo)
+                    'start': Math.floor(state.seekTo),
+                    'mute': 1
                 },
                 events: {
                     'onReady': () => { 
                         isPlayerReady = true; 
-                        if (document.activeElement) document.activeElement.blur();
+                        if (player && typeof player.playVideo === 'function') {
+                            player.playVideo();
+                        }
                     },
                     'onStateChange': onPlayerStateChange
                 }
@@ -800,8 +804,9 @@
             updateAudioVisualState();
         }
 
+        /* ANLIK SENKRONİZASYON MOTORU */
         function syncToLiveStream() {
-            if (!isPlayerReady || !player) return;
+            if (!isPlayerReady || !player || !userHasClicked) return;
 
             const state = getCurrentStreamState();
             const targetSong = songList[state.songIndex];
@@ -822,32 +827,45 @@
                 const currentTime = player.getCurrentTime();
                 const timeDiff = Math.abs(currentTime - state.seekTo);
                 
-                if (timeDiff > 1.8) {
+                // Senkron kayması 1.5 saniyeyi geçerse takılmadan düzelt
+                if (timeDiff > 1.5) {
                     player.seekTo(state.seekTo, true);
-                    player.playVideo();
+                    if (typeof player.getPlayerState === 'function' && player.getPlayerState() !== YT.PlayerState.PLAYING) {
+                        player.playVideo();
+                    }
                 }
             }
         }
 
-        function handleUserClick() {
+        function handleUserClick(e) {
+            if (e) e.preventDefault();
+            if (userHasClicked) return;
+            userHasClicked = true;
+
             const overlay = document.getElementById('start-overlay');
             overlay.style.opacity = '0';
             overlay.style.pointerEvents = 'none';
-            setTimeout(() => { overlay.style.display = 'none'; }, 500);
+            setTimeout(() => { overlay.style.display = 'none'; }, 300);
 
             const startPlaying = () => {
                 const state = getCurrentStreamState();
                 const targetSong = songList[state.songIndex];
 
                 updateTrackLabels(state.songIndex);
-                currentLoadedVideoId = targetSong.id;
 
                 if (typeof player.unMute === 'function') player.unMute();
+                if (typeof player.setVolume === 'function') player.setVolume(Number(volumeRange.value));
 
-                player.loadVideoById({
-                    videoId: targetSong.id,
-                    startSeconds: Math.floor(state.seekTo)
-                });
+                if (currentLoadedVideoId !== targetSong.id) {
+                    currentLoadedVideoId = targetSong.id;
+                    player.loadVideoById({
+                        videoId: targetSong.id,
+                        startSeconds: Math.floor(state.seekTo)
+                    });
+                } else {
+                    player.seekTo(state.seekTo, true);
+                }
+
                 player.playVideo();
 
                 if (syncCheckInterval) clearInterval(syncCheckInterval);
@@ -862,15 +880,17 @@
                         clearInterval(checkReady);
                         startPlaying();
                     }
-                }, 100);
+                }, 50);
             }
         }
 
-        document.getElementById('start-overlay').addEventListener('click', handleUserClick);
-        document.getElementById('start-btn-el').addEventListener('click', (e) => {
-            e.stopPropagation();
-            handleUserClick();
-        });
+        const startOverlay = document.getElementById('start-overlay');
+        const startBtnEl = document.getElementById('start-btn-el');
+
+        startOverlay.addEventListener('click', handleUserClick, { passive: false });
+        startOverlay.addEventListener('touchstart', handleUserClick, { passive: false });
+        startBtnEl.addEventListener('click', handleUserClick, { passive: false });
+        startBtnEl.addEventListener('touchstart', handleUserClick, { passive: false });
 
         const volumeRange = document.getElementById('volume-range');
         const muteBtn = document.getElementById('mute-btn');

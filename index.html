@@ -77,7 +77,7 @@
             letter-spacing: -3px;
             text-shadow: 0 0 30px rgba(255, 255, 255, 0.08);
             filter: blur(1px);
-            transition: transform 0.08s ease, color 0.3s ease;
+            transition: transform 0.2s ease-out, color 0.3s ease;
             will-change: transform;
         }
 
@@ -101,7 +101,7 @@
             font-size: 9vw;
             z-index: 1;
             pointer-events: none;
-            transition: color 0.4s ease, opacity 0.4s ease, transform 0.08s ease;
+            transition: color 0.4s ease, opacity 0.2s ease-out, transform 0.2s ease-out;
             text-shadow: 0 0 15px var(--glow-color);
             will-change: transform;
         }
@@ -132,6 +132,7 @@
             opacity: 0;
             mix-blend-mode: overlay;
             will-change: opacity;
+            transition: opacity 0.1s ease-out;
         }
 
         /* AMBIENT NEON GLOW */
@@ -145,7 +146,7 @@
             background: radial-gradient(circle, var(--glow-color) 0%, var(--bg-glow) 50%, rgba(0, 0, 0, 0) 80%);
             z-index: 4;
             pointer-events: none;
-            transition: transform 0.08s ease-out, opacity 0.08s ease-out, background 0.4s ease;
+            transition: transform 0.2s ease-out, opacity 0.2s ease-out, background 0.4s ease;
             will-change: transform, opacity;
             filter: blur(60px);
         }
@@ -165,22 +166,23 @@
             gap: 8px;
             margin: 0 auto;
             box-sizing: border-box;
-            transition: transform 0.05s ease, filter 0.05s ease;
+            transition: transform 0.15s ease-out, filter 0.15s ease-out;
         }
 
+        /* TITREME MIKTARI OKUNABILIRLIK ICIN DUSURULDU */
         .wrapper-shake {
-            animation: trapBassShake 0.06s ease-in-out infinite alternate;
+            animation: trapBassShake 0.15s ease-in-out infinite alternate;
         }
 
-        /* TRAP BASS DROP GLITCH & SHAKE */
+        /* GLITCH GOLGESI HAFIFLETILDI */
         .wrapper-glitch {
-            filter: drop-shadow(-2px 0 0 rgba(255,0,0,0.6)) drop-shadow(2px 0 0 rgba(0,255,255,0.6));
+            filter: drop-shadow(-1px 0 0 rgba(255,0,0,0.3)) drop-shadow(1px 0 0 rgba(0,255,255,0.3));
         }
 
         @keyframes trapBassShake {
             0% { transform: scale(1) translate(0, 0); }
-            50% { transform: scale(1.008) translate(-2px, 2px); }
-            100% { transform: scale(0.992) translate(2px, -2px); }
+            50% { transform: scale(1.002) translate(-1px, 1px); }
+            100% { transform: scale(0.998) translate(1px, -1px); }
         }
 
         .logo-container {
@@ -250,7 +252,7 @@
             text-transform: uppercase;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8), inset 0 0 12px rgba(255, 255, 255, 0.05);
             white-space: nowrap;
-            transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+            transition: transform 0.2s ease-out, border-color 0.2s ease-out, box-shadow 0.2s ease-out;
         }
 
         .theme-selector {
@@ -263,7 +265,7 @@
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
-            transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+            transition: transform 0.2s ease-out, border-color 0.2s ease-out, box-shadow 0.2s ease-out;
         }
 
         .theme-btn {
@@ -318,11 +320,11 @@
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
-            transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+            transition: transform 0.2s ease-out, border-color 0.2s ease-out, box-shadow 0.2s ease-out;
         }
 
         .badge-bass-pulse {
-            transform: scale(1.03);
+            transform: scale(1.02);
             border-color: var(--accent-color) !important;
             box-shadow: 0 0 16px var(--glow-color) !important;
         }
@@ -384,7 +386,7 @@
             overflow: hidden;
             box-shadow: 0 16px 50px rgba(0, 0, 0, 0.95);
             border: 1px solid var(--border-glow);
-            transition: border-color 0.3s, box-shadow 0.3s, transform 0.08s ease;
+            transition: border-color 0.3s, box-shadow 0.3s, transform 0.15s ease-out;
             background: #000;
             margin: 2px 0;
         }
@@ -1032,6 +1034,8 @@
         document.fonts.ready.then(() => { createOrbitRingText(); });
 
         let bassAngle = 0;
+        let smoothBassPower = 0; // YUMUŞATILMIŞ BASS GÜCÜ (LERP İÇİN)
+
         const ambientGlowEl = document.getElementById('ambient-glow');
         const lightningEl = document.getElementById('lightning-flash');
         const badgeLiveEl = document.getElementById('badge-live');
@@ -1062,34 +1066,37 @@
             ringBarsGroup.rotation.z += (isPlayingState ? 0.5 : 0.05) * deltaTime;
 
             if (isPlayingState) {
-                bassAngle += 8.5 * deltaTime;
+                bassAngle += 4.5 * deltaTime; // Bass frekansı yumuşatıldı
                 
-                const bassPower = Math.pow(Math.sin(bassAngle), 5);
-                const bassScale = 1 + bassPower * 0.06;
+                // Ham bass gücü ve yumuşatılmış süzme (Lerp)
+                const targetBassPower = Math.pow(Math.max(0, Math.sin(bassAngle)), 3);
+                smoothBassPower += (targetBassPower - smoothBassPower) * 0.12;
+
+                const bassScale = 1 + smoothBassPower * 0.03; // Büyüme miktarı %3 ile sınırlandı
                 globeMesh.scale.set(bassScale, bassScale, bassScale);
 
-                dirLight.intensity = 2.5 + bassPower * 3.2;
+                dirLight.intensity = 2.5 + smoothBassPower * 1.5;
 
-                const glowScale = 1 + Math.sin(bassAngle) * 0.18;
+                const glowScale = 1 + smoothBassPower * 0.08;
                 ambientGlowEl.style.transform = `translate(-50%, -50%) scale(${glowScale})`;
-                ambientGlowEl.style.opacity = (0.5 + bassPower * 0.4).toString();
+                ambientGlowEl.style.opacity = (0.4 + smoothBassPower * 0.3).toString();
 
-                videoBoxEl.style.transform = `scale(${1 + bassPower * 0.012})`;
+                videoBoxEl.style.transform = `scale(${1 + smoothBassPower * 0.005})`;
 
-                /* GRAFFITI & TRAP TEXT BEAT PULSE */
+                /* GRAFFITI & TRAP TEXT BEAT PULSE (Daha yumuşak) */
                 if (tag1El && tag2El) {
-                    tag1El.style.transform = `rotate(-22deg) scale(${1 + bassPower * 0.08})`;
-                    tag2El.style.transform = `rotate(12deg) scale(${1 + bassPower * 0.08})`;
-                    tag1El.style.opacity = (0.08 + bassPower * 0.2).toString();
-                    tag2El.style.opacity = (0.08 + bassPower * 0.2).toString();
+                    tag1El.style.transform = `rotate(-22deg) scale(${1 + smoothBassPower * 0.03})`;
+                    tag2El.style.transform = `rotate(12deg) scale(${1 + smoothBassPower * 0.03})`;
+                    tag1El.style.opacity = (0.08 + smoothBassPower * 0.1).toString();
+                    tag2El.style.opacity = (0.08 + smoothBassPower * 0.1).toString();
                 }
 
                 if (bgText1El && bgText2El) {
-                    bgText1El.style.transform = `rotate(-9deg) scale(${1 + bassPower * 0.03})`;
-                    bgText2El.style.transform = `rotate(7deg) scale(${1 + bassPower * 0.03})`;
+                    bgText1El.style.transform = `rotate(-9deg) scale(${1 + smoothBassPower * 0.015})`;
+                    bgText2El.style.transform = `rotate(7deg) scale(${1 + smoothBassPower * 0.015})`;
                 }
 
-                if (bassPower > 0.6) {
+                if (smoothBassPower > 0.65) {
                     badgeLiveEl.classList.add('badge-bass-pulse');
                     badgeListenerEl.classList.add('badge-bass-pulse');
                     themeSelectorEl.classList.add('badge-bass-pulse');
@@ -1101,28 +1108,29 @@
                     volumeBoxEl.classList.remove('badge-bass-pulse');
                 }
 
-                /* TRAP BASS DROP GLITCH EFFECT */
-                if (bassPower > 0.8) {
+                /* Sadece çok yüksek bass peak anında hafif glitch */
+                if (smoothBassPower > 0.88) {
                     mainWrapper.classList.add('wrapper-glitch');
                 } else {
                     mainWrapper.classList.remove('wrapper-glitch');
                 }
 
-                if (bassPower > 0.85) {
-                    lightningEl.style.opacity = (Math.random() > 0.35 ? (0.35 + (bassPower - 0.85) * 1.3) : 0).toString();
+                if (smoothBassPower > 0.92) {
+                    lightningEl.style.opacity = (Math.random() > 0.6 ? (0.15 + (smoothBassPower - 0.92) * 0.5) : 0).toString();
                 } else {
                     lightningEl.style.opacity = '0';
                 }
 
                 ringBarMeshes.forEach((bar, idx) => {
-                    const rnd = Math.sin(bassAngle * 3 + idx) * 0.5 + 0.5;
-                    const scaleY = 0.5 + rnd * 2.4 * (bassPower + 0.35);
+                    const rnd = Math.sin(bassAngle * 2 + idx) * 0.5 + 0.5;
+                    const scaleY = 0.5 + rnd * 1.5 * (smoothBassPower + 0.3);
                     bar.scale.set(1, scaleY, 1);
-                    bar.material.opacity = 0.45 + rnd * 0.5;
+                    bar.material.opacity = 0.35 + rnd * 0.4;
                 });
 
             } else {
-                globeMesh.scale.lerp(new THREE.Vector3(1, 1, 1), 10 * deltaTime);
+                smoothBassPower = 0;
+                globeMesh.scale.lerp(new THREE.Vector3(1, 1, 1), 5 * deltaTime);
                 dirLight.intensity = 2.2;
                 ambientGlowEl.style.transform = `translate(-50%, -50%) scale(1)`;
                 ambientGlowEl.style.opacity = '0.4';
@@ -1183,7 +1191,7 @@
                 this.pulseSpeed = Math.random() * 0.05 + 0.02;
             }
             update() {
-                const speedMult = isPlayingState ? 2.0 : 1.0;
+                const speedMult = isPlayingState ? 1.4 : 1.0;
                 this.x += this.speedX * speedMult;
                 this.y += this.speedY * speedMult;
                 this.opacity += Math.sin(Date.now() * this.pulseSpeed) * 0.025;
@@ -1235,7 +1243,7 @@
             document.getElementById('listener-count').innerText = snap.numChildren();
         });
 
-        /* TRAP CANLI VISUALIZER BARLARI */
+        /* TRAP CANLI VISUALIZER BARLARI (Geçişler yumuşatıldı) */
         const vCanvas = document.getElementById('visualizer-canvas');
         const vCtx = vCanvas.getContext('2d');
         const numBars = isMobileDevice ? 32 : 60;
@@ -1254,7 +1262,7 @@
                 if (isPlayingState) {
                     const centerFactor = 1 - Math.abs((i - numBars / 2) / (numBars / 2)) * 0.35;
                     const target = (Math.random() * (vCanvas.height - 2) + 2) * centerFactor;
-                    barHeights[i] += (target - barHeights[i]) * 0.38;
+                    barHeights[i] += (target - barHeights[i]) * 0.18; // Bar zıplamaları azaltıldı
                 } else {
                     barHeights[i] += (2 - barHeights[i]) * 0.15;
                 }
@@ -1262,7 +1270,7 @@
                 if (barHeights[i] > peakHeights[i]) {
                     peakHeights[i] = barHeights[i];
                 } else {
-                    peakHeights[i] -= 0.5;
+                    peakHeights[i] -= 0.3;
                 }
                 if (peakHeights[i] < 2) peakHeights[i] = 2;
 

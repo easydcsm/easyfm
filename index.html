@@ -991,13 +991,13 @@
             camera.aspect = width / height;
 
             if (window.innerWidth > 768) {
-                camera.position.z = 5.2;
-            } else if (window.innerHeight <= 650) {
                 camera.position.z = 5.8;
+            } else if (window.innerHeight <= 650) {
+                camera.position.z = 6.8;
             } else if (window.innerWidth <= 600) {
-                camera.position.z = 5.5;
+                camera.position.z = 6.4;
             } else {
-                camera.position.z = 5.0;
+                camera.position.z = 5.8;
             }
 
             camera.updateProjectionMatrix();
@@ -1133,7 +1133,7 @@
 
             if (isPlayingState) {
                 const bassPower = liveBassLevel; 
-                const bassScale = 1 + bassPower * 0.18; // Tepki genişliği artırıldı
+                const bassScale = 1 + bassPower * 0.05; // Dünyanın kontrolsüz büyümesini önler, kesilmeyi engeller
                 globeMesh.scale.set(bassScale, bassScale, bassScale);
 
                 dirLight.intensity = 2.5 + bassPower * 4.0;

@@ -681,9 +681,9 @@
                 <span class="pad-icon">🔊</span>
                 <span>DAMN SON!</span>
             </button>
-            <button class="pad-btn" onclick="playAdlib('siren')">
-                <span class="pad-icon">🚨</span>
-                <span>TRAP SIREN</span>
+            <button class="pad-btn" onclick="playAdlib('wheezy')">
+                <span class="pad-icon">🐍</span>
+                <span>WHEEZY!!</span>
             </button>
             <button class="pad-btn" onclick="playAdlib('gun')">
                 <span class="pad-icon">💥</span>
@@ -777,68 +777,25 @@
             }
         }
 
-        /* TRAP AD-LIB SOUNDBOARD AUDIO SYNTHESIZER & SAMPLES */
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        /* REAL HQ TRAP PRODUCER TAGS & SOUND EFFECTS AUDIO ENGINE */
+        const adlibSounds = {
+            metro: new Audio('https://res.cloudinary.com/dyd9l3f2r/video/upload/v1700000000/metro_boomin_tag.mp3'),
+            damn: new Audio('https://res.cloudinary.com/dyd9l3f2r/video/upload/v1700000000/damn_son_where_did_you_find_this.mp3'),
+            wheezy: new Audio('https://res.cloudinary.com/dyd9l3f2r/video/upload/v1700000000/wheezy_outta_here.mp3'),
+            gun: new Audio('https://res.cloudinary.com/dyd9l3f2r/video/upload/v1700000000/808_shotgun.mp3')
+        };
+
+        // Preload sounds
+        Object.values(adlibSounds).forEach(snd => {
+            snd.preload = 'auto';
+            snd.volume = 0.9;
+        });
 
         function playAdlib(type) {
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-            
-            const now = audioCtx.currentTime;
-
-            if (type === 'metro') {
-                // Synthesized Voice/Shout Simulation
-                let osc = audioCtx.createOscillator();
-                let gain = audioCtx.createGain();
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(220, now);
-                osc.frequency.exponentialRampToValueAtTime(440, now + 0.15);
-                osc.frequency.exponentialRampToValueAtTime(110, now + 0.4);
-                gain.gain.setValueAtTime(0.8, now);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start(now);
-                osc.stop(now + 0.4);
-            } else if (type === 'damn') {
-                // Drop Synth Sweep
-                let osc = audioCtx.createOscillator();
-                let gain = audioCtx.createGain();
-                osc.type = 'square';
-                osc.frequency.setValueAtTime(800, now);
-                osc.frequency.exponentialRampToValueAtTime(80, now + 0.5);
-                gain.gain.setValueAtTime(0.7, now);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start(now);
-                osc.stop(now + 0.5);
-            } else if (type === 'siren') {
-                // Trap Siren Pitch Slide
-                let osc = audioCtx.createOscillator();
-                let gain = audioCtx.createGain();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(600, now);
-                osc.frequency.linearRampToValueAtTime(1200, now + 0.25);
-                osc.frequency.linearRampToValueAtTime(600, now + 0.5);
-                gain.gain.setValueAtTime(0.5, now);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start(now);
-                osc.stop(now + 0.5);
-            } else if (type === 'gun') {
-                // Sub-808 Gunshot Sub Boom
-                let osc = audioCtx.createOscillator();
-                let gain = audioCtx.createGain();
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(150, now);
-                osc.frequency.exponentialRampToValueAtTime(30, now + 0.3);
-                gain.gain.setValueAtTime(1, now);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start(now);
-                osc.stop(now + 0.3);
+            const sound = adlibSounds[type];
+            if (sound) {
+                sound.currentTime = 0;
+                sound.play().catch(() => {});
             }
         }
 

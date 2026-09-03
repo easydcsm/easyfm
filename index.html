@@ -161,25 +161,25 @@
             flex-direction: column;
             align-items: center;
             justify-content: space-between;
-            padding: calc(12px + env(safe-area-inset-top)) 14px calc(10px + env(safe-area-inset-bottom)) 14px;
-            gap: 6px;
+            padding: calc(12px + env(safe-area-inset-top)) 14px calc(14px + env(safe-area-inset-bottom)) 14px;
+            gap: 8px;
             margin: 0 auto;
             box-sizing: border-box;
             will-change: transform, filter;
         }
 
         .wrapper-shake {
-            animation: trapBassShake 0.06s ease-in-out infinite alternate;
+            animation: trapBassShake 0.05s ease-in-out infinite alternate;
         }
 
         .wrapper-glitch {
-            filter: drop-shadow(-5px 0 0 rgba(255,0,0,0.9)) drop-shadow(5px 0 0 rgba(0,255,255,0.9));
+            filter: drop-shadow(-4px 0 0 rgba(255,0,0,0.8)) drop-shadow(4px 0 0 rgba(0,255,255,0.8));
         }
 
         @keyframes trapBassShake {
             0% { transform: scale(1) translate(0, 0); }
-            50% { transform: scale(1.025) translate(-6px, 5px); }
-            100% { transform: scale(0.975) translate(6px, -5px); }
+            50% { transform: scale(1.02) translate(-5px, 4px); }
+            100% { transform: scale(0.98) translate(5px, -4px); }
         }
 
         .logo-container {
@@ -187,7 +187,7 @@
             position: relative;
             width: 100%;
             max-width: 420px;
-            height: clamp(160px, 25vh, 240px);
+            height: clamp(160px, 26vh, 250px);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -199,7 +199,7 @@
         @media (min-width: 769px) {
             .logo-container {
                 max-width: 620px;
-                height: clamp(220px, 30vh, 320px);
+                height: clamp(220px, 32vh, 340px);
             }
         }
 
@@ -313,7 +313,7 @@
         }
 
         .badge-bass-pulse {
-            transform: scale(1.15) !important;
+            transform: scale(1.12) !important;
             border-color: var(--accent-color) !important;
             box-shadow: 0 0 35px var(--glow-color), inset 0 0 20px var(--glow-color) !important;
         }
@@ -398,8 +398,8 @@
             position: relative;
             width: 100%;
             flex: 1 1 auto;
-            min-height: 120px;
-            max-height: 32vh;
+            min-height: 130px;
+            max-height: 35vh;
             border-radius: 18px;
             overflow: hidden;
             box-shadow: 0 16px 50px rgba(0, 0, 0, 0.95);
@@ -466,7 +466,7 @@
             -webkit-backdrop-filter: blur(25px);
             border: 1px solid var(--border-glow);
             border-radius: 16px;
-            padding: 10px 16px;
+            padding: 12px 18px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -545,15 +545,6 @@
         @keyframes waveAnim {
             0% { transform: scaleY(0.2); }
             100% { transform: scaleY(1); }
-        }
-
-        #visualizer-canvas {
-            width: 100%;
-            height: 20px;
-            min-height: 16px;
-            margin: 0;
-            flex-shrink: 0;
-            display: block;
         }
     </style>
 
@@ -644,8 +635,6 @@
                 <span id="next-track-name" style="font-weight:700;">---</span>
             </div>
         </div>
-
-        <canvas id="visualizer-canvas"></canvas>
     </div>
 
     <script>
@@ -679,7 +668,7 @@
             }
         }
 
-        /* SOUNDBOARD SES EFEKTLERİ (KUSURSUZ AUDIO BUFFER YAPISI) */
+        /* SOUNDBOARD SES EFEKTLERİ */
         const adlibUrls = {
             metro: 'https://raw.githubusercontent.com/easydcsm/easyfm/main/Metroboomin%20producer%20tags%20-%20Every%20tags%20clean%20(mp3cut%20(mp3cut.net).mp3',
             damn: 'https://raw.githubusercontent.com/easydcsm/easyfm/main/Damn%20Son%20Whered%20You%20Find%20This%20(Sound%20Effect)%20(mp3cut.net).mp3',
@@ -820,14 +809,14 @@
         let currentLoadedUrl = null;
         let syncCheckInterval = null;
 
-        /* KUSURSUZ BASS TESPİT SİSTEMİ & EQ AYRIMI */
+        /* KUSURSUZ DİNAMİK BASS & 808 PEAK DETECTION HATTı */
         function initAudioContext() {
             if (!audioCtx) {
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 
                 audioSource = audioCtx.createMediaElementSource(videoPlayer);
 
-                /* --- 1. SES KALİTELEŞTİRME HATTI (HOPARLÖRE GİDEN) --- */
+                /* --- 1. SİLİK GELEN KALİTELİ HOPARLÖR HATTI --- */
                 const hpFilter = audioCtx.createBiquadFilter();
                 hpFilter.type = 'highpass';
                 hpFilter.frequency.setValueAtTime(22, audioCtx.currentTime);
@@ -864,7 +853,6 @@
 
                 mainGainNode = audioCtx.createGain();
 
-                // Kaliteli ses akışı zinciri
                 audioSource.connect(hpFilter);
                 hpFilter.connect(subBassFilter);
                 subBassFilter.connect(midBassFilter);
@@ -875,22 +863,21 @@
                 mainGainNode.connect(audioCtx.destination);
 
 
-                /* --- 2. BASS PATLAMA ANALİZ HATTI (SADECE SUB-BASS / 808'İ DİNLER) --- */
+                /* --- 2. ISLENMEMIS HAM SESTEN SAF BASS TESPITI (BAĞIMSIZ HAT) --- */
                 analyser = audioCtx.createAnalyser();
-                analyser.fftSize = 512;
-                analyser.smoothingTimeConstant = 0.3; // Anlık bass vuruşlarına çok hızlı tepki
+                analyser.fftSize = 256;
+                analyser.smoothingTimeConstant = 0.2; // Anlık 808 baslarına anında tepki
 
-                // EQ etkilerini yok edip saf ham sesten sadece bass'ı ayırmak için keskin LowPass Filtresi
                 const bassDetectorFilter = audioCtx.createBiquadFilter();
                 bassDetectorFilter.type = 'lowpass';
-                bassDetectorFilter.frequency.setValueAtTime(110, audioCtx.currentTime); // Sadece 110Hz ve altı (Saf 808 Bass)
+                bassDetectorFilter.frequency.setValueAtTime(80, audioCtx.currentTime); // Sadece 80Hz altı ham baslar
 
+                // Sesi doğrudan kaynaktan filtreye yönlendiriyoruz
                 audioSource.connect(bassDetectorFilter);
                 bassDetectorFilter.connect(analyser);
 
                 dataArray = new Uint8Array(analyser.frequencyBinCount);
 
-                // Soundboard padlerini önceden belleğe al
                 Object.keys(adlibUrls).forEach(k => preloadAdlib(k, adlibUrls[k]));
             }
 
@@ -1074,13 +1061,13 @@
         const globeMesh = new THREE.Mesh(geometry, material);
         scene.add(globeMesh);
 
-        /* 3D TRAP EKOLAYZIR HALKASI */
+        /* 3D TRAP HALKASI (BOYU DÜZENLENDİ - EKRANDAN TAŞMAZ) */
         const ringBarsCount = isMobileDevice ? 44 : 80;
         const ringBarsGroup = new THREE.Group();
         const ringBarMeshes = [];
 
         for (let i = 0; i < ringBarsCount; i++) {
-            const barGeo = new THREE.BoxGeometry(0.04, 0.45, 0.04);
+            const barGeo = new THREE.BoxGeometry(0.04, 0.35, 0.04);
             const barMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.85 });
             const bar = new THREE.Mesh(barGeo, barMat);
             
@@ -1156,10 +1143,7 @@
         const soundboardPads = document.querySelectorAll('.soundboard-pad');
 
         let lastTime = performance.now();
-        
-        /* HASSAS PEAK DETECTION & BASS PATLAMA ALGORİTMASI */
-        let movingAverageBass = 0;
-        let beatCooldown = 0;
+        let runningBassAvg = 0;
 
         function animateGlobe(currentTime) {
             requestAnimationFrame(animateGlobe);
@@ -1167,27 +1151,21 @@
             const deltaTime = Math.min((currentTime - lastTime) / 1000, 0.1); 
             lastTime = currentTime;
 
-            if (beatCooldown > 0) beatCooldown -= deltaTime;
-
             if (analyser && isPlayingState) {
                 analyser.getByteFrequencyData(dataArray);
                 
-                // Lowpass filtreden geçmiş ilk 4 bin (0-60Hz arasındaki saf sub-bass vuruşu)
-                let bassSum = dataArray[0] + dataArray[1] + dataArray[2] + dataArray[3];
-                let currentBassLevel = bassSum / (4 * 255.0); // 0.0 ile 1.0 arası saf değer
+                // En alt 3 bas bin'inin ortalaması (Saf 808 Baslar)
+                let currentBassEnergy = (dataArray[0] + dataArray[1] + dataArray[2]) / 3;
+                let currentBassNorm = currentBassEnergy / 255.0;
 
-                // Hareketli ortalama takibi
-                movingAverageBass = movingAverageBass * 0.92 + currentBassLevel * 0.08;
+                // Dinamik ortalama güncellemesi
+                runningBassAvg = runningBassAvg * 0.9 + currentBassNorm * 0.1;
 
-                // Gerçek 808 patlamasını tespit et (Eşiği aniden aşan güçlü vuruşlar)
-                const bassThreshold = Math.max(movingAverageBass * 1.4, 0.42);
-
-                if (currentBassLevel > bassThreshold && beatCooldown <= 0) {
-                    liveBassLevel = 1.0; // Maksimum şiddette anlık patlama
-                    beatCooldown = 0.12; // Çift patlamayı engelleyen minik ritim kilidi
+                // Anlık bas patlamalarını hassas yakala
+                if (currentBassNorm > 0.35 && currentBassNorm > runningBassAvg * 1.25) {
+                    liveBassLevel = Math.min(1.0, (currentBassNorm - runningBassAvg) * 3.0 + 0.3);
                 } else {
-                    // Sadece tam vurmadığı anlarda ultra-hızlı sönümlenme
-                    liveBassLevel *= Math.exp(-22 * deltaTime);
+                    liveBassLevel *= Math.exp(-18 * deltaTime); // Hızlı sönümleme
                 }
             } else {
                 liveBassLevel = 0;
@@ -1203,40 +1181,40 @@
             if (isPlayingState) {
                 const bassPower = liveBassLevel; 
                 
-                /* DÜNYA VE EKOLAYZIR HALKASI RİTMİK PATLAMALARI */
-                const bassScale = 1 + bassPower * 0.42;
+                /* DÜNYA VE PATLAMA RİTİMLERİ */
+                const bassScale = 1 + bassPower * 0.28;
                 globeMesh.scale.set(bassScale, bassScale, bassScale);
-                ringBarsGroup.scale.set(1 + bassPower * 0.32, 1 + bassPower * 0.32, 1 + bassPower * 0.32);
+                ringBarsGroup.scale.set(1 + bassPower * 0.2, 1 + bassPower * 0.2, 1 + bassPower * 0.2);
 
-                dirLight.intensity = 2.2 + bassPower * 12.0;
+                dirLight.intensity = 2.2 + bassPower * 8.0;
 
-                const glowScale = 1 + bassPower * 0.85;
+                const glowScale = 1 + bassPower * 0.6;
                 ambientGlowEl.style.transform = `translate(-50%, -50%) scale(${glowScale})`;
                 ambientGlowEl.style.opacity = (0.35 + bassPower * 0.65).toString();
 
-                /* KUTULAR VE KARTLARIN BASS PUMP HAREKETİ */
-                videoBoxEl.style.transform = `scale(${1 + bassPower * 0.07})`;
+                /* KUTULARIN DİNAMİK BASS TİTREŞİMİ */
+                videoBoxEl.style.transform = `scale(${1 + bassPower * 0.05})`;
                 if (nowPlayingCardEl) {
-                    nowPlayingCardEl.style.transform = `scale(${1 + bassPower * 0.04})`;
+                    nowPlayingCardEl.style.transform = `scale(${1 + bassPower * 0.03})`;
                 }
 
-                /* ARKA PLAN GRAFFITI & TAG PATLAMALARI */
+                /* GRAFFITI VE ARKA PLAN TEXT PATLAMALARI */
                 if (tag1El && tag2El) {
-                    tag1El.style.transform = `rotate(-25deg) scale(${1 + bassPower * 0.45})`;
-                    tag2El.style.transform = `rotate(15deg) scale(${1 + bassPower * 0.45})`;
+                    tag1El.style.transform = `rotate(-25deg) scale(${1 + bassPower * 0.35})`;
+                    tag2El.style.transform = `rotate(15deg) scale(${1 + bassPower * 0.35})`;
                     tag1El.style.opacity = (0.12 + bassPower * 0.88).toString();
                     tag2El.style.opacity = (0.12 + bassPower * 0.88).toString();
                 }
 
                 if (bgText1El && bgText2El) {
-                    bgText1El.style.transform = `rotate(-10deg) scale(${1 + bassPower * 0.25})`;
-                    bgText2El.style.transform = `rotate(8deg) scale(${1 + bassPower * 0.25})`;
-                    bgText1El.style.color = bassPower > 0.4 ? 'rgba(255, 255, 255, 0.4)' : 'rgba(255, 255, 255, 0.04)';
-                    bgText2El.style.color = bassPower > 0.4 ? 'rgba(255, 255, 255, 0.4)' : 'rgba(255, 255, 255, 0.04)';
+                    bgText1El.style.transform = `rotate(-10deg) scale(${1 + bassPower * 0.2})`;
+                    bgText2El.style.transform = `rotate(8deg) scale(${1 + bassPower * 0.2})`;
+                    bgText1El.style.color = bassPower > 0.3 ? 'rgba(255, 255, 255, 0.35)' : 'rgba(255, 255, 255, 0.04)';
+                    bgText2El.style.color = bassPower > 0.3 ? 'rgba(255, 255, 255, 0.35)' : 'rgba(255, 255, 255, 0.04)';
                 }
 
-                /* SADECE SERT BASS VURUŞLARINDA BUTONLARIN BÜYÜMESİ */
-                if (bassPower > 0.45) {
+                /* BUTON & BADGE PARLAMALARI */
+                if (bassPower > 0.35) {
                     badgeLiveEl.classList.add('badge-bass-pulse');
                     badgeListenerEl.classList.add('badge-bass-pulse');
                     themeSelectorEl.classList.add('badge-bass-pulse');
@@ -1250,8 +1228,8 @@
                     soundboardPads.forEach(pad => pad.classList.remove('badge-bass-pulse'));
                 }
 
-                /* GERÇEK TRAMPA & BASS PATLAMALARINDA TİTREŞİM (SHAKE / GLITCH) */
-                if (bassPower > 0.55) {
+                /* SERT BASLARDA EKRAN SALLANMASI (SHAKE/GLITCH) */
+                if (bassPower > 0.45) {
                     mainWrapper.classList.add('wrapper-glitch');
                     mainWrapper.classList.add('wrapper-shake');
                 } else {
@@ -1259,18 +1237,18 @@
                     mainWrapper.classList.remove('wrapper-shake');
                 }
 
-                /* ANLIK YILDIRIM ÇAKMASI */
-                if (bassPower > 0.5) {
-                    lightningEl.style.opacity = ((bassPower - 0.5) * 2.2).toString();
+                /* YILDIRIM ÇAKMASI */
+                if (bassPower > 0.4) {
+                    lightningEl.style.opacity = ((bassPower - 0.4) * 1.8).toString();
                 } else {
                     lightningEl.style.opacity = '0';
                 }
 
-                /* 3D EKOLAYZIR ÇİZGİLERİNİN PATLAMASI */
+                /* 3D HALKA ÇİZGİLERİ (KONTROLLÜ UZAMA) */
                 ringBarMeshes.forEach((bar, idx) => {
                     const freqValue = (dataArray ? dataArray[idx % dataArray.length] : 0) / 255;
-                    const scaleY = 0.4 + freqValue * 5.5 + bassPower * 2.8;
-                    bar.scale.set(1 + bassPower * 0.5, scaleY, 1 + bassPower * 0.5);
+                    const scaleY = 0.4 + freqValue * 1.8 + bassPower * 1.2; // Dengeli uzama
+                    bar.scale.set(1 + bassPower * 0.3, scaleY, 1 + bassPower * 0.3);
                     bar.material.opacity = 0.35 + freqValue * 0.65;
                 });
 
@@ -1393,57 +1371,6 @@
         myConnectionsRef.on('value', (snap) => {
             document.getElementById('listener-count').innerText = snap.numChildren();
         });
-
-        /* TRAP CANLI VISUALIZER BARLARI */
-        const vCanvas = document.getElementById('visualizer-canvas');
-        const vCtx = vCanvas.getContext('2d');
-        const numBars = isMobileDevice ? 32 : 60;
-        let barHeights = new Array(numBars).fill(2);
-        let peakHeights = new Array(numBars).fill(2);
-
-        function drawVisualizer() {
-            vCanvas.width = vCanvas.offsetWidth;
-            vCanvas.height = vCanvas.offsetHeight;
-            vCtx.clearRect(0, 0, vCanvas.width, vCanvas.height);
-
-            const gap = 2;
-            const barWidth = (vCanvas.width / numBars) - gap;
-
-            for (let i = 0; i < numBars; i++) {
-                if (isPlayingState && dataArray) {
-                    const dataIndex = Math.floor((i / numBars) * dataArray.length);
-                    const target = ((dataArray[dataIndex] / 255) * (vCanvas.height - 2)) + 2;
-                    barHeights[i] += (target - barHeights[i]) * 0.42;
-                } else {
-                    barHeights[i] += (2 - barHeights[i]) * 0.15;
-                }
-
-                if (barHeights[i] > peakHeights[i]) {
-                    peakHeights[i] = barHeights[i];
-                } else {
-                    peakHeights[i] -= 0.5;
-                }
-                if (peakHeights[i] < 2) peakHeights[i] = 2;
-
-                const x = i * (barWidth + gap);
-                const y = vCanvas.height - barHeights[i];
-
-                const grad = vCtx.createLinearGradient(0, vCanvas.height, 0, 0);
-                grad.addColorStop(0, 'rgba(255, 255, 255, 0.15)');
-                grad.addColorStop(1, currentAccentColor);
-
-                vCtx.fillStyle = grad;
-                vCtx.fillRect(x, y, barWidth, barHeights[i]);
-
-                vCtx.fillStyle = currentAccentColor;
-                vCtx.shadowColor = currentAccentColor;
-                vCtx.shadowBlur = 10;
-                vCtx.fillRect(x, vCanvas.height - peakHeights[i] - 1, barWidth, 1.5);
-                vCtx.shadowBlur = 0;
-            }
-            requestAnimationFrame(drawVisualizer);
-        }
-        drawVisualizer();
     </script>
 </body>
 </html>

@@ -77,7 +77,7 @@
             letter-spacing: -3px;
             text-shadow: 0 0 35px var(--glow-color);
             filter: blur(1px);
-            transition: color 0.05s ease;
+            transition: color 0.1s ease, transform 0.1s ease;
             will-change: transform;
             transform-origin: center center;
         }
@@ -104,6 +104,7 @@
             pointer-events: none;
             text-shadow: 0 0 20px var(--glow-color);
             will-change: transform, opacity;
+            transition: transform 0.1s ease, opacity 0.1s ease;
             transform-origin: center center;
         }
 
@@ -133,6 +134,7 @@
             opacity: 0;
             mix-blend-mode: overlay;
             will-change: opacity;
+            transition: opacity 0.05s ease;
         }
 
         /* AMBIENT NEON GLOW */
@@ -148,6 +150,7 @@
             pointer-events: none;
             will-change: transform, opacity;
             filter: blur(70px);
+            transition: transform 0.1s ease, opacity 0.1s ease;
         }
 
         .main-wrapper {
@@ -173,13 +176,13 @@
         }
 
         .wrapper-glitch {
-            filter: drop-shadow(-4px 0 0 rgba(255,0,0,0.8)) drop-shadow(4px 0 0 rgba(0,255,255,0.8));
+            filter: drop-shadow(-2px 0 0 rgba(255,0,0,0.6)) drop-shadow(2px 0 0 rgba(0,255,255,0.6));
         }
 
         @keyframes trapBassShake {
             0% { transform: scale(1) translate(0, 0); }
-            50% { transform: scale(1.02) translate(-5px, 4px); }
-            100% { transform: scale(0.98) translate(5px, -4px); }
+            50% { transform: scale(1.005) translate(-2px, 2px); }
+            100% { transform: scale(0.995) translate(2px, -2px); }
         }
 
         .logo-container {
@@ -217,7 +220,7 @@
         #globe-3d-container canvas {
             display: block;
             outline: none;
-            filter: drop-shadow(0 0 40px var(--glow-color));
+            filter: drop-shadow(0 0 30px var(--glow-color));
         }
 
         /* STATUS BAR */
@@ -249,7 +252,7 @@
             text-transform: uppercase;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.9), inset 0 0 12px rgba(255, 255, 255, 0.08);
             white-space: nowrap;
-            transition: transform 0.05s ease, border-color 0.05s ease, box-shadow 0.05s ease;
+            transition: transform 0.1s ease, border-color 0.1s ease, box-shadow 0.1s ease;
         }
 
         .theme-selector {
@@ -262,7 +265,7 @@
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.9);
-            transition: transform 0.05s ease, border-color 0.05s ease, box-shadow 0.05s ease;
+            transition: transform 0.1s ease, border-color 0.1s ease, box-shadow 0.1s ease;
         }
 
         .theme-btn {
@@ -308,14 +311,15 @@
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.9);
-            transition: transform 0.05s ease, border-color 0.05s ease, box-shadow 0.05s ease;
+            transition: transform 0.1s ease, border-color 0.1s ease, box-shadow 0.1s ease;
             pointer-events: none;
         }
 
+        /* DENGELENMİŞ BASS PULSE (ÇAKIŞMAYI ÖNLER) */
         .badge-bass-pulse {
-            transform: scale(1.12) !important;
+            transform: scale(1.03) !important;
             border-color: var(--accent-color) !important;
-            box-shadow: 0 0 35px var(--glow-color), inset 0 0 20px var(--glow-color) !important;
+            box-shadow: 0 0 18px var(--glow-color), inset 0 0 10px var(--glow-color) !important;
         }
 
         .volume-btn {
@@ -378,15 +382,15 @@
             gap: 3px;
             text-transform: uppercase;
             backdrop-filter: blur(15px);
-            transition: transform 0.05s ease, border-color 0.05s ease, box-shadow 0.05s ease, background 0.1s ease;
+            transition: transform 0.1s ease, border-color 0.1s ease, box-shadow 0.1s ease, background 0.1s ease;
             box-shadow: 0 4px 15px rgba(0,0,0,0.6);
         }
 
         .pad-btn:active {
-            transform: scale(0.92) !important;
+            transform: scale(0.95) !important;
             background: var(--accent-color);
             color: #000;
-            box-shadow: 0 0 25px var(--accent-color) !important;
+            box-shadow: 0 0 20px var(--accent-color) !important;
         }
 
         .pad-icon {
@@ -404,7 +408,7 @@
             overflow: hidden;
             box-shadow: 0 16px 50px rgba(0, 0, 0, 0.95);
             border: 1px solid var(--border-glow);
-            transition: border-color 0.05s, box-shadow 0.05s;
+            transition: border-color 0.1s, box-shadow 0.1s, transform 0.1s ease;
             background: #000;
             margin: 2px 0;
             will-change: transform;
@@ -412,7 +416,7 @@
 
         .video-container.playing-border {
             border-color: var(--accent-color);
-            box-shadow: 0 0 40px var(--glow-color), inset 0 0 25px var(--glow-color);
+            box-shadow: 0 0 25px var(--glow-color), inset 0 0 15px var(--glow-color);
         }
 
         #stream-player {
@@ -454,8 +458,8 @@
         }
 
         .start-btn:hover {
-            transform: scale(1.08);
-            box-shadow: 0 0 65px var(--accent-color);
+            transform: scale(1.05);
+            box-shadow: 0 0 55px var(--accent-color);
         }
 
         /* NOW PLAYING CARD */
@@ -475,6 +479,7 @@
             position: relative;
             overflow: hidden;
             will-change: transform;
+            transition: transform 0.1s ease;
         }
 
         .track-info {
@@ -865,9 +870,8 @@
                 /* --- 2. SADECE SUB-BASS (808) SÜZGEÇLİ HASSAS ANALİZ SİSTEMİ --- */
                 analyser = audioCtx.createAnalyser();
                 analyser.fftSize = 512;
-                analyser.smoothingTimeConstant = 0.1; // Bas Vuru Tepki Süresi
+                analyser.smoothingTimeConstant = 0.2;
 
-                // Yalnızca 30Hz - 90Hz arası Saf Derin Basları filtreleyen Lowpass
                 const pureBassFilter = audioCtx.createBiquadFilter();
                 pureBassFilter.type = 'lowpass';
                 pureBassFilter.frequency.setValueAtTime(90, audioCtx.currentTime); 
@@ -1152,7 +1156,6 @@
             if (analyser && isPlayingState) {
                 analyser.getByteFrequencyData(dataArray);
                 
-                // Yalnızca 808/Sub-bass kapsama alanındaki en alt frekans kanallarını al (İlk 3-4 bin)
                 let bassSum = 0;
                 const bassBinsCount = 4;
                 for (let i = 0; i < bassBinsCount; i++) {
@@ -1160,13 +1163,12 @@
                 }
                 let rawBass = (bassSum / bassBinsCount) / 255.0;
 
-                // Tiz/Vokal tepkilerini temizleyen dinamik bas eşiği
                 const HARD_BASS_THRESHOLD = 0.50; 
 
                 if (rawBass > HARD_BASS_THRESHOLD) {
                     liveBassLevel = (rawBass - HARD_BASS_THRESHOLD) / (1.0 - HARD_BASS_THRESHOLD);
                 } else {
-                    liveBassLevel = 0; // Sadece bas yoksa sıfırla
+                    liveBassLevel = 0;
                 }
             } else {
                 liveBassLevel = 0;
@@ -1182,40 +1184,42 @@
             if (isPlayingState) {
                 const bassPower = liveBassLevel; 
                 
-                /* DÜNYA VE PATLAMA RİTİMLERİ (Sadece Bas Vurduğunda Büyür) */
-                const bassScale = 1 + bassPower * 0.45;
+                /* DÜNYA DENGELENMİŞ TİTREŞİM (Maksimum %8 Ölçekleme) */
+                const bassScale = 1 + bassPower * 0.08;
                 globeMesh.scale.set(bassScale, bassScale, bassScale);
-                ringBarsGroup.scale.set(1 + bassPower * 0.35, 1 + bassPower * 0.35, 1 + bassPower * 0.35);
+                
+                const ringScale = 1 + bassPower * 0.06;
+                ringBarsGroup.scale.set(ringScale, ringScale, ringScale);
 
-                dirLight.intensity = 2.2 + bassPower * 12.0;
+                dirLight.intensity = 2.2 + bassPower * 3.0;
 
-                const glowScale = 1 + bassPower * 0.8;
+                const glowScale = 1 + bassPower * 0.15;
                 ambientGlowEl.style.transform = `translate(-50%, -50%) scale(${glowScale})`;
-                ambientGlowEl.style.opacity = (0.35 + bassPower * 0.65).toString();
+                ambientGlowEl.style.opacity = (0.35 + bassPower * 0.35).toString();
 
-                /* KUTULARIN DİNAMİK BASS TİTREŞİMİ */
-                videoBoxEl.style.transform = `scale(${1 + bassPower * 0.06})`;
+                /* KUTULARIN DENGELİ TİTREŞİMİ */
+                videoBoxEl.style.transform = `scale(${1 + bassPower * 0.015})`;
                 if (nowPlayingCardEl) {
-                    nowPlayingCardEl.style.transform = `scale(${1 + bassPower * 0.04})`;
+                    nowPlayingCardEl.style.transform = `scale(${1 + bassPower * 0.01})`;
                 }
 
-                /* GRAFFITI VE ARKA PLAN TEXT PATLAMALARI */
+                /* GRAFFITI VE ARKA PLAN TEXT DENGELENMİŞ TİTREŞİMİ */
                 if (tag1El && tag2El) {
-                    tag1El.style.transform = `rotate(-25deg) scale(${1 + bassPower * 0.4})`;
-                    tag2El.style.transform = `rotate(15deg) scale(${1 + bassPower * 0.4})`;
-                    tag1El.style.opacity = (0.12 + bassPower * 0.88).toString();
-                    tag2El.style.opacity = (0.12 + bassPower * 0.88).toString();
+                    tag1El.style.transform = `rotate(-25deg) scale(${1 + bassPower * 0.08})`;
+                    tag2El.style.transform = `rotate(15deg) scale(${1 + bassPower * 0.08})`;
+                    tag1El.style.opacity = (0.12 + bassPower * 0.3).toString();
+                    tag2El.style.opacity = (0.12 + bassPower * 0.3).toString();
                 }
 
                 if (bgText1El && bgText2El) {
-                    bgText1El.style.transform = `rotate(-10deg) scale(${1 + bassPower * 0.25})`;
-                    bgText2El.style.transform = `rotate(8deg) scale(${1 + bassPower * 0.25})`;
-                    bgText1El.style.color = bassPower > 0.20 ? 'rgba(255, 255, 255, 0.4)' : 'rgba(255, 255, 255, 0.04)';
-                    bgText2El.style.color = bassPower > 0.20 ? 'rgba(255, 255, 255, 0.4)' : 'rgba(255, 255, 255, 0.04)';
+                    bgText1El.style.transform = `rotate(-10deg) scale(${1 + bassPower * 0.05})`;
+                    bgText2El.style.transform = `rotate(8deg) scale(${1 + bassPower * 0.05})`;
+                    bgText1El.style.color = bassPower > 0.30 ? 'rgba(255, 255, 255, 0.15)' : 'rgba(255, 255, 255, 0.04)';
+                    bgText2El.style.color = bassPower > 0.30 ? 'rgba(255, 255, 255, 0.15)' : 'rgba(255, 255, 255, 0.04)';
                 }
 
                 /* BUTON & BADGE PARLAMALARI */
-                if (bassPower > 0.25) {
+                if (bassPower > 0.35) {
                     badgeLiveEl.classList.add('badge-bass-pulse');
                     badgeListenerEl.classList.add('badge-bass-pulse');
                     themeSelectorEl.classList.add('badge-bass-pulse');
@@ -1229,8 +1233,8 @@
                     soundboardPads.forEach(pad => pad.classList.remove('badge-bass-pulse'));
                 }
 
-                /* SERT BASLARDA EKRAN SALLANMASI (SHAKE/GLITCH) */
-                if (bassPower > 0.45) {
+                /* HAFİF EKRAN SALLANMASI */
+                if (bassPower > 0.60) {
                     mainWrapper.classList.add('wrapper-glitch');
                     mainWrapper.classList.add('wrapper-shake');
                 } else {
@@ -1239,17 +1243,17 @@
                 }
 
                 /* YILDIRIM ÇAKMASI */
-                if (bassPower > 0.40) {
-                    lightningEl.style.opacity = ((bassPower - 0.40) * 2.5).toString();
+                if (bassPower > 0.65) {
+                    lightningEl.style.opacity = ((bassPower - 0.65) * 1.2).toString();
                 } else {
                     lightningEl.style.opacity = '0';
                 }
 
-                /* HALKA ÇUBUKLARI - Sadece Bas Temposunda Uzar */
+                /* HALKA ÇUBUKLARI - Kontrollü Uzama */
                 ringBarMeshes.forEach((bar) => {
-                    const scaleY = 0.4 + bassPower * 3.2; 
-                    bar.scale.set(1 + bassPower * 0.5, scaleY, 1 + bassPower * 0.5);
-                    bar.material.opacity = 0.25 + bassPower * 0.75;
+                    const scaleY = 0.4 + bassPower * 1.2; 
+                    bar.scale.set(1 + bassPower * 0.2, scaleY, 1 + bassPower * 0.2);
+                    bar.material.opacity = 0.25 + bassPower * 0.5;
                 });
 
             } else {
@@ -1320,7 +1324,7 @@
                 this.pulseSpeed = Math.random() * 0.05 + 0.02;
             }
             update() {
-                const speedMult = isPlayingState ? 1.0 + liveBassLevel * 4.0 : 1.0;
+                const speedMult = isPlayingState ? 1.0 + liveBassLevel * 2.0 : 1.0;
                 this.x += this.speedX * speedMult;
                 this.y += this.speedY * speedMult;
                 this.opacity += Math.sin(Date.now() * this.pulseSpeed) * 0.025;

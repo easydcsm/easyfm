@@ -708,7 +708,6 @@
 
         const STREAM_START_TIME = 1700000000; 
 
-        // Pseudo-random sıralama üretici
         function getPseudoRandomNumber(seed) {
             let z = (seed += 0x6D2B79F5);
             z = Math.imul(z ^ (z >>> 15), z | 1);
@@ -716,7 +715,6 @@
             return ((z ^ (z >>> 14)) >>> 0) / 4294967296;
         }
 
-        // Son 4 şarkıyı es geçerek senkronize rastgele çalma listesi oluşturma
         function generateStreamSequence() {
             let sequence = [];
             let lastPlayed = [];
@@ -730,7 +728,6 @@
                     }
                 }
                 
-                // Eğer yeterli eleman kalmazsa en eski seçeneği boşalt
                 if (availableIndices.length === 0) {
                     availableIndices = baseSongList.map((_, idx) => idx);
                 }
@@ -791,12 +788,38 @@
         function initAudioContext() {
             if (!audioCtx) {
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                
+                // Frekans çözünürlüğünü hassaslaştırma
                 analyser = audioCtx.createAnalyser();
-                analyser.fftSize = 256;
-                analyser.smoothingTimeConstant = 0.8;
+                analyser.fftSize = 512;
+                analyser.smoothingTimeConstant = 0.82;
+
+                // DSP EQUALIZER DÜĞÜMLERİ (SESİ BERRAKLAŞTIRMA)
+                const lowFilter = audioCtx.createBiquadFilter();
+                lowFilter.type = 'lowshelf';
+                lowFilter.frequency.setValueAtTime(80, audioCtx.currentTime);
+                lowFilter.gain.setValueAtTime(3.5, audioCtx.currentTime); // Vurucu 808 bass boost
+
+                const midFilter = audioCtx.createBiquadFilter();
+                midFilter.type = 'peaking';
+                midFilter.frequency.setValueAtTime(1000, audioCtx.currentTime);
+                midFilter.Q.setValueAtTime(1.0, audioCtx.currentTime);
+                midFilter.gain.setValueAtTime(-2.0, audioCtx.currentTime); // Boğuk orta sesleri temizleme
+
+                const highFilter = audioCtx.createBiquadFilter();
+                highFilter.type = 'highshelf';
+                highFilter.frequency.setValueAtTime(8000, audioCtx.currentTime);
+                highFilter.gain.setValueAtTime(4.0, audioCtx.currentTime); // Hi-Hat ve vokal berraklığı
+
                 audioSource = audioCtx.createMediaElementSource(videoPlayer);
-                audioSource.connect(analyser);
+                
+                // Bağlantı Zinciri: Source -> LowFilter -> MidFilter -> HighFilter -> Analyser -> Output
+                audioSource.connect(lowFilter);
+                lowFilter.connect(midFilter);
+                midFilter.connect(highFilter);
+                highFilter.connect(analyser);
                 analyser.connect(audioCtx.destination);
+
                 dataArray = new Uint8Array(analyser.frequencyBinCount);
             }
             if (audioCtx.state === 'suspended') {
@@ -1070,15 +1093,18 @@
 
             if (isNaN(deltaTime) || deltaTime > 0.1) return;
 
-            // MP4 Sesinden Gerçek Bass Seviyesi Çıkarma (0 ile 1 arası)
+            // GERÇEK SUB-BASS (808 / Kick) FREKANS HESAPLAMASI
             if (analyser && isPlayingState) {
                 analyser.getByteFrequencyData(dataArray);
                 let bassSum = 0;
-                // Düşük frekans bantları (Bass / 808 sesleri)
-                for (let i = 0; i < 8; i++) {
+                // Sadece Sub-Bass bandına odaklanma (1 ile 4. index arası ~ 20Hz - 100Hz)
+                for (let i = 1; i <= 4; i++) {
                     bassSum += dataArray[i];
                 }
-                liveBassLevel = (bassSum / (8 * 255)); 
+                let rawBass = bassSum / (4 * 255);
+                
+                // Bass Vuruşlarını Keskinleştirme (Power Curve)
+                liveBassLevel = Math.pow(rawBass, 1.8);
             } else {
                 liveBassLevel = 0;
             }
@@ -1092,30 +1118,30 @@
 
             if (isPlayingState) {
                 const bassPower = liveBassLevel; 
-                const bassScale = 1 + bassPower * 0.12;
+                const bassScale = 1 + bassPower * 0.18; // Tepki genişliği artırıldı
                 globeMesh.scale.set(bassScale, bassScale, bassScale);
 
-                dirLight.intensity = 2.5 + bassPower * 3.5;
+                dirLight.intensity = 2.5 + bassPower * 4.0;
 
-                const glowScale = 1 + bassPower * 0.25;
+                const glowScale = 1 + bassPower * 0.3;
                 ambientGlowEl.style.transform = `translate(-50%, -50%) scale(${glowScale})`;
                 ambientGlowEl.style.opacity = (0.55 + bassPower * 0.45).toString();
 
-                videoBoxEl.style.transform = `scale(${1 + bassPower * 0.02})`;
+                videoBoxEl.style.transform = `scale(${1 + bassPower * 0.03})`;
 
                 if (tag1El && tag2El) {
-                    tag1El.style.transform = `rotate(-25deg) scale(${1 + bassPower * 0.12})`;
-                    tag2El.style.transform = `rotate(15deg) scale(${1 + bassPower * 0.12})`;
-                    tag1El.style.opacity = (0.12 + bassPower * 0.3).toString();
-                    tag2El.style.opacity = (0.12 + bassPower * 0.3).toString();
+                    tag1El.style.transform = `rotate(-25deg) scale(${1 + bassPower * 0.15})`;
+                    tag2El.style.transform = `rotate(15deg) scale(${1 + bassPower * 0.15})`;
+                    tag1El.style.opacity = (0.12 + bassPower * 0.35).toString();
+                    tag2El.style.opacity = (0.12 + bassPower * 0.35).toString();
                 }
 
                 if (bgText1El && bgText2El) {
-                    bgText1El.style.transform = `rotate(-10deg) scale(${1 + bassPower * 0.05})`;
-                    bgText2El.style.transform = `rotate(8deg) scale(${1 + bassPower * 0.05})`;
+                    bgText1El.style.transform = `rotate(-10deg) scale(${1 + bassPower * 0.08})`;
+                    bgText2El.style.transform = `rotate(8deg) scale(${1 + bassPower * 0.08})`;
                 }
 
-                if (bassPower > 0.5) {
+                if (bassPower > 0.4) {
                     badgeLiveEl.classList.add('badge-bass-pulse');
                     badgeListenerEl.classList.add('badge-bass-pulse');
                     themeSelectorEl.classList.add('badge-bass-pulse');
@@ -1129,21 +1155,21 @@
                     soundboardPads.forEach(pad => pad.classList.remove('badge-bass-pulse'));
                 }
 
-                if (bassPower > 0.7) {
+                if (bassPower > 0.6) {
                     mainWrapper.classList.add('wrapper-glitch');
                 } else {
                     mainWrapper.classList.remove('wrapper-glitch');
                 }
 
-                if (bassPower > 0.75) {
-                    lightningEl.style.opacity = (Math.random() > 0.3 ? (0.3 + (bassPower - 0.75) * 2.0) : 0).toString();
+                if (bassPower > 0.65) {
+                    lightningEl.style.opacity = (Math.random() > 0.3 ? (0.3 + (bassPower - 0.65) * 2.0) : 0).toString();
                 } else {
                     lightningEl.style.opacity = '0';
                 }
 
                 ringBarMeshes.forEach((bar, idx) => {
-                    const freqValue = (dataArray ? dataArray[idx % dataArray.length] : 0) / 255;
-                    const scaleY = 0.4 + freqValue * 3.2;
+                    const freqValue = (dataArray ? dataArray[idx % (dataArray.length / 2)] : 0) / 255;
+                    const scaleY = 0.4 + freqValue * 3.5;
                     bar.scale.set(1, scaleY, 1);
                     bar.material.opacity = 0.4 + freqValue * 0.6;
                 });
@@ -1239,7 +1265,7 @@
         }
         animateParticles();
 
-        /* FIREBASE DİNLSystem I TAKİBİ */
+        /* FIREBASE DİNLENME TAKİBİ */
         const firebaseConfig = {
             apiKey: "AIzaSyBaTlb6V6e4FMLTYNXAPBgdzsgiclL8Qw8",
             authDomain: "easyfm-37b9e.firebaseapp.com",
@@ -1280,7 +1306,7 @@
 
             for (let i = 0; i < numBars; i++) {
                 if (isPlayingState && dataArray) {
-                    const dataIndex = Math.floor((i / numBars) * dataArray.length);
+                    const dataIndex = Math.floor((i / numBars) * (dataArray.length / 2));
                     const target = ((dataArray[dataIndex] / 255) * (vCanvas.height - 2)) + 2;
                     barHeights[i] += (target - barHeights[i]) * 0.42;
                 } else {

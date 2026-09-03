@@ -42,7 +42,6 @@
             justify-content: center;
         }
 
-        /* CRT TARAMA & VIGNETTE SİNEMATİK EFEKTİ */
         body::before {
             content: "";
             position: fixed;
@@ -64,7 +63,6 @@
             opacity: 0.7;
         }
 
-        /* CYBER SCANLINE SCAN */
         .scanline-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -79,7 +77,6 @@
             100% { transform: translateY(100%); }
         }
 
-        /* ARKA PLAN GRAFFITI / GOTIK ARKA PLAN YAZILARI */
         .trap-bg-text {
             position: fixed;
             font-family: 'UnifrakturCook', cursive;
@@ -134,7 +131,6 @@
             pointer-events: none;
         }
 
-        /* DİNAMİK BASS LIGHTNING FLASH */
         #lightning-flash {
             position: fixed;
             top: 0;
@@ -149,7 +145,6 @@
             will-change: opacity;
         }
 
-        /* AMBIENT NEON GLOW */
         .ambient-glow {
             position: fixed;
             top: 50%;
@@ -176,8 +171,8 @@
             flex-direction: column;
             align-items: center;
             justify-content: space-between;
-            padding: calc(16px + env(safe-area-inset-top)) 14px calc(12px + env(safe-area-inset-bottom)) 14px;
-            gap: 8px;
+            padding: calc(16px + env(safe-area-inset-top)) 14px calc(16px + env(safe-area-inset-bottom)) 14px;
+            gap: 12px;
             margin: 0 auto;
             box-sizing: border-box;
             transition: transform 0.05s ease, filter 0.05s ease;
@@ -187,7 +182,6 @@
             animation: trapBassShake 0.07s ease-in-out infinite alternate;
         }
 
-        /* TRAP BASS DROP GLITCH & SHAKE */
         .wrapper-glitch {
             filter: drop-shadow(-3px 0 0 rgba(255,0,0,0.8)) drop-shadow(3px 0 0 rgba(0,255,255,0.8));
         }
@@ -203,7 +197,7 @@
             position: relative;
             width: 100%;
             max-width: 420px;
-            height: clamp(180px, 29vh, 270px);
+            height: clamp(180px, 32vh, 300px);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -215,7 +209,7 @@
         @media (min-width: 769px) {
             .logo-container {
                 max-width: 620px;
-                height: clamp(260px, 35vh, 360px);
+                height: clamp(260px, 38vh, 380px);
             }
         }
 
@@ -236,7 +230,6 @@
             filter: drop-shadow(0 0 40px var(--glow-color));
         }
 
-        /* KROM & GLASSMORPHISM STATUS BAR */
         .status-bar {
             display: flex;
             gap: 6px;
@@ -388,13 +381,12 @@
             .volume-slider { width: 38px; }
         }
 
-        /* VIDEO CONTAINER & CYBER BORDER */
         .video-container {
             position: relative;
             width: 100%;
             flex: 1 1 auto;
             min-height: 140px;
-            max-height: 36vh;
+            max-height: 38vh;
             border-radius: 18px;
             overflow: hidden;
             box-shadow: 0 16px 50px rgba(0, 0, 0, 0.95);
@@ -472,7 +464,6 @@
             box-shadow: 0 0 65px var(--accent-color);
         }
 
-        /* NOW PLAYING CARD */
         .now-playing-card {
             width: 100%;
             background: rgba(12, 12, 12, 0.88);
@@ -480,7 +471,7 @@
             -webkit-backdrop-filter: blur(25px);
             border: 1px solid var(--border-glow);
             border-radius: 16px;
-            padding: 12px 18px;
+            padding: 14px 18px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -488,6 +479,7 @@
             flex-shrink: 0;
             position: relative;
             overflow: hidden;
+            margin-bottom: 4px;
         }
 
         .track-info {
@@ -558,15 +550,6 @@
         @keyframes waveAnim {
             0% { transform: scaleY(0.2); }
             100% { transform: scaleY(1); }
-        }
-
-        #visualizer-canvas {
-            width: 100%;
-            height: 22px;
-            min-height: 18px;
-            margin: 0;
-            flex-shrink: 0;
-            display: block;
         }
     </style>
 
@@ -644,14 +627,15 @@
                 <span id="next-track-name" style="font-weight:700;">---</span>
             </div>
         </div>
-
-        <canvas id="visualizer-canvas"></canvas>
     </div>
 
     <script>
-        document.addEventListener('touchmove', function(e) { e.preventDefault(); }, { passive: false });
+        document.addEventListener('touchmove', function(e) { 
+            if (!e.target.closest('.volume-control-box, .theme-selector')) {
+                e.preventDefault(); 
+            }
+        }, { passive: false });
 
-        /* PARALLAX MOUSE EFFECT */
         let mouseX = 0, mouseY = 0;
         let targetX = 0, targetY = 0;
         window.addEventListener('mousemove', (e) => {
@@ -659,7 +643,6 @@
             mouseY = (e.clientY - window.innerHeight / 2) / (window.innerHeight / 2);
         });
 
-        /* TEMA KONTROLÜ */
         let currentAccentColor = '#ffffff';
         const THEMES = {
             ICE: { accent: '#ffffff', glow: 'rgba(255, 255, 255, 0.55)', bgGlow: 'rgba(180, 220, 255, 0.1)', borderGlow: 'rgba(255, 255, 255, 0.35)' },
@@ -945,6 +928,7 @@
         const volumeRange = document.getElementById('volume-range');
         const muteBtn = document.getElementById('mute-btn');
         let isMuted = false;
+        let lastVolume = 100;
 
         volumeRange.addEventListener('input', (e) => {
             const val = Number(e.target.value);
@@ -961,6 +945,7 @@
                         isMuted = false;
                     }
                     muteBtn.innerText = '🔊';
+                    lastVolume = val;
                 }
             }
             updateAudioVisualState();
@@ -973,21 +958,23 @@
                 muteBtn.innerText = '🔊';
                 let currentVol = Number(volumeRange.value);
                 if (currentVol === 0) {
-                    currentVol = 100;
-                    volumeRange.value = 100;
+                    currentVol = lastVolume > 0 ? lastVolume : 100;
+                    volumeRange.value = currentVol;
                 }
                 if (typeof player.setVolume === 'function') player.setVolume(currentVol);
                 isMuted = false;
             } else {
                 player.mute();
                 muteBtn.innerText = '🔇';
+                if (Number(volumeRange.value) > 0) {
+                    lastVolume = Number(volumeRange.value);
+                }
                 volumeRange.value = 0;
                 isMuted = true;
             }
             updateAudioVisualState();
         });
 
-        /* THREE.JS DÜNYA, ATMOSFER HALO & TRAP HALKASI */
         const globeContainer = document.getElementById('globe-3d-container');
         
         const scene = new THREE.Scene();
@@ -1033,7 +1020,6 @@
         const globeMesh = new THREE.Mesh(geometry, material);
         scene.add(globeMesh);
 
-        /* NEON ATMOSPHERE GLOW SPHERE */
         const atmosGeo = new THREE.SphereGeometry(baseRadius + 0.08, segments, segments);
         const atmosMat = new THREE.MeshBasicMaterial({
             color: 0xffffff,
@@ -1044,7 +1030,6 @@
         const atmosphereMesh = new THREE.Mesh(atmosGeo, atmosMat);
         scene.add(atmosphereMesh);
 
-        /* 3D TRAP EKOLAYZIR HALKASI */
         const ringBarsCount = isMobileDevice ? 44 : 80;
         const ringBarsGroup = new THREE.Group();
         const ringBarMeshes = [];
@@ -1134,7 +1119,6 @@
 
             if (isNaN(deltaTime) || deltaTime > 0.1) return;
 
-            // Smooth Mouse Parallax lerp
             targetX += (mouseX - targetX) * 0.05;
             targetY += (mouseY - targetY) * 0.05;
 
@@ -1245,7 +1229,6 @@
         resizeThreeJS();
         requestAnimationFrame(animateGlobe);
 
-        /* CYBER CONNECTED NETWORK PARTICLES */
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
         let particlesArray = [];
@@ -1322,7 +1305,6 @@
         }
         animateParticles();
 
-        /* FIREBASE DİNLEYİCİ TAKİBİ */
         const firebaseConfig = {
             apiKey: "AIzaSyBaTlb6V6e4FMLTYNXAPBgdzsgiclL8Qw8",
             authDomain: "easyfm-37b9e.firebaseapp.com",
@@ -1345,57 +1327,6 @@
         myConnectionsRef.on('value', (snap) => {
             document.getElementById('listener-count').innerText = snap.numChildren();
         });
-
-        /* TRAP CANLI VISUALIZER BARLARI */
-        const vCanvas = document.getElementById('visualizer-canvas');
-        const vCtx = vCanvas.getContext('2d');
-        const numBars = isMobileDevice ? 32 : 60;
-        let barHeights = new Array(numBars).fill(2);
-        let peakHeights = new Array(numBars).fill(2);
-
-        function drawVisualizer() {
-            vCanvas.width = vCanvas.offsetWidth;
-            vCanvas.height = vCanvas.offsetHeight;
-            vCtx.clearRect(0, 0, vCanvas.width, vCanvas.height);
-
-            const gap = 2;
-            const barWidth = (vCanvas.width / numBars) - gap;
-
-            for (let i = 0; i < numBars; i++) {
-                if (isPlayingState) {
-                    const centerFactor = 1 - Math.abs((i - numBars / 2) / (numBars / 2)) * 0.35;
-                    const target = (Math.random() * (vCanvas.height - 2) + 2) * centerFactor;
-                    barHeights[i] += (target - barHeights[i]) * 0.42;
-                } else {
-                    barHeights[i] += (2 - barHeights[i]) * 0.15;
-                }
-
-                if (barHeights[i] > peakHeights[i]) {
-                    peakHeights[i] = barHeights[i];
-                } else {
-                    peakHeights[i] -= 0.5;
-                }
-                if (peakHeights[i] < 2) peakHeights[i] = 2;
-
-                const x = i * (barWidth + gap);
-                const y = vCanvas.height - barHeights[i];
-
-                const grad = vCtx.createLinearGradient(0, vCanvas.height, 0, 0);
-                grad.addColorStop(0, 'rgba(255, 255, 255, 0.15)');
-                grad.addColorStop(1, currentAccentColor);
-
-                vCtx.fillStyle = grad;
-                vCtx.fillRect(x, y, barWidth, barHeights[i]);
-
-                vCtx.fillStyle = currentAccentColor;
-                vCtx.shadowColor = currentAccentColor;
-                vCtx.shadowBlur = 10;
-                vCtx.fillRect(x, vCanvas.height - peakHeights[i] - 1, barWidth, 1.5);
-                vCtx.shadowBlur = 0;
-            }
-            requestAnimationFrame(drawVisualizer);
-        }
-        drawVisualizer();
     </script>
 </body>
 </html>

@@ -57,7 +57,7 @@
             display: block;
             position: absolute;
             top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.45) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.04), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.04));
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.45) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.04), rgba(0, 255, 0, 0.02), rgba(0, 255, 0, 0.04));
             z-index: 50;
             background-size: 100% 4px, 6px 100%;
             pointer-events: none;
@@ -166,20 +166,22 @@
             margin: 0 auto;
             box-sizing: border-box;
             transition: transform 0.05s ease, filter 0.05s ease;
+            will-change: transform, filter;
         }
 
+        /* VURUCU TİTREME (BASS BEAT IMPACT SHAKE) */
         .wrapper-shake {
-            animation: trapBassShake 0.07s ease-in-out infinite alternate;
+            animation: trapBassShake 0.06s cubic-bezier(.36,.07,.19,.97) infinite alternate;
         }
 
         .wrapper-glitch {
-            filter: drop-shadow(-2px 0 0 rgba(255,0,0,0.6)) drop-shadow(2px 0 0 rgba(0,255,255,0.6));
+            filter: drop-shadow(-3px 0 0 rgba(255,0,0,0.7)) drop-shadow(3px 0 0 rgba(0,255,255,0.7));
         }
 
         @keyframes trapBassShake {
             0% { transform: scale(1) translate(0, 0); }
-            50% { transform: scale(1.008) translate(-1.5px, 1.5px); }
-            100% { transform: scale(0.992) translate(1.5px, -1.5px); }
+            50% { transform: scale(1.012) translate(-2.5px, 2px); }
+            100% { transform: scale(0.988) translate(2.5px, -2px); }
         }
 
         .logo-container {
@@ -789,35 +791,42 @@
             if (!audioCtx) {
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 
-                // Frekans çözünürlüğünü hassaslaştırma
                 analyser = audioCtx.createAnalyser();
                 analyser.fftSize = 512;
-                analyser.smoothingTimeConstant = 0.82;
+                analyser.smoothingTimeConstant = 0.80; // Hızlı bass patlaması için hassasiyet
 
-                // DSP EQUALIZER DÜĞÜMLERİ (SESİ BERRAKLAŞTIRMA)
+                // GELİŞMİŞ DSP STÜDYO EQ & DYNAMICS COMPRESSOR (GÖĞSÜ SIKIŞTIRAN YÜKSEK BASS VE NET SES)
                 const lowFilter = audioCtx.createBiquadFilter();
                 lowFilter.type = 'lowshelf';
-                lowFilter.frequency.setValueAtTime(80, audioCtx.currentTime);
-                lowFilter.gain.setValueAtTime(3.5, audioCtx.currentTime); // Vurucu 808 bass boost
+                lowFilter.frequency.setValueAtTime(65, audioCtx.currentTime); // Derin 808 Sub-Bass
+                lowFilter.gain.setValueAtTime(5.5, audioCtx.currentTime);
 
                 const midFilter = audioCtx.createBiquadFilter();
                 midFilter.type = 'peaking';
-                midFilter.frequency.setValueAtTime(1000, audioCtx.currentTime);
-                midFilter.Q.setValueAtTime(1.0, audioCtx.currentTime);
-                midFilter.gain.setValueAtTime(-2.0, audioCtx.currentTime); // Boğuk orta sesleri temizleme
+                midFilter.frequency.setValueAtTime(650, audioCtx.currentTime);
+                midFilter.Q.setValueAtTime(1.2, audioCtx.currentTime);
+                midFilter.gain.setValueAtTime(-2.5, audioCtx.currentTime); // Çamurlu sesleri süzme
 
                 const highFilter = audioCtx.createBiquadFilter();
                 highFilter.type = 'highshelf';
-                highFilter.frequency.setValueAtTime(8000, audioCtx.currentTime);
-                highFilter.gain.setValueAtTime(4.0, audioCtx.currentTime); // Hi-Hat ve vokal berraklığı
+                highFilter.frequency.setValueAtTime(9000, audioCtx.currentTime);
+                highFilter.gain.setValueAtTime(4.5, audioCtx.currentTime); // Kristal hi-hatlar & vokaller
+
+                const compressor = audioCtx.createDynamicsCompressor();
+                compressor.threshold.setValueAtTime(-18, audioCtx.currentTime);
+                compressor.knee.setValueAtTime(25, audioCtx.currentTime);
+                compressor.ratio.setValueAtTime(6, audioCtx.currentTime);
+                compressor.attack.setValueAtTime(0.003, audioCtx.currentTime);
+                compressor.release.setValueAtTime(0.15, audioCtx.currentTime);
 
                 audioSource = audioCtx.createMediaElementSource(videoPlayer);
                 
-                // Bağlantı Zinciri: Source -> LowFilter -> MidFilter -> HighFilter -> Analyser -> Output
+                // Bağlantı Zinciri: Source -> LowFilter -> MidFilter -> HighFilter -> Compressor -> Analyser -> Output
                 audioSource.connect(lowFilter);
                 lowFilter.connect(midFilter);
                 midFilter.connect(highFilter);
-                highFilter.connect(analyser);
+                highFilter.connect(compressor);
+                compressor.connect(analyser);
                 analyser.connect(audioCtx.destination);
 
                 dataArray = new Uint8Array(analyser.frequencyBinCount);
@@ -845,7 +854,6 @@
                 isPlayingState = true;
                 vBox.classList.add('playing-border');
                 waveBars.style.opacity = '1';
-                mainWrapper.classList.add('wrapper-shake');
             }
         }
 
@@ -1097,13 +1105,11 @@
             if (analyser && isPlayingState) {
                 analyser.getByteFrequencyData(dataArray);
                 let bassSum = 0;
-                // Sadece Sub-Bass bandına odaklanma (1 ile 4. index arası ~ 20Hz - 100Hz)
                 for (let i = 1; i <= 4; i++) {
                     bassSum += dataArray[i];
                 }
                 let rawBass = bassSum / (4 * 255);
                 
-                // Bass Vuruşlarını Keskinleştirme (Power Curve)
                 liveBassLevel = Math.pow(rawBass, 1.8);
             } else {
                 liveBassLevel = 0;
@@ -1118,7 +1124,7 @@
 
             if (isPlayingState) {
                 const bassPower = liveBassLevel; 
-                const bassScale = 1 + bassPower * 0.18; // Tepki genişliği artırıldı
+                const bassScale = 1 + bassPower * 0.18;
                 globeMesh.scale.set(bassScale, bassScale, bassScale);
 
                 dirLight.intensity = 2.5 + bassPower * 4.0;
@@ -1137,8 +1143,8 @@
                 }
 
                 if (bgText1El && bgText2El) {
-                    bgText1El.style.transform = `rotate(-10deg) scale(${1 + bassPower * 0.08})`;
-                    bgText2El.style.transform = `rotate(8deg) scale(${1 + bassPower * 0.08})`;
+                    bgText1El.style.transform = `rotate(-10deg) scale(${1 + bgText1El.getAttribute('data-scale') || 1})`;
+                    bgText2El.style.transform = `rotate(8deg) scale(${1 + bgText2El.getAttribute('data-scale') || 1})`;
                 }
 
                 if (bassPower > 0.4) {
@@ -1155,9 +1161,12 @@
                     soundboardPads.forEach(pad => pad.classList.remove('badge-bass-pulse'));
                 }
 
+                // DİNAMİK BASS VURUŞ SENKRONİZASYONU (EKRAN TİTREMESİ & GLITCH & ŞİMŞEK)
                 if (bassPower > 0.6) {
+                    mainWrapper.classList.add('wrapper-shake');
                     mainWrapper.classList.add('wrapper-glitch');
                 } else {
+                    mainWrapper.classList.remove('wrapper-shake');
                     mainWrapper.classList.remove('wrapper-glitch');
                 }
 
@@ -1181,6 +1190,7 @@
                 ambientGlowEl.style.opacity = '0.4';
                 lightningEl.style.opacity = '0';
                 videoBoxEl.style.transform = `scale(1)`;
+                mainWrapper.classList.remove('wrapper-shake');
                 mainWrapper.classList.remove('wrapper-glitch');
                 badgeLiveEl.classList.remove('badge-bass-pulse');
                 badgeListenerEl.classList.remove('badge-bass-pulse');

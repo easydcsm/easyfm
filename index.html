@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>EA$Y FM | 7/24 YÜZDE YÜZ MÜZİK</title>
+    <title>EA$Y FM | 7/24 TRAP & HIP-HOP EMPIRE</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;900&family=Syne:wght@800;900&family=Montserrat:wght@400;700;900&family=Permanent+Marker&family=UnifrakturCook:wght@700&display=swap" rel="stylesheet">
     
@@ -109,7 +109,7 @@
         .spray-tag.tag1 { top: 35%; left: 2%; transform: rotate(-25deg); }
         .spray-tag.tag2 { top: 15%; right: 3%; transform: rotate(15deg); }
 
-        #bg-canvas {
+        #bg-canvas, #slime-canvas {
             position: fixed;
             top: 0;
             left: 0;
@@ -117,6 +117,10 @@
             height: 100%;
             z-index: 2;
             pointer-events: none;
+        }
+
+        #slime-canvas {
+            z-index: 5;
         }
 
         /* DİNAMİK BASS LIGHTNING FLASH */
@@ -161,8 +165,8 @@
             flex-direction: column;
             align-items: center;
             justify-content: space-between;
-            padding: calc(16px + env(safe-area-inset-top)) 14px calc(12px + env(safe-area-inset-bottom)) 14px;
-            gap: 8px;
+            padding: calc(12px + env(safe-area-inset-top)) 14px calc(10px + env(safe-area-inset-bottom)) 14px;
+            gap: 6px;
             margin: 0 auto;
             box-sizing: border-box;
             transition: transform 0.05s ease, filter 0.05s ease;
@@ -172,7 +176,15 @@
             animation: trapBassShake 0.07s ease-in-out infinite alternate;
         }
 
-        /* TRAP BASS DROP GLITCH & SHAKE */
+        .rage-shake-mode {
+            animation: rageShake 0.03s ease-in-out infinite alternate !important;
+        }
+
+        @keyframes rageShake {
+            0% { transform: scale(1.02) translate(-4px, 3px) rotate(-1deg); }
+            100% { transform: scale(0.98) translate(4px, -3px) rotate(1deg); }
+        }
+
         .wrapper-glitch {
             filter: drop-shadow(-2px 0 0 rgba(255,0,0,0.6)) drop-shadow(2px 0 0 rgba(0,255,255,0.6));
         }
@@ -188,7 +200,7 @@
             position: relative;
             width: 100%;
             max-width: 420px;
-            height: clamp(180px, 29vh, 270px);
+            height: clamp(160px, 25vh, 240px);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -200,7 +212,7 @@
         @media (min-width: 769px) {
             .logo-container {
                 max-width: 620px;
-                height: clamp(260px, 35vh, 360px);
+                height: clamp(220px, 30vh, 320px);
             }
         }
 
@@ -221,7 +233,7 @@
             filter: drop-shadow(0 0 40px var(--glow-color));
         }
 
-        /* KROM & GLASSMORPHISM STATUS BAR */
+        /* STATUS BAR */
         .status-bar {
             display: flex;
             gap: 6px;
@@ -239,9 +251,9 @@
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
             border: 1px solid var(--border-glow);
-            padding: 7px 12px;
+            padding: 6px 12px;
             border-radius: 40px;
-            font-size: 9.5px;
+            font-size: 9px;
             font-weight: 900;
             letter-spacing: 1.5px;
             display: flex;
@@ -258,7 +270,7 @@
             gap: 6px;
             background: rgba(10, 10, 10, 0.85);
             border: 1px solid var(--border-glow);
-            padding: 6px 10px;
+            padding: 5px 10px;
             border-radius: 40px;
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
@@ -267,8 +279,8 @@
         }
 
         .theme-btn {
-            width: 15px;
-            height: 15px;
+            width: 14px;
+            height: 14px;
             border-radius: 50%;
             border: 1px solid rgba(255, 255, 255, 0.8);
             cursor: pointer;
@@ -276,16 +288,7 @@
             position: relative;
         }
 
-        .theme-btn:active {
-            transform: scale(0.6);
-            animation: themeExplosion 0.35s ease-out;
-        }
-
-        @keyframes themeExplosion {
-            0% { transform: scale(0.8); }
-            50% { transform: scale(1.8); filter: brightness(3); }
-            100% { transform: scale(1); }
-        }
+        .theme-btn:active { transform: scale(0.6); }
 
         .theme-ice { background: #ffffff; box-shadow: 0 0 14px #fff; }
         .theme-slime { background: #39ff14; box-shadow: 0 0 14px #39ff14; }
@@ -313,13 +316,13 @@
             gap: 6px;
             background: rgba(10, 10, 10, 0.85);
             border: 1px solid var(--border-glow);
-            padding: 6px 12px;
+            padding: 5px 12px;
             border-radius: 40px;
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.9);
             transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
-            pointer-events: none; /* Başlangıçta görüntüsü değişmeden tıklanması engellendi */
+            pointer-events: none;
         }
 
         .badge-bass-pulse {
@@ -338,10 +341,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.1s ease;
         }
-        
-        .volume-btn:active { transform: scale(0.8); }
 
         .volume-slider {
             -webkit-appearance: none;
@@ -364,13 +364,77 @@
             box-shadow: 0 0 12px var(--accent-color);
         }
 
-        @media (max-width: 480px) {
-            .status-bar { gap: 4px; }
-            .badge { padding: 5px 9px; font-size: 8px; letter-spacing: 1px; }
-            .theme-selector { padding: 5px 8px; gap: 4px; }
-            .theme-btn { width: 13px; height: 13px; }
-            .volume-control-box { padding: 5px 9px; }
-            .volume-slider { width: 38px; }
+        /* TRAP SOUNDBOARD / PRODUCER SOUND PADS */
+        .soundboard-container {
+            width: 100%;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            flex-shrink: 0;
+            margin: 2px 0;
+        }
+
+        .pad-btn {
+            background: rgba(15, 15, 15, 0.85);
+            border: 1px solid var(--border-glow);
+            border-radius: 12px;
+            padding: 8px 4px;
+            color: #fff;
+            font-size: 8px;
+            font-weight: 900;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            text-transform: uppercase;
+            backdrop-filter: blur(15px);
+            transition: all 0.1s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+        }
+
+        .pad-btn:active {
+            transform: scale(0.92);
+            background: var(--accent-color);
+            color: #000;
+            box-shadow: 0 0 20px var(--accent-color);
+        }
+
+        .pad-icon {
+            font-size: 12px;
+        }
+
+        /* YENİ INTERAKTİF KONTROL BAR */
+        .utility-bar {
+            display: flex;
+            gap: 6px;
+            width: 100%;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .util-btn {
+            background: rgba(18, 18, 18, 0.85);
+            border: 1px solid var(--border-glow);
+            border-radius: 30px;
+            padding: 6px 12px;
+            color: #fff;
+            font-size: 8.5px;
+            font-weight: 900;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            letter-spacing: 1px;
+            backdrop-filter: blur(20px);
+            transition: all 0.2s ease;
+        }
+
+        .util-btn:hover {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 15px var(--glow-color);
         }
 
         /* VIDEO CONTAINER & CYBER BORDER */
@@ -378,8 +442,8 @@
             position: relative;
             width: 100%;
             flex: 1 1 auto;
-            min-height: 140px;
-            max-height: 36vh;
+            min-height: 120px;
+            max-height: 32vh;
             border-radius: 18px;
             overflow: hidden;
             box-shadow: 0 16px 50px rgba(0, 0, 0, 0.95);
@@ -448,7 +512,7 @@
             -webkit-backdrop-filter: blur(25px);
             border: 1px solid var(--border-glow);
             border-radius: 16px;
-            padding: 12px 18px;
+            padding: 10px 16px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -479,7 +543,7 @@
 
         .track-title {
             font-family: 'Syne', sans-serif;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 900;
             color: #fff;
             white-space: nowrap;
@@ -530,11 +594,38 @@
 
         #visualizer-canvas {
             width: 100%;
-            height: 22px;
-            min-height: 18px;
+            height: 20px;
+            min-height: 16px;
             margin: 0;
             flex-shrink: 0;
             display: block;
+        }
+
+        /* GRAFFITI MODAL SYSTEM */
+        #tag-modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(15px);
+            z-index: 100;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .tag-input {
+            background: #111;
+            border: 2px solid var(--accent-color);
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 30px;
+            font-family: 'Permanent Marker', cursive;
+            font-size: 20px;
+            outline: none;
+            text-align: center;
+            box-shadow: 0 0 20px var(--glow-color);
         }
     </style>
 
@@ -551,6 +642,7 @@
     <div class="spray-tag tag2" id="tag2">TRAPHOUSE</div>
 
     <canvas id="bg-canvas"></canvas>
+    <canvas id="slime-canvas"></canvas>
     <div id="lightning-flash"></div>
     <div class="ambient-glow" id="ambient-glow"></div>
 
@@ -580,6 +672,25 @@
             </div>
         </div>
 
+        <div class="soundboard-container">
+            <button class="pad-btn" onclick="playAdlib('metro')">
+                <span class="pad-icon">🎙️</span>
+                <span>METRO!!</span>
+            </button>
+            <button class="pad-btn" onclick="playAdlib('damn')">
+                <span class="pad-icon">🔊</span>
+                <span>DAMN SON!</span>
+            </button>
+            <button class="pad-btn" onclick="playAdlib('siren')">
+                <span class="pad-icon">🚨</span>
+                <span>TRAP SIREN</span>
+            </button>
+            <button class="pad-btn" onclick="playAdlib('gun')">
+                <span class="pad-icon">💥</span>
+                <span>808 GUN</span>
+            </button>
+        </div>
+
         <div class="video-container" id="video-box">
             <div class="yt-shield-top-main"></div>
             <div class="yt-shield-bottom-left"></div>
@@ -589,6 +700,21 @@
                 <button class="start-btn" id="start-btn-el">CANLI YAYINA KATIL</button>
             </div>
             <div id="youtube-player"></div>
+        </div>
+
+        <div class="utility-bar">
+            <button class="util-btn" onclick="toggleSlimeRain()">
+                <span>🐍</span>
+                <span>SLIME RAIN</span>
+            </button>
+            <button class="util-btn" onclick="triggerRageMode()">
+                <span>🔥</span>
+                <span>RAGE SHAKE</span>
+            </button>
+            <button class="util-btn" onclick="openTagModal()">
+                <span>🎨</span>
+                <span>SPRAY TAG</span>
+            </button>
         </div>
 
         <div class="now-playing-card">
@@ -612,6 +738,12 @@
         </div>
 
         <canvas id="visualizer-canvas"></canvas>
+    </div>
+
+    <div id="tag-modal">
+        <h3 style="font-family:'Syne'; letter-spacing:2px; color:var(--accent-color);">DUVARA DUBAJINI AT</h3>
+        <input type="text" id="tag-text-input" class="tag-input" placeholder="TAGINIZI YAZIN..." maxlength="12">
+        <button class="start-btn" onclick="applyCustomTag()" style="padding:10px 25px;">DUVARA PÜSKÜRT</button>
     </div>
 
     <script>
@@ -642,6 +774,137 @@
             if (ringBarMeshes) {
                 const hexColor = parseInt(t.accent.replace('#', '0x'));
                 ringBarMeshes.forEach(b => b.material.color.setHex(hexColor));
+            }
+        }
+
+        /* TRAP AD-LIB SOUNDBOARD AUDIO SYNTHESIZER & SAMPLES */
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playAdlib(type) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            
+            const now = audioCtx.currentTime;
+
+            if (type === 'metro') {
+                // Synthesized Voice/Shout Simulation
+                let osc = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(220, now);
+                osc.frequency.exponentialRampToValueAtTime(440, now + 0.15);
+                osc.frequency.exponentialRampToValueAtTime(110, now + 0.4);
+                gain.gain.setValueAtTime(0.8, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.4);
+            } else if (type === 'damn') {
+                // Drop Synth Sweep
+                let osc = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(800, now);
+                osc.frequency.exponentialRampToValueAtTime(80, now + 0.5);
+                gain.gain.setValueAtTime(0.7, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.5);
+            } else if (type === 'siren') {
+                // Trap Siren Pitch Slide
+                let osc = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, now);
+                osc.frequency.linearRampToValueAtTime(1200, now + 0.25);
+                osc.frequency.linearRampToValueAtTime(600, now + 0.5);
+                gain.gain.setValueAtTime(0.5, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.5);
+            } else if (type === 'gun') {
+                // Sub-808 Gunshot Sub Boom
+                let osc = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(150, now);
+                osc.frequency.exponentialRampToValueAtTime(30, now + 0.3);
+                gain.gain.setValueAtTime(1, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.3);
+            }
+        }
+
+        /* SLIME RAIN CANVAS EFEKTİ */
+        let slimeActive = false;
+        const slimeCanvas = document.getElementById('slime-canvas');
+        const sCtx = slimeCanvas.getContext('2d');
+        let slimeDrops = [];
+
+        function toggleSlimeRain() {
+            slimeActive = !slimeActive;
+            if (slimeActive) {
+                slimeCanvas.width = window.innerWidth;
+                slimeCanvas.height = window.innerHeight;
+                for (let i = 0; i < 40; i++) {
+                    slimeDrops.push({
+                        x: Math.random() * slimeCanvas.width,
+                        y: Math.random() * slimeCanvas.height,
+                        len: Math.random() * 20 + 10,
+                        speed: Math.random() * 8 + 4
+                    });
+                }
+                animateSlime();
+            } else {
+                slimeDrops = [];
+                sCtx.clearRect(0,0,slimeCanvas.width, slimeCanvas.height);
+            }
+        }
+
+        function animateSlime() {
+            if (!slimeActive) return;
+            sCtx.clearRect(0, 0, slimeCanvas.width, slimeCanvas.height);
+            sCtx.fillStyle = '#39ff14';
+            sCtx.shadowColor = '#39ff14';
+            sCtx.shadowBlur = 10;
+
+            slimeDrops.forEach(d => {
+                sCtx.fillRect(d.x, d.y, 3, d.len);
+                d.y += d.speed;
+                if (d.y > slimeCanvas.height) {
+                    d.y = -d.len;
+                    d.x = Math.random() * slimeCanvas.width;
+                }
+            });
+            requestAnimationFrame(animateSlime);
+        }
+
+        /* RAGE SHAKE MODE */
+        function triggerRageMode() {
+            const wrapper = document.getElementById('main-wrapper');
+            wrapper.classList.add('rage-shake-mode');
+            setTimeout(() => {
+                wrapper.classList.remove('rage-shake-mode');
+            }, 2000);
+        }
+
+        /* GRAFFITI TAG MODAL CONTROL */
+        function openTagModal() {
+            document.getElementById('tag-modal').style.display = 'flex';
+        }
+
+        function applyCustomTag() {
+            const val = document.getElementById('tag-text-input').value;
+            if (val.trim() !== '') {
+                document.getElementById('tag1').innerText = val.toUpperCase();
+                document.getElementById('tag-modal').style.display = 'none';
             }
         }
 
@@ -786,7 +1049,6 @@
             const waveBars = document.getElementById('wave-bars');
             const vol = Number(volumeRange.value);
 
-            /* Kullanıcı butona basmadıysa, ses kapalıysa veya oynatıcı çalmıyorsa efektleri kapat */
             if (!userHasClicked || vol === 0 || isMuted || !actualPlayerStatePlaying) {
                 isPlayingState = false;
                 vBox.classList.remove('playing-border');
@@ -809,7 +1071,6 @@
             updateAudioVisualState();
         }
 
-        /* ANLIK SENKRONİZASYON MOTORU */
         function syncToLiveStream() {
             if (!isPlayerReady || !player || !userHasClicked) return;
 
@@ -832,7 +1093,6 @@
                 const currentTime = player.getCurrentTime();
                 const timeDiff = Math.abs(currentTime - state.seekTo);
                 
-                // Senkron kayması 1.5 saniyeyi geçerse takılmadan düzelt
                 if (timeDiff > 1.5) {
                     player.seekTo(state.seekTo, true);
                     if (typeof player.getPlayerState === 'function' && player.getPlayerState() !== YT.PlayerState.PLAYING) {
@@ -847,7 +1107,6 @@
             if (userHasClicked) return;
             userHasClicked = true;
 
-            /* Ses kutusunu canlı yayına katılındığı an tıklanabilir yap */
             document.getElementById('volume-box').style.pointerEvents = 'auto';
 
             const overlay = document.getElementById('start-overlay');
@@ -1104,7 +1363,6 @@
 
                 videoBoxEl.style.transform = `scale(${1 + bassPower * 0.012})`;
 
-                /* GRAFFITI & TRAP TEXT BEAT PULSE */
                 if (tag1El && tag2El) {
                     tag1El.style.transform = `rotate(-25deg) scale(${1 + bassPower * 0.08})`;
                     tag2El.style.transform = `rotate(15deg) scale(${1 + bassPower * 0.08})`;
@@ -1129,7 +1387,6 @@
                     volumeBoxEl.classList.remove('badge-bass-pulse');
                 }
 
-                /* TRAP BASS DROP GLITCH EFFECT */
                 if (bassPower > 0.8) {
                     mainWrapper.classList.add('wrapper-glitch');
                 } else {

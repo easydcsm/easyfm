@@ -15,10 +15,10 @@
         }
 
         :root {
-            --accent-color: #39ff14;
-            --glow-color: rgba(57, 255, 20, 0.6);
-            --bg-glow: rgba(0, 255, 50, 0.12);
-            --border-glow: rgba(57, 255, 20, 0.4);
+            --accent-color: #ffffff;
+            --glow-color: rgba(255, 255, 255, 0.55);
+            --bg-glow: rgba(180, 220, 255, 0.1);
+            --border-glow: rgba(255, 255, 255, 0.35);
         }
 
         html, body {
@@ -42,12 +42,12 @@
             justify-content: center;
         }
 
-        /* CRT TARAMA & VIGNETTE SİNEMATİK EFEKTİ */
+        /* CRT TARAMA & VIGNETTE SİNEMATİK EFEKTI */
         body::before {
             content: "";
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle, transparent 20%, #000000 130%);
+            background: radial-gradient(circle, transparent 25%, #000000 120%);
             z-index: 45;
             pointer-events: none;
         }
@@ -57,26 +57,11 @@
             display: block;
             position: absolute;
             top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.5) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.05), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.05));
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.45) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.04), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.04));
             z-index: 50;
             background-size: 100% 4px, 6px 100%;
             pointer-events: none;
-            opacity: 0.7;
-        }
-
-        /* CYBER SCANLINE SCAN */
-        .scanline-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(to bottom, transparent 0%, rgba(255, 255, 255, 0.03) 50%, transparent 100%);
-            z-index: 46;
-            pointer-events: none;
-            animation: scanlineAnim 8s linear infinite;
-        }
-
-        @keyframes scanlineAnim {
-            0% { transform: translateY(-100%); }
-            100% { transform: translateY(100%); }
+            opacity: 0.6;
         }
 
         /* ARKA PLAN GRAFFITI / GOTIK ARKA PLAN YAZILARI */
@@ -92,7 +77,7 @@
             letter-spacing: -3px;
             text-shadow: 0 0 35px var(--glow-color);
             filter: blur(1px);
-            transition: transform 0.1s ease-out, color 0.3s ease;
+            transition: transform 0.08s ease, color 0.3s ease;
             will-change: transform;
         }
 
@@ -112,17 +97,17 @@
             position: fixed;
             font-family: 'Permanent Marker', cursive;
             color: var(--accent-color);
-            opacity: 0.15;
+            opacity: 0.12;
             font-size: 10vw;
             z-index: 1;
             pointer-events: none;
-            transition: color 0.4s ease, opacity 0.4s ease, transform 0.1s ease-out;
+            transition: color 0.4s ease, opacity 0.4s ease, transform 0.08s ease;
             text-shadow: 0 0 20px var(--glow-color);
             will-change: transform;
         }
 
-        .spray-tag.tag1 { top: 32%; left: 2%; transform: rotate(-25deg); }
-        .spray-tag.tag2 { top: 12%; right: 3%; transform: rotate(15deg); }
+        .spray-tag.tag1 { top: 35%; left: 2%; transform: rotate(-25deg); }
+        .spray-tag.tag2 { top: 15%; right: 3%; transform: rotate(15deg); }
 
         #bg-canvas {
             position: fixed;
@@ -176,8 +161,8 @@
             flex-direction: column;
             align-items: center;
             justify-content: space-between;
-            padding: calc(12px + env(safe-area-inset-top)) 14px calc(10px + env(safe-area-inset-bottom)) 14px;
-            gap: 6px;
+            padding: calc(16px + env(safe-area-inset-top)) 14px calc(12px + env(safe-area-inset-bottom)) 14px;
+            gap: 8px;
             margin: 0 auto;
             box-sizing: border-box;
             transition: transform 0.05s ease, filter 0.05s ease;
@@ -189,7 +174,7 @@
 
         /* TRAP BASS DROP GLITCH & SHAKE */
         .wrapper-glitch {
-            filter: drop-shadow(-3px 0 0 rgba(255,0,0,0.8)) drop-shadow(3px 0 0 rgba(0,255,255,0.8));
+            filter: drop-shadow(-2px 0 0 rgba(255,0,0,0.6)) drop-shadow(2px 0 0 rgba(0,255,255,0.6));
         }
 
         @keyframes trapBassShake {
@@ -203,7 +188,7 @@
             position: relative;
             width: 100%;
             max-width: 420px;
-            height: clamp(160px, 25vh, 240px);
+            height: clamp(180px, 29vh, 270px);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -215,7 +200,7 @@
         @media (min-width: 769px) {
             .logo-container {
                 max-width: 620px;
-                height: clamp(230px, 32vh, 320px);
+                height: clamp(260px, 35vh, 360px);
             }
         }
 
@@ -236,7 +221,7 @@
             filter: drop-shadow(0 0 40px var(--glow-color));
         }
 
-        /* STATUS BAR & CONTROLS */
+        /* KROM & GLASSMORPHISM STATUS BAR */
         .status-bar {
             display: flex;
             gap: 6px;
@@ -293,10 +278,17 @@
 
         .theme-btn:active {
             transform: scale(0.6);
+            animation: themeExplosion 0.35s ease-out;
         }
 
-        .theme-slime { background: #39ff14; box-shadow: 0 0 14px #39ff14; }
+        @keyframes themeExplosion {
+            0% { transform: scale(0.8); }
+            50% { transform: scale(1.8); filter: brightness(3); }
+            100% { transform: scale(1); }
+        }
+
         .theme-ice { background: #ffffff; box-shadow: 0 0 14px #fff; }
+        .theme-slime { background: #39ff14; box-shadow: 0 0 14px #39ff14; }
         .theme-opium { background: #ff0000; box-shadow: 0 0 14px #ff0000; }
         .theme-purple { background: #a855f7; box-shadow: 0 0 14px #a855f7; }
         .theme-gold { background: #ffd700; box-shadow: 0 0 14px #ffd700; }
@@ -327,6 +319,7 @@
             -webkit-backdrop-filter: blur(25px);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.9);
             transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+            pointer-events: none; /* Başlangıçta görüntüsü değişmeden tıklanması engellendi */
         }
 
         .badge-bass-pulse {
@@ -371,56 +364,22 @@
             box-shadow: 0 0 12px var(--accent-color);
         }
 
-        /* TRAP SOUNDBOARD (SFX) BAR */
-        .sfx-bar {
-            display: flex;
-            gap: 8px;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            max-width: 100%;
-            margin-top: 2px;
+        @media (max-width: 480px) {
+            .status-bar { gap: 4px; }
+            .badge { padding: 5px 9px; font-size: 8px; letter-spacing: 1px; }
+            .theme-selector { padding: 5px 8px; gap: 4px; }
+            .theme-btn { width: 13px; height: 13px; }
+            .volume-control-box { padding: 5px 9px; }
+            .volume-slider { width: 38px; }
         }
 
-        .sfx-btn {
-            background: rgba(15, 15, 15, 0.9);
-            border: 1px solid var(--border-glow);
-            color: #fff;
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 9px;
-            font-weight: 900;
-            letter-spacing: 1.5px;
-            padding: 6px 14px;
-            border-radius: 20px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            backdrop-filter: blur(15px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.8);
-            transition: all 0.15s ease;
-            text-transform: uppercase;
-        }
-
-        .sfx-btn:hover {
-            border-color: var(--accent-color);
-            box-shadow: 0 0 15px var(--glow-color);
-            transform: translateY(-2px);
-        }
-
-        .sfx-btn:active {
-            transform: scale(0.92);
-            background: var(--accent-color);
-            color: #000;
-        }
-
-        /* VIDEO CONTAINER */
+        /* VIDEO CONTAINER & CYBER BORDER */
         .video-container {
             position: relative;
             width: 100%;
             flex: 1 1 auto;
-            min-height: 130px;
-            max-height: 32vh;
+            min-height: 140px;
+            max-height: 36vh;
             border-radius: 18px;
             overflow: hidden;
             box-shadow: 0 16px 50px rgba(0, 0, 0, 0.95);
@@ -474,23 +433,6 @@
             box-shadow: 0 0 45px var(--accent-color);
             transition: transform 0.2s ease, box-shadow 0.2s ease;
             text-transform: uppercase;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .start-btn::after {
-            content: '';
-            position: absolute;
-            top: -50%; left: -50%;
-            width: 200%; height: 200%;
-            background: linear-gradient(60deg, transparent, rgba(255,255,255,0.4), transparent);
-            transform: rotate(30deg);
-            animation: btnShine 3s infinite;
-        }
-
-        @keyframes btnShine {
-            0% { transform: translateX(-100%) rotate(30deg); }
-            100% { transform: translateX(100%) rotate(30deg); }
         }
 
         .start-btn:hover {
@@ -506,7 +448,7 @@
             -webkit-backdrop-filter: blur(25px);
             border: 1px solid var(--border-glow);
             border-radius: 16px;
-            padding: 10px 16px;
+            padding: 12px 18px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -537,7 +479,7 @@
 
         .track-title {
             font-family: 'Syne', sans-serif;
-            font-size: 13.5px;
+            font-size: 14px;
             font-weight: 900;
             color: #fff;
             white-space: nowrap;
@@ -588,8 +530,8 @@
 
         #visualizer-canvas {
             width: 100%;
-            height: 20px;
-            min-height: 16px;
+            height: 22px;
+            min-height: 18px;
             margin: 0;
             flex-shrink: 0;
             display: block;
@@ -601,8 +543,6 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body>
-
-    <div class="scanline-overlay"></div>
 
     <div class="trap-bg-text top-left" id="bg-text-1">EA$Y WORLDWIDE</div>
     <div class="trap-bg-text bottom-right" id="bg-text-2">OPIUM 808</div>
@@ -628,8 +568,8 @@
                 <span>🎧 DİNLEYİCİ: <strong id="listener-count" style="color: #ffffff; text-shadow:0 0 10px #fff;">0</strong></span>
             </div>
             <div class="theme-selector" id="theme-selector-box">
-                <div class="theme-btn theme-slime" onclick="setRadioTheme('SLIME')" title="SLIME Green"></div>
                 <div class="theme-btn theme-ice" onclick="setRadioTheme('ICE')" title="ICE White"></div>
+                <div class="theme-btn theme-slime" onclick="setRadioTheme('SLIME')" title="SLIME Green"></div>
                 <div class="theme-btn theme-opium" onclick="setRadioTheme('OPIUM')" title="OPIUM Red"></div>
                 <div class="theme-btn theme-purple" onclick="setRadioTheme('PURPLE')" title="LEAN Purple"></div>
                 <div class="theme-btn theme-gold" onclick="setRadioTheme('GOLD')" title="CHAMPAGNE Gold"></div>
@@ -638,12 +578,6 @@
                 <button class="volume-btn" id="mute-btn">🔊</button>
                 <input type="range" class="volume-slider" id="volume-range" min="0" max="100" value="100">
             </div>
-        </div>
-
-        <div class="sfx-bar">
-            <button class="sfx-btn" onclick="playTRAPSound('horn')">📢 AIRHORN</button>
-            <button class="sfx-btn" onclick="playTRAPSound('laser')">⚡ LASER</button>
-            <button class="sfx-btn" onclick="playTRAPSound('siren')">🚨 SIREN</button>
         </div>
 
         <div class="video-container" id="video-box">
@@ -683,19 +617,11 @@
     <script>
         document.addEventListener('touchmove', function(e) { e.preventDefault(); }, { passive: false });
 
-        /* PARALLAX MOUSE EFFECT */
-        let mouseX = 0, mouseY = 0;
-        let targetX = 0, targetY = 0;
-        window.addEventListener('mousemove', (e) => {
-            mouseX = (e.clientX - window.innerWidth / 2) / (window.innerWidth / 2);
-            mouseY = (e.clientY - window.innerHeight / 2) / (window.innerHeight / 2);
-        });
-
         /* TEMA KONTROLÜ */
-        let currentAccentColor = '#39ff14';
+        let currentAccentColor = '#ffffff';
         const THEMES = {
-            SLIME: { accent: '#39ff14', glow: 'rgba(57, 255, 20, 0.6)', bgGlow: 'rgba(0, 255, 50, 0.12)', borderGlow: 'rgba(57, 255, 20, 0.4)' },
             ICE: { accent: '#ffffff', glow: 'rgba(255, 255, 255, 0.55)', bgGlow: 'rgba(180, 220, 255, 0.1)', borderGlow: 'rgba(255, 255, 255, 0.35)' },
+            SLIME: { accent: '#39ff14', glow: 'rgba(57, 255, 20, 0.6)', bgGlow: 'rgba(0, 255, 50, 0.12)', borderGlow: 'rgba(57, 255, 20, 0.4)' },
             OPIUM: { accent: '#ff0000', glow: 'rgba(255, 0, 0, 0.65)', bgGlow: 'rgba(255, 0, 0, 0.12)', borderGlow: 'rgba(255, 0, 0, 0.4)' },
             PURPLE: { accent: '#a855f7', glow: 'rgba(168, 85, 247, 0.65)', bgGlow: 'rgba(168, 85, 247, 0.12)', borderGlow: 'rgba(168, 85, 247, 0.4)' },
             GOLD: { accent: '#ffd700', glow: 'rgba(255, 215, 0, 0.65)', bgGlow: 'rgba(255, 215, 0, 0.12)', borderGlow: 'rgba(255, 215, 0, 0.4)' }
@@ -716,49 +642,6 @@
             if (ringBarMeshes) {
                 const hexColor = parseInt(t.accent.replace('#', '0x'));
                 ringBarMeshes.forEach(b => b.material.color.setHex(hexColor));
-            }
-            if (atmosphereMesh) {
-                atmosphereMesh.material.color.setHex(parseInt(t.accent.replace('#', '0x')));
-            }
-        }
-
-        /* WEB AUDIO SYNTH SFX (TRAP AIRHORN / LASER / SIREN) */
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        function playTRAPSound(type) {
-            if (audioCtx.state === 'suspended') { audioCtx.resume(); }
-            const now = audioCtx.currentTime;
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-
-            if (type === 'horn') {
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(320, now);
-                osc.frequency.setValueAtTime(460, now + 0.08);
-                osc.frequency.setValueAtTime(320, now + 0.22);
-                osc.frequency.setValueAtTime(460, now + 0.3);
-                gain.gain.setValueAtTime(0.3, now);
-                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
-                osc.start(now);
-                osc.stop(now + 0.5);
-            } else if (type === 'laser') {
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(880, now);
-                osc.frequency.exponentialRampToValueAtTime(110, now + 0.25);
-                gain.gain.setValueAtTime(0.3, now);
-                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
-                osc.start(now);
-                osc.stop(now + 0.25);
-            } else if (type === 'siren') {
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(600, now);
-                osc.frequency.linearRampToValueAtTime(950, now + 0.2);
-                osc.frequency.linearRampToValueAtTime(600, now + 0.4);
-                gain.gain.setValueAtTime(0.25, now);
-                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
-                osc.start(now);
-                osc.stop(now + 0.45);
             }
         }
 
@@ -903,6 +786,7 @@
             const waveBars = document.getElementById('wave-bars');
             const vol = Number(volumeRange.value);
 
+            /* Kullanıcı butona basmadıysa, ses kapalıysa veya oynatıcı çalmıyorsa efektleri kapat */
             if (!userHasClicked || vol === 0 || isMuted || !actualPlayerStatePlaying) {
                 isPlayingState = false;
                 vBox.classList.remove('playing-border');
@@ -925,6 +809,7 @@
             updateAudioVisualState();
         }
 
+        /* ANLIK SENKRONİZASYON MOTORU */
         function syncToLiveStream() {
             if (!isPlayerReady || !player || !userHasClicked) return;
 
@@ -947,6 +832,7 @@
                 const currentTime = player.getCurrentTime();
                 const timeDiff = Math.abs(currentTime - state.seekTo);
                 
+                // Senkron kayması 1.5 saniyeyi geçerse takılmadan düzelt
                 if (timeDiff > 1.5) {
                     player.seekTo(state.seekTo, true);
                     if (typeof player.getPlayerState === 'function' && player.getPlayerState() !== YT.PlayerState.PLAYING) {
@@ -961,6 +847,7 @@
             if (userHasClicked) return;
             userHasClicked = true;
 
+            /* Ses kutusunu canlı yayına katılındığı an tıklanabilir yap */
             document.getElementById('volume-box').style.pointerEvents = 'auto';
 
             const overlay = document.getElementById('start-overlay');
@@ -1059,7 +946,7 @@
             updateAudioVisualState();
         });
 
-        /* THREE.JS DÜNYA, ATMOSFER HALO & TRAP HALKASI */
+        /* THREE.JS DÜNYA & TRAP HALKASI */
         const globeContainer = document.getElementById('globe-3d-container');
         
         const scene = new THREE.Scene();
@@ -1105,17 +992,6 @@
         const globeMesh = new THREE.Mesh(geometry, material);
         scene.add(globeMesh);
 
-        /* NEON ATMOSPHERE GLOW SPHERE */
-        const atmosGeo = new THREE.SphereGeometry(baseRadius + 0.08, segments, segments);
-        const atmosMat = new THREE.MeshBasicMaterial({
-            color: 0x39ff14,
-            transparent: true,
-            opacity: 0.15,
-            side: THREE.BackSide
-        });
-        const atmosphereMesh = new THREE.Mesh(atmosGeo, atmosMat);
-        scene.add(atmosphereMesh);
-
         /* 3D TRAP EKOLAYZIR HALKASI */
         const ringBarsCount = isMobileDevice ? 44 : 80;
         const ringBarsGroup = new THREE.Group();
@@ -1123,7 +999,7 @@
 
         for (let i = 0; i < ringBarsCount; i++) {
             const barGeo = new THREE.BoxGeometry(0.04, 0.45, 0.04);
-            const barMat = new THREE.MeshBasicMaterial({ color: 0x39ff14, transparent: true, opacity: 0.85 });
+            const barMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.85 });
             const bar = new THREE.Mesh(barGeo, barMat);
             
             const angle = (i / ringBarsCount) * Math.PI * 2;
@@ -1206,12 +1082,6 @@
 
             if (isNaN(deltaTime) || deltaTime > 0.1) return;
 
-            targetX += (mouseX - targetX) * 0.05;
-            targetY += (mouseY - targetY) * 0.05;
-
-            globeMesh.rotation.x = targetY * 0.2;
-            globeMesh.rotation.z = -targetX * 0.1;
-
             const globeSpeed = isPlayingState ? 0.6 : 0.15;
             const ringSpeed = isPlayingState ? 0.75 : 0.22;
 
@@ -1225,7 +1095,6 @@
                 const bassPower = Math.pow(Math.sin(bassAngle), 5);
                 const bassScale = 1 + bassPower * 0.05;
                 globeMesh.scale.set(bassScale, bassScale, bassScale);
-                atmosphereMesh.scale.set(bassScale * 1.02, bassScale * 1.02, bassScale * 1.02);
 
                 dirLight.intensity = 2.5 + bassPower * 3.0;
 
@@ -1235,16 +1104,17 @@
 
                 videoBoxEl.style.transform = `scale(${1 + bassPower * 0.012})`;
 
+                /* GRAFFITI & TRAP TEXT BEAT PULSE */
                 if (tag1El && tag2El) {
-                    tag1El.style.transform = `rotate(-25deg) scale(${1 + bassPower * 0.08}) translate(${targetX * 15}px, ${targetY * 15}px)`;
-                    tag2El.style.transform = `rotate(15deg) scale(${1 + bassPower * 0.08}) translate(${-targetX * 15}px, ${-targetY * 15}px)`;
-                    tag1El.style.opacity = (0.15 + bassPower * 0.2).toString();
-                    tag2El.style.opacity = (0.15 + bassPower * 0.2).toString();
+                    tag1El.style.transform = `rotate(-25deg) scale(${1 + bassPower * 0.08})`;
+                    tag2El.style.transform = `rotate(15deg) scale(${1 + bassPower * 0.08})`;
+                    tag1El.style.opacity = (0.12 + bassPower * 0.2).toString();
+                    tag2El.style.opacity = (0.12 + bassPower * 0.2).toString();
                 }
 
                 if (bgText1El && bgText2El) {
-                    bgText1El.style.transform = `rotate(-10deg) scale(${1 + bassPower * 0.03}) translate(${targetX * 25}px, ${targetY * 25}px)`;
-                    bgText2El.style.transform = `rotate(8deg) scale(${1 + bassPower * 0.03}) translate(${-targetX * 25}px, ${-targetY * 25}px)`;
+                    bgText1El.style.transform = `rotate(-10deg) scale(${1 + bassPower * 0.03})`;
+                    bgText2El.style.transform = `rotate(8deg) scale(${1 + bassPower * 0.03})`;
                 }
 
                 if (bassPower > 0.6) {
@@ -1259,6 +1129,7 @@
                     volumeBoxEl.classList.remove('badge-bass-pulse');
                 }
 
+                /* TRAP BASS DROP GLITCH EFFECT */
                 if (bassPower > 0.8) {
                     mainWrapper.classList.add('wrapper-glitch');
                 } else {
@@ -1280,7 +1151,6 @@
 
             } else {
                 globeMesh.scale.lerp(new THREE.Vector3(1, 1, 1), 10 * deltaTime);
-                atmosphereMesh.scale.lerp(new THREE.Vector3(1, 1, 1), 10 * deltaTime);
                 dirLight.intensity = 2.2;
                 ambientGlowEl.style.transform = `translate(-50%, -50%) scale(1)`;
                 ambientGlowEl.style.opacity = '0.4';
@@ -1293,15 +1163,15 @@
                 volumeBoxEl.classList.remove('badge-bass-pulse');
 
                 if (tag1El && tag2El) {
-                    tag1El.style.transform = `rotate(-25deg) scale(1) translate(${targetX * 10}px, ${targetY * 10}px)`;
-                    tag2El.style.transform = `rotate(15deg) scale(1) translate(${-targetX * 10}px, ${-targetY * 10}px)`;
-                    tag1El.style.opacity = '0.15';
-                    tag2El.style.opacity = '0.15';
+                    tag1El.style.transform = `rotate(-25deg) scale(1)`;
+                    tag2El.style.transform = `rotate(15deg) scale(1)`;
+                    tag1El.style.opacity = '0.12';
+                    tag2El.style.opacity = '0.12';
                 }
 
                 if (bgText1El && bgText2El) {
-                    bgText1El.style.transform = `rotate(-10deg) scale(1) translate(${targetX * 15}px, ${targetY * 15}px)`;
-                    bgText2El.style.transform = `rotate(8deg) scale(1) translate(${-targetX * 15}px, ${-targetY * 15}px)`;
+                    bgText1El.style.transform = `rotate(-10deg) scale(1)`;
+                    bgText2El.style.transform = `rotate(8deg) scale(1)`;
                 }
 
                 ringBarMeshes.forEach((bar) => {
@@ -1316,7 +1186,7 @@
         resizeThreeJS();
         requestAnimationFrame(animateGlobe);
 
-        /* CYBER CONNECTED NETWORK PARTICLES */
+        /* TRAP SPARKLE / PARÇACIK EFEKTİ */
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
         let particlesArray = [];
@@ -1329,19 +1199,19 @@
         window.addEventListener('resize', handleResize);
         handleResize();
 
-        class CyberParticle {
+        class CleanDotParticle {
             constructor() { this.reset(); }
             reset() {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 2.5 + 0.8;
-                this.speedX = (Math.random() - 0.5) * 0.8;
-                this.speedY = (Math.random() - 0.5) * 0.8;
+                this.size = Math.random() * 2.8 + 0.8;
+                this.speedX = (Math.random() - 0.5) * 0.6;
+                this.speedY = (Math.random() - 0.5) * 0.6;
                 this.opacity = Math.random() * 0.6 + 0.2;
                 this.pulseSpeed = Math.random() * 0.05 + 0.02;
             }
             update() {
-                const speedMult = isPlayingState ? 2.2 : 1.0;
+                const speedMult = isPlayingState ? 2.0 : 1.0;
                 this.x += this.speedX * speedMult;
                 this.y += this.speedY * speedMult;
                 this.opacity += Math.sin(Date.now() * this.pulseSpeed) * 0.025;
@@ -1359,41 +1229,17 @@
             }
         }
 
-        const particleCount = isMobileDevice ? 35 : 65;
-        for (let i = 0; i < particleCount; i++) particlesArray.push(new CyberParticle());
-
-        function connectParticles() {
-            const maxDistance = 110;
-            for (let a = 0; a < particlesArray.length; a++) {
-                for (let b = a; b < particlesArray.length; b++) {
-                    const dx = particlesArray[a].x - particlesArray[b].x;
-                    const dy = particlesArray[a].y - particlesArray[b].y;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
-
-                    if (dist < maxDistance) {
-                        const alpha = (1 - dist / maxDistance) * 0.18;
-                        ctx.strokeStyle = currentAccentColor;
-                        ctx.globalAlpha = alpha;
-                        ctx.lineWidth = 0.75;
-                        ctx.beginPath();
-                        ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
-                        ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
-                        ctx.stroke();
-                        ctx.globalAlpha = 1.0;
-                    }
-                }
-            }
-        }
+        const particleCount = isMobileDevice ? 35 : 70;
+        for (let i = 0; i < particleCount; i++) particlesArray.push(new CleanDotParticle());
 
         function animateParticles() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             particlesArray.forEach(p => { p.update(); p.draw(); });
-            connectParticles();
             requestAnimationFrame(animateParticles);
         }
         animateParticles();
 
-        /* FIREBASE DİNLEYİCİ TAKİBİ */
+        /* FIREBASE DINLEYICI TAKIBI */
         const firebaseConfig = {
             apiKey: "AIzaSyBaTlb6V6e4FMLTYNXAPBgdzsgiclL8Qw8",
             authDomain: "easyfm-37b9e.firebaseapp.com",

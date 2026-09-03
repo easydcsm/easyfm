@@ -42,12 +42,12 @@
             justify-content: center;
         }
 
-        /* CRT TARAMA & VIGNETTE EFEKTI */
+        /* CRT TARAMA & VIGNETTE SİNEMATİK EFEKTİ */
         body::before {
             content: "";
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle, transparent 25%, #000000 120%);
+            background: radial-gradient(circle, transparent 20%, #000000 130%);
             z-index: 45;
             pointer-events: none;
         }
@@ -57,11 +57,26 @@
             display: block;
             position: absolute;
             top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.45) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.04), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.04));
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.5) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.05), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.05));
             z-index: 50;
             background-size: 100% 4px, 6px 100%;
             pointer-events: none;
-            opacity: 0.6;
+            opacity: 0.7;
+        }
+
+        /* CYBER SCANLINE SCAN */
+        .scanline-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, transparent 0%, rgba(255, 255, 255, 0.03) 50%, transparent 100%);
+            z-index: 46;
+            pointer-events: none;
+            animation: scanlineAnim 8s linear infinite;
+        }
+
+        @keyframes scanlineAnim {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
         }
 
         /* ARKA PLAN GRAFFITI / GOTIK ARKA PLAN YAZILARI */
@@ -69,7 +84,7 @@
             position: fixed;
             font-family: 'UnifrakturCook', cursive;
             color: rgba(255, 255, 255, 0.04);
-            font-size: 20vw;
+            font-size: 22vw;
             z-index: 1;
             pointer-events: none;
             text-transform: uppercase;
@@ -77,20 +92,19 @@
             letter-spacing: -3px;
             text-shadow: 0 0 35px var(--glow-color);
             filter: blur(1px);
-            transition: color 0.1s ease, transform 0.05s ease-out, opacity 0.05s ease-out;
-            will-change: transform, opacity;
-            transform-origin: center center;
+            transition: transform 0.1s ease-out, color 0.3s ease;
+            will-change: transform;
         }
 
         .trap-bg-text.top-left {
-            top: -4%;
-            left: -10%;
+            top: -6%;
+            left: -12%;
             transform: rotate(-10deg);
         }
 
         .trap-bg-text.bottom-right {
-            bottom: -8%;
-            right: -10%;
+            bottom: -10%;
+            right: -12%;
             transform: rotate(8deg);
         }
 
@@ -99,13 +113,12 @@
             font-family: 'Permanent Marker', cursive;
             color: var(--accent-color);
             opacity: 0.12;
-            font-size: 9vw;
+            font-size: 10vw;
             z-index: 1;
             pointer-events: none;
+            transition: color 0.4s ease, opacity 0.4s ease, transform 0.1s ease-out;
             text-shadow: 0 0 20px var(--glow-color);
-            will-change: transform, opacity;
-            transform-origin: center center;
-            transition: transform 0.05s ease-out, opacity 0.05s ease-out;
+            will-change: transform;
         }
 
         .spray-tag.tag1 { top: 35%; left: 2%; transform: rotate(-25deg); }
@@ -134,7 +147,6 @@
             opacity: 0;
             mix-blend-mode: overlay;
             will-change: opacity;
-            transition: opacity 0.04s ease-out;
         }
 
         /* AMBIENT NEON GLOW */
@@ -143,40 +155,41 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 90vw;
-            height: 90vh;
+            width: 95vw;
+            height: 95vh;
             background: radial-gradient(circle, var(--glow-color) 0%, var(--bg-glow) 50%, rgba(0, 0, 0, 0) 80%);
             z-index: 4;
             pointer-events: none;
+            transition: transform 0.08s ease-out, opacity 0.08s ease-out, background 0.4s ease;
             will-change: transform, opacity;
-            filter: blur(60px);
-            transition: transform 0.05s ease-out, opacity 0.05s ease-out;
+            filter: blur(70px);
         }
 
         .main-wrapper {
             position: relative;
             z-index: 10;
             width: 100%;
-            max-width: 620px;
+            max-width: 680px;
             height: 100%;
             height: 100dvh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: space-between;
-            padding: calc(10px + env(safe-area-inset-top)) 12px calc(12px + env(safe-area-inset-bottom)) 12px;
-            gap: 10px; /* Elemanların birbirine değmesini önlemek için düzenli aralık */
+            padding: calc(16px + env(safe-area-inset-top)) 14px calc(12px + env(safe-area-inset-bottom)) 14px;
+            gap: 8px;
             margin: 0 auto;
             box-sizing: border-box;
-            will-change: transform, filter;
+            transition: transform 0.05s ease, filter 0.05s ease;
         }
 
         .wrapper-shake {
-            animation: trapBassShake 0.04s ease-in-out infinite alternate;
+            animation: trapBassShake 0.07s ease-in-out infinite alternate;
         }
 
+        /* TRAP BASS DROP GLITCH & SHAKE */
         .wrapper-glitch {
-            filter: drop-shadow(-2px 0 0 rgba(255,0,0,0.6)) drop-shadow(2px 0 0 rgba(0,255,255,0.6));
+            filter: drop-shadow(-3px 0 0 rgba(255,0,0,0.8)) drop-shadow(3px 0 0 rgba(0,255,255,0.8));
         }
 
         @keyframes trapBassShake {
@@ -189,8 +202,8 @@
             text-align: center;
             position: relative;
             width: 100%;
-            max-width: 380px;
-            height: clamp(130px, 22vh, 200px);
+            max-width: 420px;
+            height: clamp(180px, 29vh, 270px);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -201,8 +214,8 @@
 
         @media (min-width: 769px) {
             .logo-container {
-                max-width: 500px;
-                height: clamp(180px, 28vh, 260px);
+                max-width: 620px;
+                height: clamp(260px, 35vh, 360px);
             }
         }
 
@@ -220,21 +233,20 @@
         #globe-3d-container canvas {
             display: block;
             outline: none;
-            filter: drop-shadow(0 0 30px var(--glow-color));
+            filter: drop-shadow(0 0 40px var(--glow-color));
         }
 
-        /* STATUS BAR - DEĞMEYİ ÖNLEMEK İÇİN ROW GAP VE DÜZENLEME */
+        /* KROM & GLASSMORPHISM STATUS BAR */
         .status-bar {
             display: flex;
-            gap: 8px;
-            row-gap: 8px;
+            gap: 6px;
             flex-wrap: wrap;
             justify-content: center;
             align-items: center;
             width: 100%;
             max-width: 100%;
             flex-shrink: 0;
-            padding: 2px 4px;
+            padding: 0 2px;
         }
 
         .badge {
@@ -242,9 +254,9 @@
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
             border: 1px solid var(--border-glow);
-            padding: 6px 12px;
+            padding: 7px 12px;
             border-radius: 40px;
-            font-size: 9px;
+            font-size: 9.5px;
             font-weight: 900;
             letter-spacing: 1.5px;
             display: flex;
@@ -253,8 +265,7 @@
             text-transform: uppercase;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.9), inset 0 0 12px rgba(255, 255, 255, 0.08);
             white-space: nowrap;
-            transition: border-color 0.05s ease-out, box-shadow 0.05s ease-out;
-            will-change: transform;
+            transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
         }
 
         .theme-selector {
@@ -262,18 +273,17 @@
             gap: 6px;
             background: rgba(10, 10, 10, 0.85);
             border: 1px solid var(--border-glow);
-            padding: 5px 10px;
+            padding: 6px 10px;
             border-radius: 40px;
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.9);
-            transition: border-color 0.05s ease-out, box-shadow 0.05s ease-out;
-            will-change: transform;
+            transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
         }
 
         .theme-btn {
-            width: 14px;
-            height: 14px;
+            width: 15px;
+            height: 15px;
             border-radius: 50%;
             border: 1px solid rgba(255, 255, 255, 0.8);
             cursor: pointer;
@@ -281,7 +291,16 @@
             position: relative;
         }
 
-        .theme-btn:active { transform: scale(0.6); }
+        .theme-btn:active {
+            transform: scale(0.6);
+            animation: themeExplosion 0.35s ease-out;
+        }
+
+        @keyframes themeExplosion {
+            0% { transform: scale(0.8); }
+            50% { transform: scale(1.8); filter: brightness(3); }
+            100% { transform: scale(1); }
+        }
 
         .theme-ice { background: #ffffff; box-shadow: 0 0 14px #fff; }
         .theme-slime { background: #39ff14; box-shadow: 0 0 14px #39ff14; }
@@ -309,19 +328,19 @@
             gap: 6px;
             background: rgba(10, 10, 10, 0.85);
             border: 1px solid var(--border-glow);
-            padding: 5px 12px;
+            padding: 6px 12px;
             border-radius: 40px;
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.9);
-            transition: border-color 0.05s ease-out, box-shadow 0.05s ease-out;
+            transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
             pointer-events: none;
-            will-change: transform;
         }
 
         .badge-bass-pulse {
+            transform: scale(1.04);
             border-color: var(--accent-color) !important;
-            box-shadow: 0 0 20px var(--glow-color), inset 0 0 10px var(--glow-color) !important;
+            box-shadow: 0 0 20px var(--glow-color) !important;
         }
 
         .volume-btn {
@@ -334,7 +353,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: transform 0.1s ease;
         }
+        
+        .volume-btn:active { transform: scale(0.8); }
 
         .volume-slider {
             -webkit-appearance: none;
@@ -357,47 +379,13 @@
             box-shadow: 0 0 12px var(--accent-color);
         }
 
-        /* TRAP SOUNDBOARD / PRODUCER SOUND PADS */
-        .soundboard-container {
-            width: 100%;
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            flex-shrink: 0;
-            margin: 2px 0;
-        }
-
-        .pad-btn {
-            background: rgba(15, 15, 15, 0.85);
-            border: 1px solid var(--border-glow);
-            border-radius: 12px;
-            padding: 8px 4px;
-            color: #fff;
-            font-size: 8px;
-            font-weight: 900;
-            letter-spacing: 0.5px;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 3px;
-            text-transform: uppercase;
-            backdrop-filter: blur(15px);
-            transition: transform 0.05s ease-out, border-color 0.05s ease-out, box-shadow 0.05s ease-out, background 0.1s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
-            will-change: transform;
-        }
-
-        .pad-btn:active {
-            transform: scale(0.92) !important;
-            background: var(--accent-color);
-            color: #000;
-            box-shadow: 0 0 25px var(--accent-color) !important;
-        }
-
-        .pad-icon {
-            font-size: 12px;
+        @media (max-width: 480px) {
+            .status-bar { gap: 4px; }
+            .badge { padding: 5px 9px; font-size: 8px; letter-spacing: 1px; }
+            .theme-selector { padding: 5px 8px; gap: 4px; }
+            .theme-btn { width: 13px; height: 13px; }
+            .volume-control-box { padding: 5px 9px; }
+            .volume-slider { width: 38px; }
         }
 
         /* VIDEO CONTAINER & CYBER BORDER */
@@ -405,30 +393,31 @@
             position: relative;
             width: 100%;
             flex: 1 1 auto;
-            min-height: 110px;
-            max-height: 30vh;
+            min-height: 140px;
+            max-height: 36vh;
             border-radius: 18px;
             overflow: hidden;
             box-shadow: 0 16px 50px rgba(0, 0, 0, 0.95);
             border: 1px solid var(--border-glow);
-            transition: border-color 0.05s, box-shadow 0.05s, transform 0.05s ease-out;
+            transition: border-color 0.3s, box-shadow 0.3s, transform 0.08s ease;
             background: #000;
             margin: 2px 0;
-            will-change: transform;
-            transform-origin: center center;
         }
 
         .video-container.playing-border {
             border-color: var(--accent-color);
-            box-shadow: 0 0 30px var(--glow-color), inset 0 0 15px var(--glow-color);
+            box-shadow: 0 0 40px var(--glow-color), inset 0 0 25px var(--glow-color);
         }
 
-        #stream-player {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            pointer-events: none;
+        #youtube-player {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            border: none; pointer-events: auto;
         }
+
+        .yt-shield-top-main { position: absolute; top: 0; left: 0; width: 100%; height: 82%; z-index: 15; background: transparent; }
+        .yt-shield-bottom-left { position: absolute; bottom: 0; left: 0; width: 78%; height: 18%; z-index: 15; background: transparent; }
+        .yt-shield-bottom-edge { position: absolute; bottom: 0; right: 0; width: 2%; height: 18%; z-index: 15; background: transparent; }
 
         #start-overlay {
             position: absolute;
@@ -459,6 +448,23 @@
             box-shadow: 0 0 45px var(--accent-color);
             transition: transform 0.2s ease, box-shadow 0.2s ease;
             text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .start-btn::after {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: linear-gradient(60deg, transparent, rgba(255,255,255,0.4), transparent);
+            transform: rotate(30deg);
+            animation: btnShine 3s infinite;
+        }
+
+        @keyframes btnShine {
+            0% { transform: translateX(-100%) rotate(30deg); }
+            100% { transform: translateX(100%) rotate(30deg); }
         }
 
         .start-btn:hover {
@@ -482,9 +488,6 @@
             flex-shrink: 0;
             position: relative;
             overflow: hidden;
-            will-change: transform;
-            transition: transform 0.05s ease-out;
-            transform-origin: center center;
         }
 
         .track-info {
@@ -508,7 +511,7 @@
 
         .track-title {
             font-family: 'Syne', sans-serif;
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 900;
             color: #fff;
             white-space: nowrap;
@@ -556,6 +559,15 @@
             0% { transform: scaleY(0.2); }
             100% { transform: scaleY(1); }
         }
+
+        #visualizer-canvas {
+            width: 100%;
+            height: 22px;
+            min-height: 18px;
+            margin: 0;
+            flex-shrink: 0;
+            display: block;
+        }
     </style>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -563,6 +575,8 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body>
+
+    <div class="scanline-overlay"></div>
 
     <div class="trap-bg-text top-left" id="bg-text-1">EA$Y WORLDWIDE</div>
     <div class="trap-bg-text bottom-right" id="bg-text-2">OPIUM 808</div>
@@ -600,33 +614,18 @@
             </div>
         </div>
 
-        <div class="soundboard-container" id="soundboard-box">
-            <button class="pad-btn soundboard-pad" onclick="playAdlib('metro')">
-                <span class="pad-icon">🎙️</span>
-                <span>METRO!!</span>
-            </button>
-            <button class="pad-btn soundboard-pad" onclick="playAdlib('damn')">
-                <span class="pad-icon">🔊</span>
-                <span>DAMN SON!</span>
-            </button>
-            <button class="pad-btn soundboard-pad" onclick="playAdlib('wheezy')">
-                <span class="pad-icon">🐍</span>
-                <span>WHEEZY!!</span>
-            </button>
-            <button class="pad-btn soundboard-pad" onclick="playAdlib('f1lthy')">
-                <span class="pad-icon">💥</span>
-                <span>WAKE UP F1LTHY!</span>
-            </button>
-        </div>
-
         <div class="video-container" id="video-box">
+            <div class="yt-shield-top-main"></div>
+            <div class="yt-shield-bottom-left"></div>
+            <div class="yt-shield-bottom-edge"></div>
+
             <div id="start-overlay">
                 <button class="start-btn" id="start-btn-el">CANLI YAYINA KATIL</button>
             </div>
-            <video id="stream-player" playsinline crossorigin="anonymous"></video>
+            <div id="youtube-player"></div>
         </div>
 
-        <div class="now-playing-card" id="now-playing-card-el">
+        <div class="now-playing-card">
             <div class="track-info">
                 <span class="track-label">
                     <span style="display:inline-block; width:6px; height:6px; background:var(--accent-color); border-radius:50%; box-shadow:0 0 10px var(--accent-color);"></span>
@@ -645,10 +644,20 @@
                 <span id="next-track-name" style="font-weight:700;">---</span>
             </div>
         </div>
+
+        <canvas id="visualizer-canvas"></canvas>
     </div>
 
     <script>
         document.addEventListener('touchmove', function(e) { e.preventDefault(); }, { passive: false });
+
+        /* PARALLAX MOUSE EFFECT */
+        let mouseX = 0, mouseY = 0;
+        let targetX = 0, targetY = 0;
+        window.addEventListener('mousemove', (e) => {
+            mouseX = (e.clientX - window.innerWidth / 2) / (window.innerWidth / 2);
+            mouseY = (e.clientY - window.innerHeight / 2) / (window.innerHeight / 2);
+        });
 
         /* TEMA KONTROLÜ */
         let currentAccentColor = '#ffffff';
@@ -676,103 +685,81 @@
                 const hexColor = parseInt(t.accent.replace('#', '0x'));
                 ringBarMeshes.forEach(b => b.material.color.setHex(hexColor));
             }
-        }
-
-        /* SOUNDBOARD SES EFEKTLERİ */
-        const adlibUrls = {
-            metro: 'https://raw.githubusercontent.com/easydcsm/easyfm/main/Metroboomin%20producer%20tags%20-%20Every%20tags%20clean%20(mp3cut%20(mp3cut.net).mp3',
-            damn: 'https://raw.githubusercontent.com/easydcsm/easyfm/main/Damn%20Son%20Whered%20You%20Find%20This%20(Sound%20Effect)%20(mp3cut.net).mp3',
-            wheezy: 'https://raw.githubusercontent.com/easydcsm/easyfm/main/WHEEZY%20OUTTA%20HERE%20OFFICIAL%20PRODUCER%20TAG%20(ORIGINAL)%20(mp3cut.net).mp3',
-            f1lthy: "https://raw.githubusercontent.com/easydcsm/easyfm/main/F1LTHY%20'WAKE%20UP%20FILTHY'%20OFFICIAL%20PRODUCER%20TAG%20(mp3cut.net).mp3"
-        };
-
-        const adlibBuffers = {};
-
-        async function preloadAdlib(type, url) {
-            try {
-                const response = await fetch(url);
-                const arrayBuffer = await response.arrayBuffer();
-                if (audioCtx) {
-                    adlibBuffers[type] = await audioCtx.decodeAudioData(arrayBuffer);
-                }
-            } catch (e) {}
-        }
-
-        function playAdlib(type) {
-            if (!audioCtx) initAudioContext();
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-
-            if (adlibBuffers[type]) {
-                const source = audioCtx.createBufferSource();
-                source.buffer = adlibBuffers[type];
-                const gain = audioCtx.createGain();
-                gain.gain.value = 1.8;
-                source.connect(gain);
-                gain.connect(audioCtx.destination);
-                source.start(0);
-            } else {
-                preloadAdlib(type, adlibUrls[type]).then(() => {
-                    if (adlibBuffers[type]) {
-                        const source = audioCtx.createBufferSource();
-                        source.buffer = adlibBuffers[type];
-                        const gain = audioCtx.createGain();
-                        gain.gain.value = 1.8;
-                        source.connect(gain);
-                        gain.connect(audioCtx.destination);
-                        source.start(0);
-                    }
-                });
+            if (atmosphereMesh) {
+                atmosphereMesh.material.color.setHex(parseInt(t.accent.replace('#', '0x')));
             }
         }
 
-        /* GITHUB RASTGELE CANLI YAYIN ALGORİTMASI */
+        let player = null;
+        let isPlayerReady = false;
+        let isPlayingState = false;
+        let actualPlayerStatePlaying = false; 
+        let currentLoadedVideoId = null;
+        let syncCheckInterval = null;
+        let userHasClicked = false;
+
         const baseSongList = [
-            { url: 'https://raw.githubusercontent.com/easydcsm/easyfm/main/franchise.mp4', duration: 120, title: 'FRANCHISE' },
-            { url: 'https://raw.githubusercontent.com/easydcsm/easyfm/main/outwest.mp4', duration: 207, title: 'OUT WEST' }, 
-            { url: 'https://raw.githubusercontent.com/easydcsm/easyfm/main/brotherstone.mp4', duration: 236, title: 'BROTHER STONE' }, 
-            { url: 'https://raw.githubusercontent.com/easydcsm/easyfm/main/withthat.mp4', duration: 204, title: 'WITH THAT' }
+            { id: '1IEg_3x35go', duration: 120, title: 'FRANCHISE' },
+            { id: 'qAlF70MdfwU', duration: 207, title: 'OUT WEST' }, 
+            { id: 'L_BpiSsIBFM', duration: 236, title: 'BROTHER STONE' }, 
+            { id: 'cTGQrA5HHIU', duration: 204, title: 'WITH THAT' }, 
+            { id: 'ftaXMKV3ffE', duration: 160, title: 'BACKR00MS' },
+            { id: 'LPTlvQ1Zet0', duration: 188, title: 'RIC FLAIR DRIP' },
+            { id: 'EfHNIPXTxy0', duration: 276, title: 'ZEZE' },
+            { id: 'yST9RwZNZDw', duration: 169, title: 'VURURUM KAFANDAN' },
+            { id: 'JrPBResAG2s', duration: 175, title: 'KÖPEKBALIKLARI BURDA' },
+            { id: '-q-XvhV7GFA', duration: 165, title: 'HARBİDEN ŞEKERMİŞ' },
+            { id: 'N4nfjhJN6SA', duration: 197, title: 'TAKE IT TO TRIAL' },
+            { id: 'kC2nGcgKeX0', duration: 167, title: 'GOSTOSO' },
+            { id: 'LcKC9YG-TQY', duration: 150, title: 'MOB GUYS' },
+            { id: '-yElvysKMCY', duration: 164, title: 'TRIMSKI' },
+            { id: 'pfjy7PhVtMo', duration: 135, title: 'POTATO LOADED' },
+            { id: 'bHDWrnlIqfQ', duration: 173, title: 'POPPIN/TALIBAN' },
+            { id: 'KPz33BLkvho', duration: 165, title: 'ESCAPE PLAN' },
+            { id: 'B9synWjqBn8', duration: 209, title: 'FE!N' },
+            { id: 'MKPEZlXY49Q', duration: 244, title: 'JENGA' },
+            { id: 'SpXw0qiy3Wo', duration: 314, title: 'X' },
+            { id: 'GErG9femMQk', duration: 174, title: 'WE PAID' },
+            { id: 'leJNDpm_G10', duration: 308, title: 'HOT' },
+            { id: 'PXxbEfhtDiM', duration: 169, title: 'DEAD FRESH' },
+            { id: '81LJJFASh-I', duration: 185, title: '24/7' },
+            { id: 'H6v_UYs01gA', duration: 167, title: 'PEMBE YALANLAR' },
+            { id: 'p6DHMNX-TO4', duration: 191, title: 'INSANË' },
+            { id: 'OBVx0Jmg88g', duration: 212, title: 'HBA' },
+            { id: 'qG6pQYhjOBw', duration: 186, title: 'ILMB' },
+            { id: 'vo98StHYs90', duration: 168, title: 'UR THE MOON' },
+            { id: '-nzUN-uHS2E', duration: 265, title: '1ST N 3RD' },
+            { id: 'ipOSrQNrp1U', duration: 247, title: 'RAN TO ATLANTA' },
+            { id: 'Ynlfvw2QgE4', duration: 135, title: 'İMDAT' },
+            { id: '0kbOaQOxiQU', duration: 242, title: 'THREE HEADED SNAKE' },
+            { id: 'ggzWJW38bfs', duration: 137, title: 'OG SPLIT' },
+            { id: 'nBj1d39KtcE', duration: 172, title: 'BLACK & CHINESE' },
+            { id: 'aWotrzyK5GA', duration: 157, title: 'OUT THE MUD' },
+            { id: '44G5iSzSNcE', duration: 190, title: 'BAYBAY' }
         ];
 
         const STREAM_START_TIME = 1700000000; 
 
-        function getPseudoRandomNumber(seed) {
-            let z = (seed += 0x6D2B79F5);
-            z = Math.imul(z ^ (z >>> 15), z | 1);
-            z ^= z + Math.imul(z ^ (z >>> 7), z | 61);
-            return ((z ^ (z >>> 14)) >>> 0) / 4294967296;
-        }
+        function getDeterministicShuffledList(array, seed) {
+            let shuffled = [...array];
+            let m = shuffled.length, t, i;
+            let pseudoRandom = function() {
+                let z = (seed += 0x6D2B79F5);
+                z = Math.imul(z ^ (z >>> 15), z | 1);
+                z ^= z + Math.imul(z ^ (z >>> 7), z | 61);
+                return ((z ^ (z >>> 14)) >>> 0) / 4294967296;
+            };
 
-        function generateStreamSequence() {
-            let sequence = [];
-            let lastPlayed = [];
-            let currentSeed = STREAM_START_TIME;
-
-            for (let i = 0; i < 500; i++) {
-                let availableIndices = [];
-                for (let j = 0; j < baseSongList.length; j++) {
-                    if (!lastPlayed.includes(j)) {
-                        availableIndices.push(j);
-                    }
-                }
-                
-                if (availableIndices.length === 0) {
-                    availableIndices = baseSongList.map((_, idx) => idx);
-                }
-
-                let rnd = getPseudoRandomNumber(currentSeed++);
-                let chosenIndex = availableIndices[Math.floor(rnd * availableIndices.length)];
-                
-                sequence.push(baseSongList[chosenIndex]);
-                
-                lastPlayed.push(chosenIndex);
-                if (lastPlayed.length > 4) {
-                    lastPlayed.shift();
-                }
+            while (m) {
+                i = Math.floor(pseudoRandom() * m--);
+                t = shuffled[m];
+                shuffled[m] = shuffled[i];
+                shuffled[i] = t;
             }
-            return sequence;
+            return shuffled;
         }
 
-        const songList = generateStreamSequence();
+        const songList = getDeterministicShuffledList(baseSongList, STREAM_START_TIME);
         const totalPlaylistDuration = songList.reduce((acc, song) => acc + song.duration, 0);
 
         function getCurrentStreamState() {
@@ -800,63 +787,51 @@
             document.getElementById('next-track-name').innerText = nextSong.title;
         }
 
-        const videoPlayer = document.getElementById('stream-player');
-        let audioCtx = null;
-        let analyser = null;
-        let audioSource = null;
-        let dataArray = null;
-        let liveBassLevel = 0;
-
-        /* DİNAMİK BASS ALGILAMA LİMİTLERİ (ENVELOPE/PEAK FOLLOWER) */
-        let bassBeatPeak = 0.5;
-
-        let userHasClicked = false;
-        let isPlayingState = false;
-        let currentLoadedUrl = null;
-        let syncCheckInterval = null;
-
-        /* SAF RAW SES KORUNARAK MÜKEMMEL AUDIO ANALYZER KURULUMU */
-        function initAudioContext() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                
-                audioSource = audioCtx.createMediaElementSource(videoPlayer);
-
-                // Ses hoparlörlere ham (raw) olarak doğrudan aktarılıyor
-                audioSource.connect(audioCtx.destination);
-
-                /* BASS ANALİZÖRÜ */
-                analyser = audioCtx.createAnalyser();
-                analyser.fftSize = 512;
-                analyser.smoothingTimeConstant = 0.3; // Anlık bass vuruşlarını anında yakalamak için hızlandırıldı
-
-                const bassFilter = audioCtx.createBiquadFilter();
-                bassFilter.type = 'lowpass';
-                bassFilter.frequency.setValueAtTime(90, audioCtx.currentTime); // Sadece saf 808 ve Kick frekansları (0-90Hz)
-
-                audioSource.connect(bassFilter);
-                bassFilter.connect(analyser);
-
-                dataArray = new Uint8Array(analyser.frequencyBinCount);
-
-                Object.keys(adlibUrls).forEach(k => preloadAdlib(k, adlibUrls[k]));
-            }
-
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-        }
-
         const initialState = getCurrentStreamState();
         updateTrackLabels(initialState.songIndex);
+
+        const tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        document.head.appendChild(tag);
+
+        function onYouTubeIframeAPIReady() {
+            const state = getCurrentStreamState();
+            const targetSong = songList[state.songIndex];
+            currentLoadedVideoId = targetSong.id;
+
+            player = new YT.Player('youtube-player', {
+                videoId: targetSong.id,
+                playerVars: {
+                    'autoplay': 1,
+                    'controls': 1,
+                    'rel': 0,
+                    'playsinline': 1,
+                    'enablejsapi': 1,
+                    'iv_load_policy': 3,
+                    'fs': 0,
+                    'start': Math.floor(state.seekTo),
+                    'mute': 1
+                },
+                events: {
+                    'onReady': () => { 
+                        isPlayerReady = true; 
+                        if (player && typeof player.playVideo === 'function') {
+                            player.playVideo();
+                        }
+                    },
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+        }
 
         const mainWrapper = document.getElementById('main-wrapper');
 
         function updateAudioVisualState() {
             const vBox = document.getElementById('video-box');
             const waveBars = document.getElementById('wave-bars');
+            const vol = Number(volumeRange.value);
 
-            if (!userHasClicked || videoPlayer.muted || videoPlayer.paused) {
+            if (!userHasClicked || vol === 0 || isMuted || !actualPlayerStatePlaying) {
                 isPlayingState = false;
                 vBox.classList.remove('playing-border');
                 waveBars.style.opacity = '0';
@@ -865,30 +840,46 @@
                 isPlayingState = true;
                 vBox.classList.add('playing-border');
                 waveBars.style.opacity = '1';
+                mainWrapper.classList.add('wrapper-shake');
             }
         }
 
+        function onPlayerStateChange(event) {
+            if (event.data === YT.PlayerState.PLAYING) {
+                actualPlayerStatePlaying = true;
+            } else {
+                actualPlayerStatePlaying = false;
+            }
+            updateAudioVisualState();
+        }
+
         function syncToLiveStream() {
-            if (!userHasClicked) return;
+            if (!isPlayerReady || !player || !userHasClicked) return;
 
             const state = getCurrentStreamState();
             const targetSong = songList[state.songIndex];
 
             updateTrackLabels(state.songIndex);
 
-            if (currentLoadedUrl !== targetSong.url) {
-                currentLoadedUrl = targetSong.url;
-                videoPlayer.src = targetSong.url;
-                videoPlayer.currentTime = state.seekTo;
-                videoPlayer.play().catch(() => {});
+            if (currentLoadedVideoId !== targetSong.id) {
+                currentLoadedVideoId = targetSong.id;
+                player.loadVideoById({
+                    videoId: targetSong.id,
+                    startSeconds: Math.floor(state.seekTo)
+                });
+                player.playVideo();
                 return;
             }
 
-            const timeDiff = Math.abs(videoPlayer.currentTime - state.seekTo);
-            if (timeDiff > 1.5) {
-                videoPlayer.currentTime = state.seekTo;
-                if (videoPlayer.paused) {
-                    videoPlayer.play().catch(() => {});
+            if (typeof player.getCurrentTime === 'function') {
+                const currentTime = player.getCurrentTime();
+                const timeDiff = Math.abs(currentTime - state.seekTo);
+                
+                if (timeDiff > 1.5) {
+                    player.seekTo(state.seekTo, true);
+                    if (typeof player.getPlayerState === 'function' && player.getPlayerState() !== YT.PlayerState.PLAYING) {
+                        player.playVideo();
+                    }
                 }
             }
         }
@@ -898,7 +889,6 @@
             if (userHasClicked) return;
             userHasClicked = true;
 
-            initAudioContext();
             document.getElementById('volume-box').style.pointerEvents = 'auto';
 
             const overlay = document.getElementById('start-overlay');
@@ -906,23 +896,42 @@
             overlay.style.pointerEvents = 'none';
             setTimeout(() => { overlay.style.display = 'none'; }, 300);
 
-            const state = getCurrentStreamState();
-            const targetSong = songList[state.songIndex];
+            const startPlaying = () => {
+                const state = getCurrentStreamState();
+                const targetSong = songList[state.songIndex];
 
-            updateTrackLabels(state.songIndex);
+                updateTrackLabels(state.songIndex);
 
-            currentLoadedUrl = targetSong.url;
-            videoPlayer.src = targetSong.url;
-            videoPlayer.currentTime = state.seekTo;
-            videoPlayer.volume = Number(volumeRange.value) / 100;
-            videoPlayer.muted = false;
+                if (typeof player.unMute === 'function') player.unMute();
+                if (typeof player.setVolume === 'function') player.setVolume(Number(volumeRange.value));
 
-            videoPlayer.play().then(() => {
+                if (currentLoadedVideoId !== targetSong.id) {
+                    currentLoadedVideoId = targetSong.id;
+                    player.loadVideoById({
+                        videoId: targetSong.id,
+                        startSeconds: Math.floor(state.seekTo)
+                    });
+                } else {
+                    player.seekTo(state.seekTo, true);
+                }
+
+                player.playVideo();
                 updateAudioVisualState();
-            }).catch(() => {});
 
-            if (syncCheckInterval) clearInterval(syncCheckInterval);
-            syncCheckInterval = setInterval(syncToLiveStream, 1000);
+                if (syncCheckInterval) clearInterval(syncCheckInterval);
+                syncCheckInterval = setInterval(syncToLiveStream, 1000);
+            };
+
+            if (isPlayerReady && player) {
+                startPlaying();
+            } else {
+                const checkReady = setInterval(() => {
+                    if (isPlayerReady && player) {
+                        clearInterval(checkReady);
+                        startPlaying();
+                    }
+                }, 50);
+            }
         }
 
         const startOverlay = document.getElementById('start-overlay');
@@ -933,42 +942,44 @@
         startBtnEl.addEventListener('click', handleUserClick, { passive: false });
         startBtnEl.addEventListener('touchstart', handleUserClick, { passive: false });
 
-        videoPlayer.addEventListener('play', updateAudioVisualState);
-        videoPlayer.addEventListener('pause', updateAudioVisualState);
-        videoPlayer.addEventListener('ended', syncToLiveStream);
-
         const volumeRange = document.getElementById('volume-range');
         const muteBtn = document.getElementById('mute-btn');
         let isMuted = false;
 
         volumeRange.addEventListener('input', (e) => {
             const val = Number(e.target.value);
-            videoPlayer.volume = val / 100;
-            if (val === 0) {
-                videoPlayer.muted = true;
-                muteBtn.innerText = '🔇';
-                isMuted = true;
-            } else {
-                videoPlayer.muted = false;
-                muteBtn.innerText = '🔊';
-                isMuted = false;
+            
+            if (player && typeof player.setVolume === 'function') {
+                player.setVolume(val);
+                if (val === 0) {
+                    player.mute();
+                    muteBtn.innerText = '🔇';
+                    isMuted = true;
+                } else {
+                    if (isMuted || (typeof player.isMuted === 'function' && player.isMuted())) {
+                        player.unMute();
+                        isMuted = false;
+                    }
+                    muteBtn.innerText = '🔊';
+                }
             }
             updateAudioVisualState();
         });
 
         muteBtn.addEventListener('click', () => {
+            if (!player) return;
             if (isMuted) {
-                videoPlayer.muted = false;
+                player.unMute();
                 muteBtn.innerText = '🔊';
                 let currentVol = Number(volumeRange.value);
                 if (currentVol === 0) {
                     currentVol = 100;
                     volumeRange.value = 100;
                 }
-                videoPlayer.volume = currentVol / 100;
+                if (typeof player.setVolume === 'function') player.setVolume(currentVol);
                 isMuted = false;
             } else {
-                videoPlayer.muted = true;
+                player.mute();
                 muteBtn.innerText = '🔇';
                 volumeRange.value = 0;
                 isMuted = true;
@@ -976,7 +987,7 @@
             updateAudioVisualState();
         });
 
-        /* THREE.JS DÜNYA & TRAP HALKASI */
+        /* THREE.JS DÜNYA, ATMOSFER HALO & TRAP HALKASI */
         const globeContainer = document.getElementById('globe-3d-container');
         
         const scene = new THREE.Scene();
@@ -997,11 +1008,11 @@
             if (window.innerWidth > 768) {
                 camera.position.z = 5.2;
             } else if (window.innerHeight <= 650) {
-                camera.position.z = 6.2;
-            } else if (window.innerWidth <= 600) {
                 camera.position.z = 5.8;
+            } else if (window.innerWidth <= 600) {
+                camera.position.z = 5.5;
             } else {
-                camera.position.z = 5.2;
+                camera.position.z = 5.0;
             }
 
             camera.updateProjectionMatrix();
@@ -1011,7 +1022,7 @@
         const textureLoader = new THREE.TextureLoader();
         const earthTexture = textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_atmos_2048.jpg');
 
-        const baseRadius = 1.35;
+        const baseRadius = 1.5;
         const segments = isMobileDevice ? 32 : 64;
         const geometry = new THREE.SphereGeometry(baseRadius, segments, segments);
         const material = new THREE.MeshStandardMaterial({
@@ -1022,18 +1033,29 @@
         const globeMesh = new THREE.Mesh(geometry, material);
         scene.add(globeMesh);
 
-        /* 3D TRAP HALKASI */
-        const ringBarsCount = isMobileDevice ? 40 : 72;
+        /* NEON ATMOSPHERE GLOW SPHERE */
+        const atmosGeo = new THREE.SphereGeometry(baseRadius + 0.08, segments, segments);
+        const atmosMat = new THREE.MeshBasicMaterial({
+            color: 0xffffff,
+            transparent: true,
+            opacity: 0.12,
+            side: THREE.BackSide
+        });
+        const atmosphereMesh = new THREE.Mesh(atmosGeo, atmosMat);
+        scene.add(atmosphereMesh);
+
+        /* 3D TRAP EKOLAYZIR HALKASI */
+        const ringBarsCount = isMobileDevice ? 44 : 80;
         const ringBarsGroup = new THREE.Group();
         const ringBarMeshes = [];
 
         for (let i = 0; i < ringBarsCount; i++) {
-            const barGeo = new THREE.BoxGeometry(0.03, 0.3, 0.03);
+            const barGeo = new THREE.BoxGeometry(0.04, 0.45, 0.04);
             const barMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.85 });
             const bar = new THREE.Mesh(barGeo, barMat);
             
             const angle = (i / ringBarsCount) * Math.PI * 2;
-            const radius = baseRadius + 0.25;
+            const radius = baseRadius + 0.28;
             bar.position.set(Math.cos(angle) * radius, Math.sin(angle) * radius, -0.2);
             bar.rotation.z = angle - Math.PI / 2;
             
@@ -1074,7 +1096,7 @@
             ringTex.minFilter = THREE.LinearFilter;
             ringTex.magFilter = THREE.LinearFilter;
 
-            const ringGeo = new THREE.CylinderGeometry(baseRadius + 0.3, baseRadius + 0.3, 0.7, isMobileDevice ? 32 : 64, 1, true);
+            const ringGeo = new THREE.CylinderGeometry(baseRadius + 0.35, baseRadius + 0.35, 0.75, isMobileDevice ? 32 : 64, 1, true);
             const ringMat = new THREE.MeshBasicMaterial({
                 map: ringTex,
                 transparent: true,
@@ -1089,6 +1111,7 @@
 
         document.fonts.ready.then(() => { createOrbitRingText(); });
 
+        let bassAngle = 0;
         const ambientGlowEl = document.getElementById('ambient-glow');
         const lightningEl = document.getElementById('lightning-flash');
         const badgeLiveEl = document.getElementById('badge-live');
@@ -1096,51 +1119,27 @@
         const themeSelectorEl = document.getElementById('theme-selector-box');
         const volumeBoxEl = document.getElementById('volume-box');
         const videoBoxEl = document.getElementById('video-box');
-        const nowPlayingCardEl = document.getElementById('now-playing-card-el');
         const tag1El = document.getElementById('tag1');
         const tag2El = document.getElementById('tag2');
         const bgText1El = document.getElementById('bg-text-1');
         const bgText2El = document.getElementById('bg-text-2');
-        const soundboardPads = document.querySelectorAll('.soundboard-pad');
 
         let lastTime = performance.now();
 
         function animateGlobe(currentTime) {
             requestAnimationFrame(animateGlobe);
 
-            const deltaTime = Math.min((currentTime - lastTime) / 1000, 0.1); 
+            const deltaTime = (currentTime - lastTime) / 1000; 
             lastTime = currentTime;
 
-            if (analyser && isPlayingState) {
-                analyser.getByteFrequencyData(dataArray);
-                
-                // En derin 808/Kick bass frekans alanını okuma (0-3 arası bin'ler)
-                let bassSum = 0;
-                const bassBinsCount = 3;
-                for (let i = 0; i < bassBinsCount; i++) {
-                    bassSum += dataArray[i];
-                }
-                let rawBass = (bassSum / bassBinsCount) / 255.0;
+            if (isNaN(deltaTime) || deltaTime > 0.1) return;
 
-                // Dinamik Peak takibi - Sürekli çalarken yüksek ortam gürültüsünü filtreleme
-                if (rawBass > bassBeatPeak) {
-                    bassBeatPeak = rawBass;
-                } else {
-                    bassBeatPeak = Math.max(0.35, bassBeatPeak - 0.2 * deltaTime); // Peak zamanla düşer
-                }
+            // Smooth Mouse Parallax lerp
+            targetX += (mouseX - targetX) * 0.05;
+            targetY += (mouseY - targetY) * 0.05;
 
-                // Eşik değeri: Bass vurmadığı sürece tepkiyi sıfırla/minimuma indir
-                const DYNAMIC_THRESHOLD = bassBeatPeak * 0.72; 
-
-                if (rawBass > DYNAMIC_THRESHOLD) {
-                    liveBassLevel = (rawBass - DYNAMIC_THRESHOLD) / (1.0 - DYNAMIC_THRESHOLD);
-                    liveBassLevel = Math.pow(liveBassLevel, 1.8); // Üstel vuruş keskinleştirmesi
-                } else {
-                    liveBassLevel = 0;
-                }
-            } else {
-                liveBassLevel = 0;
-            }
+            globeMesh.rotation.x = targetY * 0.2;
+            globeMesh.rotation.z = -targetX * 0.1;
 
             const globeSpeed = isPlayingState ? 0.6 : 0.15;
             const ringSpeed = isPlayingState ? 0.75 : 0.22;
@@ -1150,108 +1149,88 @@
             ringBarsGroup.rotation.z += (isPlayingState ? 0.4 : 0.05) * deltaTime;
 
             if (isPlayingState) {
-                const bassPower = liveBassLevel; 
+                bassAngle += 7.0 * deltaTime;
                 
-                /* KONTROLLÜ VE TAŞMAYAN 3D BASS ÖLÇEKLENMESİ */
-                const bassScale = 1 + bassPower * 0.08; 
+                const bassPower = Math.pow(Math.sin(bassAngle), 5);
+                const bassScale = 1 + bassPower * 0.05;
                 globeMesh.scale.set(bassScale, bassScale, bassScale);
-                ringBarsGroup.scale.set(1 + bassPower * 0.06, 1 + bassPower * 0.06, 1 + bassPower * 0.06);
+                atmosphereMesh.scale.set(bassScale * 1.02, bassScale * 1.02, bassScale * 1.02);
 
-                dirLight.intensity = 2.2 + bassPower * 3.0;
+                dirLight.intensity = 2.5 + bassPower * 3.0;
 
-                const glowScale = 1 + bassPower * 0.15;
+                const glowScale = 1 + Math.sin(bassAngle) * 0.16;
                 ambientGlowEl.style.transform = `translate(-50%, -50%) scale(${glowScale})`;
-                ambientGlowEl.style.opacity = (0.35 + bassPower * 0.45).toString();
+                ambientGlowEl.style.opacity = (0.55 + bassPower * 0.4).toString();
 
-                /* KUTULARIN KESKİN VE TAŞMAYAN TİTREŞİMİ */
-                videoBoxEl.style.transform = `scale(${1 + bassPower * 0.008})`;
-                if (nowPlayingCardEl) {
-                    nowPlayingCardEl.style.transform = `scale(${1 + bassPower * 0.005})`;
-                }
+                videoBoxEl.style.transform = `scale(${1 + bassPower * 0.012})`;
 
-                /* GRAFFITI VE ARKA PLAN TEXTLERİ */
                 if (tag1El && tag2El) {
-                    tag1El.style.transform = `rotate(-25deg) scale(${1 + bassPower * 0.08})`;
-                    tag2El.style.transform = `rotate(15deg) scale(${1 + bassPower * 0.08})`;
-                    tag1El.style.opacity = (0.12 + bassPower * 0.35).toString();
-                    tag2El.style.opacity = (0.12 + bassPower * 0.35).toString();
+                    tag1El.style.transform = `rotate(-25deg) scale(${1 + bassPower * 0.08}) translate(${targetX * 15}px, ${targetY * 15}px)`;
+                    tag2El.style.transform = `rotate(15deg) scale(${1 + bassPower * 0.08}) translate(${-targetX * 15}px, ${-targetY * 15}px)`;
+                    tag1El.style.opacity = (0.12 + bassPower * 0.2).toString();
+                    tag2El.style.opacity = (0.12 + bassPower * 0.2).toString();
                 }
 
                 if (bgText1El && bgText2El) {
-                    bgText1El.style.transform = `rotate(-10deg) scale(${1 + bassPower * 0.04})`;
-                    bgText2El.style.transform = `rotate(8deg) scale(${1 + bassPower * 0.04})`;
-                    bgText1El.style.color = bassPower > 0.5 ? 'rgba(255, 255, 255, 0.12)' : 'rgba(255, 255, 255, 0.04)';
-                    bgText2El.style.color = bassPower > 0.5 ? 'rgba(255, 255, 255, 0.12)' : 'rgba(255, 255, 255, 0.04)';
+                    bgText1El.style.transform = `rotate(-10deg) scale(${1 + bassPower * 0.03}) translate(${targetX * 25}px, ${targetY * 25}px)`;
+                    bgText2El.style.transform = `rotate(8deg) scale(${1 + bassPower * 0.03}) translate(${-targetX * 25}px, ${-targetY * 25}px)`;
                 }
 
-                /* BUTON & BADGE PARLAMALARI (SCALE YAPILMADAN SADECE BORDER/GLOW PARLAMA) */
-                if (bassPower > 0.4) {
+                if (bassPower > 0.6) {
                     badgeLiveEl.classList.add('badge-bass-pulse');
                     badgeListenerEl.classList.add('badge-bass-pulse');
                     themeSelectorEl.classList.add('badge-bass-pulse');
                     volumeBoxEl.classList.add('badge-bass-pulse');
-                    soundboardPads.forEach(pad => pad.classList.add('badge-bass-pulse'));
                 } else {
                     badgeLiveEl.classList.remove('badge-bass-pulse');
                     badgeListenerEl.classList.remove('badge-bass-pulse');
                     themeSelectorEl.classList.remove('badge-bass-pulse');
                     volumeBoxEl.classList.remove('badge-bass-pulse');
-                    soundboardPads.forEach(pad => pad.classList.remove('badge-bass-pulse'));
                 }
 
-                /* Sert Vuruşlarda Ekran Sallanması */
-                if (bassPower > 0.7) {
+                if (bassPower > 0.8) {
                     mainWrapper.classList.add('wrapper-glitch');
-                    mainWrapper.classList.add('wrapper-shake');
                 } else {
                     mainWrapper.classList.remove('wrapper-glitch');
-                    mainWrapper.classList.remove('wrapper-shake');
                 }
 
-                /* YILDIRIM ÇAKMASI */
-                if (bassPower > 0.6) {
-                    lightningEl.style.opacity = ((bassPower - 0.6) * 2.0).toString();
+                if (bassPower > 0.85) {
+                    lightningEl.style.opacity = (Math.random() > 0.35 ? (0.3 + (bassPower - 0.85) * 1.2) : 0).toString();
                 } else {
                     lightningEl.style.opacity = '0';
                 }
 
-                /* HALKA ÇUBUKLARI - SADECE BASS VURDUĞUNDA PATLAMA */
                 ringBarMeshes.forEach((bar, idx) => {
-                    const freqVal = (dataArray[idx % 3] || 0) / 255.0;
-                    const scaleY = 0.4 + (freqVal > DYNAMIC_THRESHOLD ? Math.pow((freqVal - DYNAMIC_THRESHOLD) / (1 - DYNAMIC_THRESHOLD), 2) * 2.5 : 0); 
+                    const rnd = Math.sin(bassAngle * 3 + idx) * 0.5 + 0.5;
+                    const scaleY = 0.5 + rnd * 2.5 * (bassPower + 0.35);
                     bar.scale.set(1, scaleY, 1);
-                    bar.material.opacity = 0.2 + (freqVal > DYNAMIC_THRESHOLD ? 0.8 : 0);
+                    bar.material.opacity = 0.5 + rnd * 0.5;
                 });
 
             } else {
                 globeMesh.scale.lerp(new THREE.Vector3(1, 1, 1), 10 * deltaTime);
-                ringBarsGroup.scale.set(1, 1, 1);
+                atmosphereMesh.scale.lerp(new THREE.Vector3(1, 1, 1), 10 * deltaTime);
                 dirLight.intensity = 2.2;
                 ambientGlowEl.style.transform = `translate(-50%, -50%) scale(1)`;
                 ambientGlowEl.style.opacity = '0.4';
                 lightningEl.style.opacity = '0';
                 videoBoxEl.style.transform = `scale(1)`;
-                if (nowPlayingCardEl) nowPlayingCardEl.style.transform = `scale(1)`;
                 mainWrapper.classList.remove('wrapper-glitch');
-                mainWrapper.classList.remove('wrapper-shake');
                 badgeLiveEl.classList.remove('badge-bass-pulse');
                 badgeListenerEl.classList.remove('badge-bass-pulse');
                 themeSelectorEl.classList.remove('badge-bass-pulse');
                 volumeBoxEl.classList.remove('badge-bass-pulse');
-                soundboardPads.forEach(pad => pad.classList.remove('badge-bass-pulse'));
 
                 if (tag1El && tag2El) {
-                    tag1El.style.transform = `rotate(-25deg) scale(1)`;
-                    tag2El.style.transform = `rotate(15deg) scale(1)`;
+                    tag1El.style.transform = `rotate(-25deg) scale(1) translate(${targetX * 10}px, ${targetY * 10}px)`;
+                    tag2El.style.transform = `rotate(15deg) scale(1) translate(${-targetX * 10}px, ${-targetY * 10}px)`;
                     tag1El.style.opacity = '0.12';
                     tag2El.style.opacity = '0.12';
                 }
 
                 if (bgText1El && bgText2El) {
-                    bgText1El.style.transform = `rotate(-10deg) scale(1)`;
-                    bgText2El.style.transform = `rotate(8deg) scale(1)`;
-                    bgText1El.style.color = 'rgba(255, 255, 255, 0.04)';
-                    bgText2El.style.color = 'rgba(255, 255, 255, 0.04)';
+                    bgText1El.style.transform = `rotate(-10deg) scale(1) translate(${targetX * 15}px, ${targetY * 15}px)`;
+                    bgText2El.style.transform = `rotate(8deg) scale(1) translate(${-targetX * 15}px, ${-targetY * 15}px)`;
                 }
 
                 ringBarMeshes.forEach((bar) => {
@@ -1266,7 +1245,7 @@
         resizeThreeJS();
         requestAnimationFrame(animateGlobe);
 
-        /* TRAP SPARKLE / PARÇACIK EFEKTİ */
+        /* CYBER CONNECTED NETWORK PARTICLES */
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
         let particlesArray = [];
@@ -1279,19 +1258,19 @@
         window.addEventListener('resize', handleResize);
         handleResize();
 
-        class CleanDotParticle {
+        class CyberParticle {
             constructor() { this.reset(); }
             reset() {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 2.8 + 0.8;
-                this.speedX = (Math.random() - 0.5) * 0.6;
-                this.speedY = (Math.random() - 0.5) * 0.6;
+                this.size = Math.random() * 2.5 + 0.8;
+                this.speedX = (Math.random() - 0.5) * 0.8;
+                this.speedY = (Math.random() - 0.5) * 0.8;
                 this.opacity = Math.random() * 0.6 + 0.2;
                 this.pulseSpeed = Math.random() * 0.05 + 0.02;
             }
             update() {
-                const speedMult = isPlayingState ? 1.0 + liveBassLevel * 2.0 : 1.0;
+                const speedMult = isPlayingState ? 2.2 : 1.0;
                 this.x += this.speedX * speedMult;
                 this.y += this.speedY * speedMult;
                 this.opacity += Math.sin(Date.now() * this.pulseSpeed) * 0.025;
@@ -1309,17 +1288,41 @@
             }
         }
 
-        const particleCount = isMobileDevice ? 35 : 70;
-        for (let i = 0; i < particleCount; i++) particlesArray.push(new CleanDotParticle());
+        const particleCount = isMobileDevice ? 35 : 65;
+        for (let i = 0; i < particleCount; i++) particlesArray.push(new CyberParticle());
+
+        function connectParticles() {
+            const maxDistance = 110;
+            for (let a = 0; a < particlesArray.length; a++) {
+                for (let b = a; b < particlesArray.length; b++) {
+                    const dx = particlesArray[a].x - particlesArray[b].x;
+                    const dy = particlesArray[a].y - particlesArray[b].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < maxDistance) {
+                        const alpha = (1 - dist / maxDistance) * 0.18;
+                        ctx.strokeStyle = currentAccentColor;
+                        ctx.globalAlpha = alpha;
+                        ctx.lineWidth = 0.75;
+                        ctx.beginPath();
+                        ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
+                        ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
+                        ctx.stroke();
+                        ctx.globalAlpha = 1.0;
+                    }
+                }
+            }
+        }
 
         function animateParticles() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             particlesArray.forEach(p => { p.update(); p.draw(); });
+            connectParticles();
             requestAnimationFrame(animateParticles);
         }
         animateParticles();
 
-        /* FIREBASE DİNLENME TAKİBİ */
+        /* FIREBASE DİNLEYİCİ TAKİBİ */
         const firebaseConfig = {
             apiKey: "AIzaSyBaTlb6V6e4FMLTYNXAPBgdzsgiclL8Qw8",
             authDomain: "easyfm-37b9e.firebaseapp.com",
@@ -1342,6 +1345,57 @@
         myConnectionsRef.on('value', (snap) => {
             document.getElementById('listener-count').innerText = snap.numChildren();
         });
+
+        /* TRAP CANLI VISUALIZER BARLARI */
+        const vCanvas = document.getElementById('visualizer-canvas');
+        const vCtx = vCanvas.getContext('2d');
+        const numBars = isMobileDevice ? 32 : 60;
+        let barHeights = new Array(numBars).fill(2);
+        let peakHeights = new Array(numBars).fill(2);
+
+        function drawVisualizer() {
+            vCanvas.width = vCanvas.offsetWidth;
+            vCanvas.height = vCanvas.offsetHeight;
+            vCtx.clearRect(0, 0, vCanvas.width, vCanvas.height);
+
+            const gap = 2;
+            const barWidth = (vCanvas.width / numBars) - gap;
+
+            for (let i = 0; i < numBars; i++) {
+                if (isPlayingState) {
+                    const centerFactor = 1 - Math.abs((i - numBars / 2) / (numBars / 2)) * 0.35;
+                    const target = (Math.random() * (vCanvas.height - 2) + 2) * centerFactor;
+                    barHeights[i] += (target - barHeights[i]) * 0.42;
+                } else {
+                    barHeights[i] += (2 - barHeights[i]) * 0.15;
+                }
+
+                if (barHeights[i] > peakHeights[i]) {
+                    peakHeights[i] = barHeights[i];
+                } else {
+                    peakHeights[i] -= 0.5;
+                }
+                if (peakHeights[i] < 2) peakHeights[i] = 2;
+
+                const x = i * (barWidth + gap);
+                const y = vCanvas.height - barHeights[i];
+
+                const grad = vCtx.createLinearGradient(0, vCanvas.height, 0, 0);
+                grad.addColorStop(0, 'rgba(255, 255, 255, 0.15)');
+                grad.addColorStop(1, currentAccentColor);
+
+                vCtx.fillStyle = grad;
+                vCtx.fillRect(x, y, barWidth, barHeights[i]);
+
+                vCtx.fillStyle = currentAccentColor;
+                vCtx.shadowColor = currentAccentColor;
+                vCtx.shadowBlur = 10;
+                vCtx.fillRect(x, vCanvas.height - peakHeights[i] - 1, barWidth, 1.5);
+                vCtx.shadowBlur = 0;
+            }
+            requestAnimationFrame(drawVisualizer);
+        }
+        drawVisualizer();
     </script>
 </body>
 </html>

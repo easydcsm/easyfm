@@ -77,7 +77,7 @@
             letter-spacing: -3px;
             text-shadow: 0 0 35px var(--glow-color);
             filter: blur(1px);
-            transition: color 0.05s ease;
+            transition: color 0.1s ease, transform 0.05s ease;
             will-change: transform;
             transform-origin: center center;
         }
@@ -105,6 +105,7 @@
             text-shadow: 0 0 20px var(--glow-color);
             will-change: transform, opacity;
             transform-origin: center center;
+            transition: transform 0.05s ease, opacity 0.05s ease;
         }
 
         .spray-tag.tag1 { top: 35%; left: 2%; transform: rotate(-25deg); }
@@ -148,6 +149,8 @@
             pointer-events: none;
             will-change: transform, opacity;
             filter: blur(70px);
+            opacity: 0.2;
+            transition: transform 0.05s ease, opacity 0.05s ease;
         }
 
         .main-wrapper {
@@ -169,7 +172,7 @@
         }
 
         .wrapper-shake {
-            animation: trapBassShake 0.04s ease-in-out infinite alternate;
+            animation: trapBassShake 0.05s ease-in-out infinite alternate;
         }
 
         .wrapper-glitch {
@@ -178,8 +181,8 @@
 
         @keyframes trapBassShake {
             0% { transform: scale(1) translate(0, 0); }
-            50% { transform: scale(1.02) translate(-5px, 4px); }
-            100% { transform: scale(0.98) translate(5px, -4px); }
+            50% { transform: scale(1.015) translate(-4px, 3px); }
+            100% { transform: scale(0.985) translate(4px, -3px); }
         }
 
         .logo-container {
@@ -313,7 +316,7 @@
         }
 
         .badge-bass-pulse {
-            transform: scale(1.12) !important;
+            transform: scale(1.1) !important;
             border-color: var(--accent-color) !important;
             box-shadow: 0 0 35px var(--glow-color), inset 0 0 20px var(--glow-color) !important;
         }
@@ -404,7 +407,7 @@
             overflow: hidden;
             box-shadow: 0 16px 50px rgba(0, 0, 0, 0.95);
             border: 1px solid var(--border-glow);
-            transition: border-color 0.05s, box-shadow 0.05s;
+            transition: transform 0.05s ease, border-color 0.05s, box-shadow 0.05s;
             background: #000;
             margin: 2px 0;
             will-change: transform;
@@ -475,6 +478,7 @@
             position: relative;
             overflow: hidden;
             will-change: transform;
+            transition: transform 0.05s ease;
         }
 
         .track-info {
@@ -534,17 +538,9 @@
             background: var(--accent-color);
             border-radius: 1px;
             box-shadow: 0 0 8px var(--accent-color);
-            animation: waveAnim 0.5s ease-in-out infinite alternate;
-        }
-
-        .wave-bar:nth-child(1) { height: 35%; animation-delay: 0.1s; }
-        .wave-bar:nth-child(2) { height: 90%; animation-delay: 0.3s; }
-        .wave-bar:nth-child(3) { height: 55%; animation-delay: 0.2s; }
-        .wave-bar:nth-child(4) { height: 100%; animation-delay: 0.4s; }
-
-        @keyframes waveAnim {
-            0% { transform: scaleY(0.2); }
-            100% { transform: scaleY(1); }
+            height: 20%;
+            transform-origin: bottom;
+            transition: transform 0.05s ease;
         }
     </style>
 
@@ -863,16 +859,16 @@
                 mainGainNode.connect(audioCtx.destination);
 
 
-                /* --- 2. DOĞRUDAN HAM SESTEN SAF DİNAMİK PEAK BASS ANALİZİ --- */
+                /* --- 2. DOĞRUDAN SAF BASS ANALİZİ (IZOLE HATT) --- */
                 analyser = audioCtx.createAnalyser();
-                analyser.fftSize = 1024; // Yüksek çözünürlüklü spektrum
-                analyser.smoothingTimeConstant = 0.0; // Sıfır yumuşatma, anlık sıçramaları %100 yakalar
+                analyser.fftSize = 512;
+                analyser.smoothingTimeConstant = 0.0; // Anlık ham 808 sıçramalarını %100 yakalar
 
                 const bassDetectorFilter = audioCtx.createBiquadFilter();
                 bassDetectorFilter.type = 'lowpass';
-                bassDetectorFilter.frequency.setValueAtTime(100, audioCtx.currentTime); // 100Hz altı saf 808/Bass bölgesi
+                bassDetectorFilter.frequency.setValueAtTime(90, audioCtx.currentTime); // Sadece saf 808/Bass/Kick bölgesi
 
-                // Raw/Ham audio kaynağından doğrudan analiz hattına bağla
+                // Doğrudan ham kaynaktan süzüp analizöre bağla (İşlenmiş sesten bağımsız)
                 audioSource.connect(bassDetectorFilter);
                 bassDetectorFilter.connect(analyser);
 
@@ -1141,9 +1137,9 @@
         const bgText1El = document.getElementById('bg-text-1');
         const bgText2El = document.getElementById('bg-text-2');
         const soundboardPads = document.querySelectorAll('.soundboard-pad');
+        const waveBarEls = document.querySelectorAll('.wave-bar');
 
         let lastTime = performance.now();
-        let bassThreshold = 0.15;
         let peakDecay = 0;
 
         function animateGlobe(currentTime) {
@@ -1155,26 +1151,25 @@
             if (analyser && isPlayingState) {
                 analyser.getByteFrequencyData(dataArray);
                 
-                // Sub-bass bölgesini hassas tara (30Hz - 90Hz aralığı)
+                // Saf sub-bass bölgesini tara (İlk 4 frekans kanalı: ~20Hz-80Hz)
                 let bassSum = 0;
-                const sampleBins = 6;
+                const sampleBins = 4;
                 for (let i = 0; i < sampleBins; i++) {
                     bassSum += dataArray[i];
                 }
-                let rawBassNorm = (bassSum / sampleBins) / 255.0;
+                
+                // Gürültü eşiği filtresi (Sadece belirgin 808 patlamaları alır)
+                let rawBass = (bassSum / sampleBins) / 255.0;
+                let cleanBass = rawBass > 0.38 ? (rawBass - 0.38) / 0.62 : 0;
 
-                // Dinamik Peak Entegrasyonu: Ardışık 808 baslarının hiçbirini kaçırmaz
-                if (rawBassNorm > bassThreshold && rawBassNorm > peakDecay) {
-                    peakDecay = rawBassNorm;
+                if (cleanBass > peakDecay) {
+                    peakDecay = cleanBass;
                 } else {
-                    peakDecay *= Math.exp(-22 * deltaTime); // Bassa anında tepki verip sıfırlanır
+                    peakDecay -= deltaTime * 3.8; // Bassa saliseler içinde anında tepki verip 0'a iner
+                    if (peakDecay < 0) peakDecay = 0;
                 }
 
-                liveBassLevel = Math.max(0, peakDecay);
-
-                // Ortamın ses seviyesine göre dinamik eşik adaptasyonu
-                bassThreshold = bassThreshold * 0.95 + rawBassNorm * 0.05 * 0.8;
-                if (bassThreshold < 0.12) bassThreshold = 0.12;
+                liveBassLevel = peakDecay;
             } else {
                 liveBassLevel = 0;
                 peakDecay = 0;
@@ -1190,7 +1185,7 @@
             if (isPlayingState) {
                 const bassPower = liveBassLevel; 
                 
-                /* DÜNYA VE PATLAMA RİTİMLERİ */
+                /* DÜNYA VE PATLAMA RİTİMLERİ (SADECE BASS VURDUĞUNDA) */
                 const bassScale = 1 + bassPower * 0.38;
                 globeMesh.scale.set(bassScale, bassScale, bassScale);
                 ringBarsGroup.scale.set(1 + bassPower * 0.28, 1 + bassPower * 0.28, 1 + bassPower * 0.28);
@@ -1199,12 +1194,12 @@
 
                 const glowScale = 1 + bassPower * 0.7;
                 ambientGlowEl.style.transform = `translate(-50%, -50%) scale(${glowScale})`;
-                ambientGlowEl.style.opacity = (0.35 + bassPower * 0.65).toString();
+                ambientGlowEl.style.opacity = (0.2 + bassPower * 0.8).toString();
 
                 /* KUTULARIN DİNAMİK BASS TİTREŞİMİ */
-                videoBoxEl.style.transform = `scale(${1 + bassPower * 0.06})`;
+                videoBoxEl.style.transform = `scale(${1 + bassPower * 0.05})`;
                 if (nowPlayingCardEl) {
-                    nowPlayingCardEl.style.transform = `scale(${1 + bassPower * 0.04})`;
+                    nowPlayingCardEl.style.transform = `scale(${1 + bassPower * 0.03})`;
                 }
 
                 /* GRAFFITI VE ARKA PLAN TEXT PATLAMALARI */
@@ -1218,12 +1213,12 @@
                 if (bgText1El && bgText2El) {
                     bgText1El.style.transform = `rotate(-10deg) scale(${1 + bassPower * 0.25})`;
                     bgText2El.style.transform = `rotate(8deg) scale(${1 + bassPower * 0.25})`;
-                    bgText1El.style.color = bassPower > 0.25 ? 'rgba(255, 255, 255, 0.4)' : 'rgba(255, 255, 255, 0.04)';
-                    bgText2El.style.color = bassPower > 0.25 ? 'rgba(255, 255, 255, 0.4)' : 'rgba(255, 255, 255, 0.04)';
+                    bgText1El.style.color = bassPower > 0.35 ? 'rgba(255, 255, 255, 0.4)' : 'rgba(255, 255, 255, 0.04)';
+                    bgText2El.style.color = bassPower > 0.35 ? 'rgba(255, 255, 255, 0.4)' : 'rgba(255, 255, 255, 0.04)';
                 }
 
                 /* BUTON & BADGE PARLAMALARI */
-                if (bassPower > 0.28) {
+                if (bassPower > 0.45) {
                     badgeLiveEl.classList.add('badge-bass-pulse');
                     badgeListenerEl.classList.add('badge-bass-pulse');
                     themeSelectorEl.classList.add('badge-bass-pulse');
@@ -1238,7 +1233,7 @@
                 }
 
                 /* SERT BASLARDA EKRAN SALLANMASI (SHAKE/GLITCH) */
-                if (bassPower > 0.4) {
+                if (bassPower > 0.55) {
                     mainWrapper.classList.add('wrapper-glitch');
                     mainWrapper.classList.add('wrapper-shake');
                 } else {
@@ -1247,22 +1242,26 @@
                 }
 
                 /* YILDIRIM ÇAKMASI */
-                if (bassPower > 0.35) {
-                    lightningEl.style.opacity = ((bassPower - 0.35) * 2.2).toString();
+                if (bassPower > 0.5) {
+                    lightningEl.style.opacity = ((bassPower - 0.5) * 2.2).toString();
                 } else {
                     lightningEl.style.opacity = '0';
                 }
 
-                /* 3D DÜNYA ETRAFINDAN KUSURSUZ UZAYAN ÇİZGİLER */
+                /* WAVE BARS ANIMASYON RITMI */
+                waveBarEls.forEach((bar, idx) => {
+                    const h = 0.2 + bassPower * (0.8 + (idx % 2) * 0.5);
+                    bar.style.transform = `scaleY(${Math.min(h, 2.0)})`;
+                });
+
+                /* 3D DÜNYA ETRAFINDAN UZAYAN BAS ÇİZGİLERİ */
                 ringBarMeshes.forEach((bar, idx) => {
-                    // Frekans verisini dairesel olarak dağıt
                     const dataIdx = Math.floor((idx / ringBarMeshes.length) * (dataArray ? dataArray.length / 4 : 1));
-                    const freqValue = (dataArray ? dataArray[dataIdx] : 0) / 255.0;
+                    const freqValue = dataArray ? (dataArray[dataIdx] / 255.0) : 0;
                     
-                    // Bass patlaması + frekans yüksekliği harmanlaması
-                    const scaleY = 0.3 + freqValue * 2.5 + bassPower * 2.0; 
-                    bar.scale.set(1 + bassPower * 0.5, scaleY, 1 + bassPower * 0.5);
-                    bar.material.opacity = 0.3 + freqValue * 0.7 + bassPower * 0.3;
+                    const scaleY = 0.2 + (freqValue > 0.3 ? freqValue : 0) * 2.2 + bassPower * 2.2; 
+                    bar.scale.set(1 + bassPower * 0.4, scaleY, 1 + bassPower * 0.4);
+                    bar.material.opacity = 0.15 + bassPower * 0.85;
                 });
 
             } else {
@@ -1270,7 +1269,7 @@
                 ringBarsGroup.scale.set(1, 1, 1);
                 dirLight.intensity = 2.2;
                 ambientGlowEl.style.transform = `translate(-50%, -50%) scale(1)`;
-                ambientGlowEl.style.opacity = '0.4';
+                ambientGlowEl.style.opacity = '0.2';
                 lightningEl.style.opacity = '0';
                 videoBoxEl.style.transform = `scale(1)`;
                 if (nowPlayingCardEl) nowPlayingCardEl.style.transform = `scale(1)`;
@@ -1296,9 +1295,11 @@
                     bgText2El.style.color = 'rgba(255, 255, 255, 0.04)';
                 }
 
+                waveBarEls.forEach(bar => bar.style.transform = 'scaleY(0.2)');
+
                 ringBarMeshes.forEach((bar) => {
-                    bar.scale.set(1, 0.4, 1);
-                    bar.material.opacity = 0.2;
+                    bar.scale.set(1, 0.3, 1);
+                    bar.material.opacity = 0.15;
                 });
             }
 
@@ -1326,26 +1327,22 @@
             reset() {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 2.8 + 0.8;
-                this.speedX = (Math.random() - 0.5) * 0.6;
-                this.speedY = (Math.random() - 0.5) * 0.6;
-                this.opacity = Math.random() * 0.6 + 0.2;
-                this.pulseSpeed = Math.random() * 0.05 + 0.02;
+                this.size = Math.random() * 2.5 + 0.8;
+                this.speedX = (Math.random() - 0.5) * 0.4;
+                this.speedY = (Math.random() - 0.5) * 0.4;
+                this.opacity = Math.random() * 0.5 + 0.1;
             }
             update() {
-                const speedMult = isPlayingState ? 1.0 + liveBassLevel * 4.0 : 1.0;
+                const speedMult = isPlayingState ? 1.0 + liveBassLevel * 4.5 : 1.0;
                 this.x += this.speedX * speedMult;
                 this.y += this.speedY * speedMult;
-                this.opacity += Math.sin(Date.now() * this.pulseSpeed) * 0.025;
-                if (this.opacity < 0.1) this.opacity = 0.1;
-                if (this.opacity > 0.85) this.opacity = 0.85;
                 if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) this.reset();
             }
             draw() {
                 ctx.fillStyle = currentAccentColor;
-                ctx.globalAlpha = this.opacity;
+                ctx.globalAlpha = Math.min(1.0, this.opacity + liveBassLevel * 0.5);
                 ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.arc(this.x, this.y, this.size * (1 + liveBassLevel * 0.8), 0, Math.PI * 2);
                 ctx.fill();
                 ctx.globalAlpha = 1.0;
             }

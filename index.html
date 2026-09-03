@@ -42,12 +42,12 @@
             justify-content: center;
         }
 
-        /* CRT TARAMA & VIGNETTE SİNEMATİK EFEKTI */
+        /* CRT TARAMA & VIGNETTE SİNEMATİK EFEKTİ */
         body::before {
             content: "";
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle, transparent 25%, #000000 120%);
+            background: radial-gradient(circle, transparent 20%, #000000 130%);
             z-index: 45;
             pointer-events: none;
         }
@@ -57,11 +57,26 @@
             display: block;
             position: absolute;
             top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.45) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.04), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.04));
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.5) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.05), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.05));
             z-index: 50;
             background-size: 100% 4px, 6px 100%;
             pointer-events: none;
-            opacity: 0.6;
+            opacity: 0.7;
+        }
+
+        /* CYBER SCANLINE SCAN */
+        .scanline-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, transparent 0%, rgba(255, 255, 255, 0.03) 50%, transparent 100%);
+            z-index: 46;
+            pointer-events: none;
+            animation: scanlineAnim 8s linear infinite;
+        }
+
+        @keyframes scanlineAnim {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
         }
 
         /* ARKA PLAN GRAFFITI / GOTIK ARKA PLAN YAZILARI */
@@ -77,7 +92,7 @@
             letter-spacing: -3px;
             text-shadow: 0 0 35px var(--glow-color);
             filter: blur(1px);
-            transition: transform 0.08s ease, color 0.3s ease;
+            transition: transform 0.1s ease-out, color 0.3s ease;
             will-change: transform;
         }
 
@@ -101,7 +116,7 @@
             font-size: 10vw;
             z-index: 1;
             pointer-events: none;
-            transition: color 0.4s ease, opacity 0.4s ease, transform 0.08s ease;
+            transition: color 0.4s ease, opacity 0.4s ease, transform 0.1s ease-out;
             text-shadow: 0 0 20px var(--glow-color);
             will-change: transform;
         }
@@ -174,7 +189,7 @@
 
         /* TRAP BASS DROP GLITCH & SHAKE */
         .wrapper-glitch {
-            filter: drop-shadow(-2px 0 0 rgba(255,0,0,0.6)) drop-shadow(2px 0 0 rgba(0,255,255,0.6));
+            filter: drop-shadow(-3px 0 0 rgba(255,0,0,0.8)) drop-shadow(3px 0 0 rgba(0,255,255,0.8));
         }
 
         @keyframes trapBassShake {
@@ -319,7 +334,7 @@
             -webkit-backdrop-filter: blur(25px);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.9);
             transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
-            pointer-events: none; /* Başlangıçta görüntüsü değişmeden tıklanması engellendi */
+            pointer-events: none;
         }
 
         .badge-bass-pulse {
@@ -433,6 +448,23 @@
             box-shadow: 0 0 45px var(--accent-color);
             transition: transform 0.2s ease, box-shadow 0.2s ease;
             text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .start-btn::after {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: linear-gradient(60deg, transparent, rgba(255,255,255,0.4), transparent);
+            transform: rotate(30deg);
+            animation: btnShine 3s infinite;
+        }
+
+        @keyframes btnShine {
+            0% { transform: translateX(-100%) rotate(30deg); }
+            100% { transform: translateX(100%) rotate(30deg); }
         }
 
         .start-btn:hover {
@@ -544,6 +576,8 @@
 </head>
 <body>
 
+    <div class="scanline-overlay"></div>
+
     <div class="trap-bg-text top-left" id="bg-text-1">EA$Y WORLDWIDE</div>
     <div class="trap-bg-text bottom-right" id="bg-text-2">OPIUM 808</div>
 
@@ -617,6 +651,14 @@
     <script>
         document.addEventListener('touchmove', function(e) { e.preventDefault(); }, { passive: false });
 
+        /* PARALLAX MOUSE EFFECT */
+        let mouseX = 0, mouseY = 0;
+        let targetX = 0, targetY = 0;
+        window.addEventListener('mousemove', (e) => {
+            mouseX = (e.clientX - window.innerWidth / 2) / (window.innerWidth / 2);
+            mouseY = (e.clientY - window.innerHeight / 2) / (window.innerHeight / 2);
+        });
+
         /* TEMA KONTROLÜ */
         let currentAccentColor = '#ffffff';
         const THEMES = {
@@ -642,6 +684,9 @@
             if (ringBarMeshes) {
                 const hexColor = parseInt(t.accent.replace('#', '0x'));
                 ringBarMeshes.forEach(b => b.material.color.setHex(hexColor));
+            }
+            if (atmosphereMesh) {
+                atmosphereMesh.material.color.setHex(parseInt(t.accent.replace('#', '0x')));
             }
         }
 
@@ -786,7 +831,6 @@
             const waveBars = document.getElementById('wave-bars');
             const vol = Number(volumeRange.value);
 
-            /* Kullanıcı butona basmadıysa, ses kapalıysa veya oynatıcı çalmıyorsa efektleri kapat */
             if (!userHasClicked || vol === 0 || isMuted || !actualPlayerStatePlaying) {
                 isPlayingState = false;
                 vBox.classList.remove('playing-border');
@@ -809,7 +853,6 @@
             updateAudioVisualState();
         }
 
-        /* ANLIK SENKRONİZASYON MOTORU */
         function syncToLiveStream() {
             if (!isPlayerReady || !player || !userHasClicked) return;
 
@@ -832,7 +875,6 @@
                 const currentTime = player.getCurrentTime();
                 const timeDiff = Math.abs(currentTime - state.seekTo);
                 
-                // Senkron kayması 1.5 saniyeyi geçerse takılmadan düzelt
                 if (timeDiff > 1.5) {
                     player.seekTo(state.seekTo, true);
                     if (typeof player.getPlayerState === 'function' && player.getPlayerState() !== YT.PlayerState.PLAYING) {
@@ -847,7 +889,6 @@
             if (userHasClicked) return;
             userHasClicked = true;
 
-            /* Ses kutusunu canlı yayına katılındığı an tıklanabilir yap */
             document.getElementById('volume-box').style.pointerEvents = 'auto';
 
             const overlay = document.getElementById('start-overlay');
@@ -946,7 +987,7 @@
             updateAudioVisualState();
         });
 
-        /* THREE.JS DÜNYA & TRAP HALKASI */
+        /* THREE.JS DÜNYA, ATMOSFER HALO & TRAP HALKASI */
         const globeContainer = document.getElementById('globe-3d-container');
         
         const scene = new THREE.Scene();
@@ -991,6 +1032,17 @@
         });
         const globeMesh = new THREE.Mesh(geometry, material);
         scene.add(globeMesh);
+
+        /* NEON ATMOSPHERE GLOW SPHERE */
+        const atmosGeo = new THREE.SphereGeometry(baseRadius + 0.08, segments, segments);
+        const atmosMat = new THREE.MeshBasicMaterial({
+            color: 0xffffff,
+            transparent: true,
+            opacity: 0.12,
+            side: THREE.BackSide
+        });
+        const atmosphereMesh = new THREE.Mesh(atmosGeo, atmosMat);
+        scene.add(atmosphereMesh);
 
         /* 3D TRAP EKOLAYZIR HALKASI */
         const ringBarsCount = isMobileDevice ? 44 : 80;
@@ -1082,6 +1134,13 @@
 
             if (isNaN(deltaTime) || deltaTime > 0.1) return;
 
+            // Smooth Mouse Parallax lerp
+            targetX += (mouseX - targetX) * 0.05;
+            targetY += (mouseY - targetY) * 0.05;
+
+            globeMesh.rotation.x = targetY * 0.2;
+            globeMesh.rotation.z = -targetX * 0.1;
+
             const globeSpeed = isPlayingState ? 0.6 : 0.15;
             const ringSpeed = isPlayingState ? 0.75 : 0.22;
 
@@ -1095,6 +1154,7 @@
                 const bassPower = Math.pow(Math.sin(bassAngle), 5);
                 const bassScale = 1 + bassPower * 0.05;
                 globeMesh.scale.set(bassScale, bassScale, bassScale);
+                atmosphereMesh.scale.set(bassScale * 1.02, bassScale * 1.02, bassScale * 1.02);
 
                 dirLight.intensity = 2.5 + bassPower * 3.0;
 
@@ -1104,17 +1164,16 @@
 
                 videoBoxEl.style.transform = `scale(${1 + bassPower * 0.012})`;
 
-                /* GRAFFITI & TRAP TEXT BEAT PULSE */
                 if (tag1El && tag2El) {
-                    tag1El.style.transform = `rotate(-25deg) scale(${1 + bassPower * 0.08})`;
-                    tag2El.style.transform = `rotate(15deg) scale(${1 + bassPower * 0.08})`;
+                    tag1El.style.transform = `rotate(-25deg) scale(${1 + bassPower * 0.08}) translate(${targetX * 15}px, ${targetY * 15}px)`;
+                    tag2El.style.transform = `rotate(15deg) scale(${1 + bassPower * 0.08}) translate(${-targetX * 15}px, ${-targetY * 15}px)`;
                     tag1El.style.opacity = (0.12 + bassPower * 0.2).toString();
                     tag2El.style.opacity = (0.12 + bassPower * 0.2).toString();
                 }
 
                 if (bgText1El && bgText2El) {
-                    bgText1El.style.transform = `rotate(-10deg) scale(${1 + bassPower * 0.03})`;
-                    bgText2El.style.transform = `rotate(8deg) scale(${1 + bassPower * 0.03})`;
+                    bgText1El.style.transform = `rotate(-10deg) scale(${1 + bassPower * 0.03}) translate(${targetX * 25}px, ${targetY * 25}px)`;
+                    bgText2El.style.transform = `rotate(8deg) scale(${1 + bassPower * 0.03}) translate(${-targetX * 25}px, ${-targetY * 25}px)`;
                 }
 
                 if (bassPower > 0.6) {
@@ -1129,7 +1188,6 @@
                     volumeBoxEl.classList.remove('badge-bass-pulse');
                 }
 
-                /* TRAP BASS DROP GLITCH EFFECT */
                 if (bassPower > 0.8) {
                     mainWrapper.classList.add('wrapper-glitch');
                 } else {
@@ -1151,6 +1209,7 @@
 
             } else {
                 globeMesh.scale.lerp(new THREE.Vector3(1, 1, 1), 10 * deltaTime);
+                atmosphereMesh.scale.lerp(new THREE.Vector3(1, 1, 1), 10 * deltaTime);
                 dirLight.intensity = 2.2;
                 ambientGlowEl.style.transform = `translate(-50%, -50%) scale(1)`;
                 ambientGlowEl.style.opacity = '0.4';
@@ -1163,15 +1222,15 @@
                 volumeBoxEl.classList.remove('badge-bass-pulse');
 
                 if (tag1El && tag2El) {
-                    tag1El.style.transform = `rotate(-25deg) scale(1)`;
-                    tag2El.style.transform = `rotate(15deg) scale(1)`;
+                    tag1El.style.transform = `rotate(-25deg) scale(1) translate(${targetX * 10}px, ${targetY * 10}px)`;
+                    tag2El.style.transform = `rotate(15deg) scale(1) translate(${-targetX * 10}px, ${-targetY * 10}px)`;
                     tag1El.style.opacity = '0.12';
                     tag2El.style.opacity = '0.12';
                 }
 
                 if (bgText1El && bgText2El) {
-                    bgText1El.style.transform = `rotate(-10deg) scale(1)`;
-                    bgText2El.style.transform = `rotate(8deg) scale(1)`;
+                    bgText1El.style.transform = `rotate(-10deg) scale(1) translate(${targetX * 15}px, ${targetY * 15}px)`;
+                    bgText2El.style.transform = `rotate(8deg) scale(1) translate(${-targetX * 15}px, ${-targetY * 15}px)`;
                 }
 
                 ringBarMeshes.forEach((bar) => {
@@ -1186,7 +1245,7 @@
         resizeThreeJS();
         requestAnimationFrame(animateGlobe);
 
-        /* TRAP SPARKLE / PARÇACIK EFEKTİ */
+        /* CYBER CONNECTED NETWORK PARTICLES */
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
         let particlesArray = [];
@@ -1199,19 +1258,19 @@
         window.addEventListener('resize', handleResize);
         handleResize();
 
-        class CleanDotParticle {
+        class CyberParticle {
             constructor() { this.reset(); }
             reset() {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 2.8 + 0.8;
-                this.speedX = (Math.random() - 0.5) * 0.6;
-                this.speedY = (Math.random() - 0.5) * 0.6;
+                this.size = Math.random() * 2.5 + 0.8;
+                this.speedX = (Math.random() - 0.5) * 0.8;
+                this.speedY = (Math.random() - 0.5) * 0.8;
                 this.opacity = Math.random() * 0.6 + 0.2;
                 this.pulseSpeed = Math.random() * 0.05 + 0.02;
             }
             update() {
-                const speedMult = isPlayingState ? 2.0 : 1.0;
+                const speedMult = isPlayingState ? 2.2 : 1.0;
                 this.x += this.speedX * speedMult;
                 this.y += this.speedY * speedMult;
                 this.opacity += Math.sin(Date.now() * this.pulseSpeed) * 0.025;
@@ -1229,17 +1288,41 @@
             }
         }
 
-        const particleCount = isMobileDevice ? 35 : 70;
-        for (let i = 0; i < particleCount; i++) particlesArray.push(new CleanDotParticle());
+        const particleCount = isMobileDevice ? 35 : 65;
+        for (let i = 0; i < particleCount; i++) particlesArray.push(new CyberParticle());
+
+        function connectParticles() {
+            const maxDistance = 110;
+            for (let a = 0; a < particlesArray.length; a++) {
+                for (let b = a; b < particlesArray.length; b++) {
+                    const dx = particlesArray[a].x - particlesArray[b].x;
+                    const dy = particlesArray[a].y - particlesArray[b].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < maxDistance) {
+                        const alpha = (1 - dist / maxDistance) * 0.18;
+                        ctx.strokeStyle = currentAccentColor;
+                        ctx.globalAlpha = alpha;
+                        ctx.lineWidth = 0.75;
+                        ctx.beginPath();
+                        ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
+                        ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
+                        ctx.stroke();
+                        ctx.globalAlpha = 1.0;
+                    }
+                }
+            }
+        }
 
         function animateParticles() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             particlesArray.forEach(p => { p.update(); p.draw(); });
+            connectParticles();
             requestAnimationFrame(animateParticles);
         }
         animateParticles();
 
-        /* FIREBASE DINLEYICI TAKIBI */
+        /* FIREBASE DİNLEYİCİ TAKİBİ */
         const firebaseConfig = {
             apiKey: "AIzaSyBaTlb6V6e4FMLTYNXAPBgdzsgiclL8Qw8",
             authDomain: "easyfm-37b9e.firebaseapp.com",

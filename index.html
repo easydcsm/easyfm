@@ -109,7 +109,7 @@
         .spray-tag.tag1 { top: 35%; left: 2%; transform: rotate(-25deg); }
         .spray-tag.tag2 { top: 15%; right: 3%; transform: rotate(15deg); }
 
-        #bg-canvas, #slime-canvas {
+        #bg-canvas {
             position: fixed;
             top: 0;
             left: 0;
@@ -117,10 +117,6 @@
             height: 100%;
             z-index: 2;
             pointer-events: none;
-        }
-
-        #slime-canvas {
-            z-index: 5;
         }
 
         /* DİNAMİK BASS LIGHTNING FLASH */
@@ -174,15 +170,6 @@
 
         .wrapper-shake {
             animation: trapBassShake 0.07s ease-in-out infinite alternate;
-        }
-
-        .rage-shake-mode {
-            animation: rageShake 0.03s ease-in-out infinite alternate !important;
-        }
-
-        @keyframes rageShake {
-            0% { transform: scale(1.02) translate(-4px, 3px) rotate(-1deg); }
-            100% { transform: scale(0.98) translate(4px, -3px) rotate(1deg); }
         }
 
         .wrapper-glitch {
@@ -391,50 +378,19 @@
             gap: 3px;
             text-transform: uppercase;
             backdrop-filter: blur(15px);
-            transition: all 0.1s ease;
+            transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, background 0.1s ease;
             box-shadow: 0 4px 15px rgba(0,0,0,0.6);
         }
 
         .pad-btn:active {
-            transform: scale(0.92);
+            transform: scale(0.92) !important;
             background: var(--accent-color);
             color: #000;
-            box-shadow: 0 0 20px var(--accent-color);
+            box-shadow: 0 0 20px var(--accent-color) !important;
         }
 
         .pad-icon {
             font-size: 12px;
-        }
-
-        /* YENİ INTERAKTİF KONTROL BAR */
-        .utility-bar {
-            display: flex;
-            gap: 6px;
-            width: 100%;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .util-btn {
-            background: rgba(18, 18, 18, 0.85);
-            border: 1px solid var(--border-glow);
-            border-radius: 30px;
-            padding: 6px 12px;
-            color: #fff;
-            font-size: 8.5px;
-            font-weight: 900;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            letter-spacing: 1px;
-            backdrop-filter: blur(20px);
-            transition: all 0.2s ease;
-        }
-
-        .util-btn:hover {
-            border-color: var(--accent-color);
-            box-shadow: 0 0 15px var(--glow-color);
         }
 
         /* VIDEO CONTAINER & CYBER BORDER */
@@ -600,33 +556,6 @@
             flex-shrink: 0;
             display: block;
         }
-
-        /* GRAFFITI MODAL SYSTEM */
-        #tag-modal {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(15px);
-            z-index: 100;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-        }
-
-        .tag-input {
-            background: #111;
-            border: 2px solid var(--accent-color);
-            color: #fff;
-            padding: 12px 20px;
-            border-radius: 30px;
-            font-family: 'Permanent Marker', cursive;
-            font-size: 20px;
-            outline: none;
-            text-align: center;
-            box-shadow: 0 0 20px var(--glow-color);
-        }
     </style>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -642,7 +571,6 @@
     <div class="spray-tag tag2" id="tag2">TRAPHOUSE</div>
 
     <canvas id="bg-canvas"></canvas>
-    <canvas id="slime-canvas"></canvas>
     <div id="lightning-flash"></div>
     <div class="ambient-glow" id="ambient-glow"></div>
 
@@ -672,20 +600,20 @@
             </div>
         </div>
 
-        <div class="soundboard-container">
-            <button class="pad-btn" onclick="playAdlib('metro')">
+        <div class="soundboard-container" id="soundboard-box">
+            <button class="pad-btn soundboard-pad" onclick="playAdlib('metro')">
                 <span class="pad-icon">🎙️</span>
                 <span>METRO!!</span>
             </button>
-            <button class="pad-btn" onclick="playAdlib('damn')">
+            <button class="pad-btn soundboard-pad" onclick="playAdlib('damn')">
                 <span class="pad-icon">🔊</span>
                 <span>DAMN SON!</span>
             </button>
-            <button class="pad-btn" onclick="playAdlib('wheezy')">
+            <button class="pad-btn soundboard-pad" onclick="playAdlib('wheezy')">
                 <span class="pad-icon">🐍</span>
                 <span>WHEEZY!!</span>
             </button>
-            <button class="pad-btn" onclick="playAdlib('f1lthy')">
+            <button class="pad-btn soundboard-pad" onclick="playAdlib('f1lthy')">
                 <span class="pad-icon">💥</span>
                 <span>WAKE UP F1ILTHY!</span>
             </button>
@@ -700,21 +628,6 @@
                 <button class="start-btn" id="start-btn-el">CANLI YAYINA KATIL</button>
             </div>
             <div id="youtube-player"></div>
-        </div>
-
-        <div class="utility-bar">
-            <button class="util-btn" onclick="toggleSlimeRain()">
-                <span>🐍</span>
-                <span>SLIME RAIN</span>
-            </button>
-            <button class="util-btn" onclick="triggerRageMode()">
-                <span>🔥</span>
-                <span>RAGE SHAKE</span>
-            </button>
-            <button class="util-btn" onclick="openTagModal()">
-                <span>🎨</span>
-                <span>SPRAY TAG</span>
-            </button>
         </div>
 
         <div class="now-playing-card">
@@ -738,12 +651,6 @@
         </div>
 
         <canvas id="visualizer-canvas"></canvas>
-    </div>
-
-    <div id="tag-modal">
-        <h3 style="font-family:'Syne'; letter-spacing:2px; color:var(--accent-color);">DUVARA DUBAJINI AT</h3>
-        <input type="text" id="tag-text-input" class="tag-input" placeholder="TAGINIZI YAZIN..." maxlength="12">
-        <button class="start-btn" onclick="applyCustomTag()" style="padding:10px 25px;">DUVARA PÜSKÜRT</button>
     </div>
 
     <script>
@@ -796,72 +703,6 @@
             if (sound) {
                 sound.currentTime = 0;
                 sound.play().catch(() => {});
-            }
-        }
-
-        /* SLIME RAIN CANVAS EFEKTİ */
-        let slimeActive = false;
-        const slimeCanvas = document.getElementById('slime-canvas');
-        const sCtx = slimeCanvas.getContext('2d');
-        let slimeDrops = [];
-
-        function toggleSlimeRain() {
-            slimeActive = !slimeActive;
-            if (slimeActive) {
-                slimeCanvas.width = window.innerWidth;
-                slimeCanvas.height = window.innerHeight;
-                for (let i = 0; i < 40; i++) {
-                    slimeDrops.push({
-                        x: Math.random() * slimeCanvas.width,
-                        y: Math.random() * slimeCanvas.height,
-                        len: Math.random() * 20 + 10,
-                        speed: Math.random() * 8 + 4
-                    });
-                }
-                animateSlime();
-            } else {
-                slimeDrops = [];
-                sCtx.clearRect(0,0,slimeCanvas.width, slimeCanvas.height);
-            }
-        }
-
-        function animateSlime() {
-            if (!slimeActive) return;
-            sCtx.clearRect(0, 0, slimeCanvas.width, slimeCanvas.height);
-            sCtx.fillStyle = '#39ff14';
-            sCtx.shadowColor = '#39ff14';
-            sCtx.shadowBlur = 10;
-
-            slimeDrops.forEach(d => {
-                sCtx.fillRect(d.x, d.y, 3, d.len);
-                d.y += d.speed;
-                if (d.y > slimeCanvas.height) {
-                    d.y = -d.len;
-                    d.x = Math.random() * slimeCanvas.width;
-                }
-            });
-            requestAnimationFrame(animateSlime);
-        }
-
-        /* RAGE SHAKE MODE */
-        function triggerRageMode() {
-            const wrapper = document.getElementById('main-wrapper');
-            wrapper.classList.add('rage-shake-mode');
-            setTimeout(() => {
-                wrapper.classList.remove('rage-shake-mode');
-            }, 2000);
-        }
-
-        /* GRAFFITI TAG MODAL CONTROL */
-        function openTagModal() {
-            document.getElementById('tag-modal').style.display = 'flex';
-        }
-
-        function applyCustomTag() {
-            const val = document.getElementById('tag-text-input').value;
-            if (val.trim() !== '') {
-                document.getElementById('tag1').innerText = val.toUpperCase();
-                document.getElementById('tag-modal').style.display = 'none';
             }
         }
 
@@ -1287,6 +1128,7 @@
         const tag2El = document.getElementById('tag2');
         const bgText1El = document.getElementById('bg-text-1');
         const bgText2El = document.getElementById('bg-text-2');
+        const soundboardPads = document.querySelectorAll('.soundboard-pad');
 
         let lastTime = performance.now();
 
@@ -1337,11 +1179,13 @@
                     badgeListenerEl.classList.add('badge-bass-pulse');
                     themeSelectorEl.classList.add('badge-bass-pulse');
                     volumeBoxEl.classList.add('badge-bass-pulse');
+                    soundboardPads.forEach(pad => pad.classList.add('badge-bass-pulse'));
                 } else {
                     badgeLiveEl.classList.remove('badge-bass-pulse');
                     badgeListenerEl.classList.remove('badge-bass-pulse');
                     themeSelectorEl.classList.remove('badge-bass-pulse');
                     volumeBoxEl.classList.remove('badge-bass-pulse');
+                    soundboardPads.forEach(pad => pad.classList.remove('badge-bass-pulse'));
                 }
 
                 if (bassPower > 0.8) {
@@ -1375,6 +1219,7 @@
                 badgeListenerEl.classList.remove('badge-bass-pulse');
                 themeSelectorEl.classList.remove('badge-bass-pulse');
                 volumeBoxEl.classList.remove('badge-bass-pulse');
+                soundboardPads.forEach(pad => pad.classList.remove('badge-bass-pulse'));
 
                 if (tag1El && tag2El) {
                     tag1El.style.transform = `rotate(-25deg) scale(1)`;

@@ -232,14 +232,14 @@
 
         .status-bar {
             display: flex;
-            gap: 6px;
+            gap: 10px;
             flex-wrap: wrap;
             justify-content: center;
             align-items: center;
             width: 100%;
             max-width: 100%;
             flex-shrink: 0;
-            padding: 0 2px;
+            padding: 0 4px;
         }
 
         .badge {
@@ -331,7 +331,7 @@
         }
 
         .badge-bass-pulse {
-            transform: scale(1.04);
+            transform: scale(1.02);
             border-color: var(--accent-color) !important;
             box-shadow: 0 0 20px var(--glow-color) !important;
         }
@@ -373,7 +373,7 @@
         }
 
         @media (max-width: 480px) {
-            .status-bar { gap: 4px; }
+            .status-bar { gap: 6px; }
             .badge { padding: 5px 9px; font-size: 8px; letter-spacing: 1px; }
             .theme-selector { padding: 5px 8px; gap: 4px; }
             .theme-btn { width: 13px; height: 13px; }
@@ -660,9 +660,6 @@
             if (ringBarMeshes) {
                 const hexColor = parseInt(t.accent.replace('#', '0x'));
                 ringBarMeshes.forEach(b => b.material.color.setHex(hexColor));
-            }
-            if (atmosphereMesh) {
-                atmosphereMesh.material.color.setHex(parseInt(t.accent.replace('#', '0x')));
             }
         }
 
@@ -1013,16 +1010,6 @@
         const globeMesh = new THREE.Mesh(geometry, material);
         scene.add(globeMesh);
 
-        const atmosGeo = new THREE.SphereGeometry(baseRadius + 0.08, segments, segments);
-        const atmosMat = new THREE.MeshBasicMaterial({
-            color: 0xffffff,
-            transparent: true,
-            opacity: 0.12,
-            side: THREE.BackSide
-        });
-        const atmosphereMesh = new THREE.Mesh(atmosGeo, atmosMat);
-        scene.add(atmosphereMesh);
-
         const ringBarsCount = isMobileDevice ? 44 : 80;
         const ringBarsGroup = new THREE.Group();
         const ringBarMeshes = [];
@@ -1128,7 +1115,6 @@
                 const bassPower = Math.pow(Math.sin(bassAngle), 5);
                 const bassScale = 1 + bassPower * 0.05;
                 globeMesh.scale.set(bassScale, bassScale, bassScale);
-                atmosphereMesh.scale.set(bassScale * 1.02, bassScale * 1.02, bassScale * 1.02);
 
                 dirLight.intensity = 2.5 + bassPower * 3.0;
 
@@ -1183,7 +1169,6 @@
 
             } else {
                 globeMesh.scale.lerp(new THREE.Vector3(1, 1, 1), 10 * deltaTime);
-                atmosphereMesh.scale.lerp(new THREE.Vector3(1, 1, 1), 10 * deltaTime);
                 dirLight.intensity = 2.2;
                 ambientGlowEl.style.transform = `translate(-50%, -50%) scale(1)`;
                 ambientGlowEl.style.opacity = '0.4';

@@ -51,7 +51,6 @@
             pointer-events: none;
         }
 
-        /* Çizgili TV efekti yumuşatıldı ve opaklığı düşürüldü */
         body::after {
             content: " ";
             display: block;
@@ -64,7 +63,6 @@
             opacity: 0.3;
         }
 
-        /* Scanline hareketli overlay yumuşatıldı */
         .scanline-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -91,7 +89,7 @@
             letter-spacing: -3px;
             text-shadow: 0 0 35px var(--glow-color);
             filter: blur(1px);
-            transition: transform 0.1s ease-out, color 0.3s ease;
+            transition: color 0.3s ease;
             will-change: transform;
         }
 
@@ -115,7 +113,7 @@
             font-size: 10vw;
             z-index: 1;
             pointer-events: none;
-            transition: color 0.4s ease, opacity 0.4s ease, transform 0.1s ease-out;
+            transition: color 0.4s ease, opacity 0.4s ease;
             text-shadow: 0 0 20px var(--glow-color);
             will-change: transform;
         }
@@ -638,13 +636,6 @@
             }
         }, { passive: false });
 
-        let mouseX = 0, mouseY = 0;
-        let targetX = 0, targetY = 0;
-        window.addEventListener('mousemove', (e) => {
-            mouseX = (e.clientX - window.innerWidth / 2) / (window.innerWidth / 2);
-            mouseY = (e.clientY - window.innerHeight / 2) / (window.innerHeight / 2);
-        });
-
         let currentAccentColor = '#ffffff';
         const THEMES = {
             ICE: { accent: '#ffffff', glow: 'rgba(255, 255, 255, 0.55)', bgGlow: 'rgba(180, 220, 255, 0.1)', borderGlow: 'rgba(255, 255, 255, 0.35)' },
@@ -1121,11 +1112,8 @@
 
             if (isNaN(deltaTime) || deltaTime > 0.1) return;
 
-            targetX += (mouseX - targetX) * 0.05;
-            targetY += (mouseY - targetY) * 0.05;
-
-            globeMesh.rotation.x = targetY * 0.2;
-            globeMesh.rotation.z = -targetX * 0.1;
+            globeMesh.rotation.x = 0;
+            globeMesh.rotation.z = 0;
 
             const globeSpeed = isPlayingState ? 0.6 : 0.15;
             const ringSpeed = isPlayingState ? 0.75 : 0.22;
@@ -1151,15 +1139,15 @@
                 videoBoxEl.style.transform = `scale(${1 + bassPower * 0.012})`;
 
                 if (tag1El && tag2El) {
-                    tag1El.style.transform = `rotate(-25deg) scale(${1 + bassPower * 0.08}) translate(${targetX * 15}px, ${targetY * 15}px)`;
-                    tag2El.style.transform = `rotate(15deg) scale(${1 + bassPower * 0.08}) translate(${-targetX * 15}px, ${-targetY * 15}px)`;
+                    tag1El.style.transform = `rotate(-25deg) scale(${1 + bassPower * 0.08})`;
+                    tag2El.style.transform = `rotate(15deg) scale(${1 + bassPower * 0.08})`;
                     tag1El.style.opacity = (0.12 + bassPower * 0.2).toString();
                     tag2El.style.opacity = (0.12 + bassPower * 0.2).toString();
                 }
 
                 if (bgText1El && bgText2El) {
-                    bgText1El.style.transform = `rotate(-10deg) scale(${1 + bassPower * 0.03}) translate(${targetX * 25}px, ${targetY * 25}px)`;
-                    bgText2El.style.transform = `rotate(8deg) scale(${1 + bassPower * 0.03}) translate(${-targetX * 25}px, ${-targetY * 25}px)`;
+                    bgText1El.style.transform = `rotate(-10deg) scale(${1 + bassPower * 0.03})`;
+                    bgText2El.style.transform = `rotate(8deg) scale(${1 + bassPower * 0.03})`;
                 }
 
                 if (bassPower > 0.6) {
@@ -1208,15 +1196,15 @@
                 volumeBoxEl.classList.remove('badge-bass-pulse');
 
                 if (tag1El && tag2El) {
-                    tag1El.style.transform = `rotate(-25deg) scale(1) translate(${targetX * 10}px, ${targetY * 10}px)`;
-                    tag2El.style.transform = `rotate(15deg) scale(1) translate(${-targetX * 10}px, ${-targetY * 10}px)`;
+                    tag1El.style.transform = `rotate(-25deg) scale(1)`;
+                    tag2El.style.transform = `rotate(15deg) scale(1)`;
                     tag1El.style.opacity = '0.12';
                     tag2El.style.opacity = '0.12';
                 }
 
                 if (bgText1El && bgText2El) {
-                    bgText1El.style.transform = `rotate(-10deg) scale(1) translate(${targetX * 15}px, ${targetY * 15}px)`;
-                    bgText2El.style.transform = `rotate(8deg) scale(1) translate(${-targetX * 15}px, ${-targetY * 15}px)`;
+                    bgText1El.style.transform = `rotate(-10deg) scale(1)`;
+                    bgText2El.style.transform = `rotate(8deg) scale(1)`;
                 }
 
                 ringBarMeshes.forEach((bar) => {

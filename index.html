@@ -176,7 +176,6 @@
             margin: 0 auto;
             box-sizing: border-box;
             transition: transform 0.05s ease, filter 0.05s ease;
-            overflow: visible !important;
         }
 
         .wrapper-shake {
@@ -197,20 +196,20 @@
             text-align: center;
             position: relative;
             width: 100%;
-            max-width: 100%;
-            height: clamp(200px, 34vh, 320px);
+            max-width: 420px;
+            height: clamp(180px, 32vh, 300px);
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: visible !important;
+            overflow: visible;
             margin: 0 auto;
             flex-shrink: 0;
         }
 
         @media (min-width: 769px) {
             .logo-container {
-                max-width: 100%;
-                height: clamp(280px, 40vh, 420px);
+                max-width: 620px;
+                height: clamp(260px, 38vh, 380px);
             }
         }
 
@@ -219,7 +218,7 @@
             height: 100%;
             position: relative;
             z-index: 2;
-            overflow: visible !important;
+            overflow: visible;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -228,7 +227,6 @@
         #globe-3d-container canvas {
             display: block;
             outline: none;
-            overflow: visible !important;
             filter: drop-shadow(0 0 40px var(--glow-color));
         }
 
@@ -984,15 +982,15 @@
 
             camera.aspect = width / height;
 
-            // Kamera mesafesini biraz daha geriye çekerek çubukların uzadığında ekran dışına çıkıp kesilmesini önlüyoruz
+            // Kamera mesafeleri büyük dünya ve optimize edilmiş çizgiler için ayarlandı
             if (window.innerWidth > 768) {
-                camera.position.z = 6.8;
+                camera.position.z = 5.6;
             } else if (window.innerHeight <= 650) {
-                camera.position.z = 7.2;
+                camera.position.z = 6.2;
             } else if (window.innerWidth <= 600) {
-                camera.position.z = 7.0;
+                camera.position.z = 5.9;
             } else {
-                camera.position.z = 6.6;
+                camera.position.z = 5.5;
             }
 
             camera.updateProjectionMatrix();
@@ -1002,7 +1000,8 @@
         const textureLoader = new THREE.TextureLoader();
         const earthTexture = textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_atmos_2048.jpg');
 
-        const baseRadius = 1.35;
+        // Dünya büyütüldü: 1.5 -> 1.8
+        const baseRadius = 1.8;
         const segments = isMobileDevice ? 32 : 64;
         const geometry = new THREE.SphereGeometry(baseRadius, segments, segments);
         const material = new THREE.MeshStandardMaterial({
@@ -1018,14 +1017,16 @@
         const ringBarMeshes = [];
 
         for (let i = 0; i < ringBarsCount; i++) {
-            const barGeo = new THREE.BoxGeometry(0.035, 0.45, 0.035);
-            barGeo.translate(0, 0.225, 0); 
+            // Çubuğun boyu kısalıp dengelendi: Yüksekliği 0.45 -> 0.28 yapıldı.
+            // Taban hizasını merkezde tutmak için Y ekseni kaydırması tam yarısı (0.14) olarak ayarlandı.
+            const barGeo = new THREE.BoxGeometry(0.04, 0.28, 0.04);
+            barGeo.translate(0, 0.14, 0); 
             
             const barMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.85 });
             const bar = new THREE.Mesh(barGeo, barMat);
             
             const angle = (i / ringBarsCount) * Math.PI * 2;
-            const radius = baseRadius + 0.05;
+            const radius = baseRadius + 0.02;
             bar.position.set(Math.cos(angle) * radius, Math.sin(angle) * radius, 0);
             bar.rotation.z = angle - Math.PI / 2;
             
@@ -1118,7 +1119,7 @@
                 bassAngle += 7.0 * deltaTime;
                 
                 const bassPower = Math.pow(Math.sin(bassAngle), 5);
-                const bassScale = 1 + bassPower * 0.05;
+                const bassScale = 1 + bassPower * 0.04; // Küre mikro bas genişlemesi
                 globeMesh.scale.set(bassScale, bassScale, bassScale);
 
                 dirLight.intensity = 2.5 + bassPower * 3.0;
@@ -1167,7 +1168,8 @@
 
                 ringBarMeshes.forEach((bar, idx) => {
                     const rnd = Math.sin(bassAngle * 3 + idx) * 0.5 + 0.5;
-                    const scaleY = 0.3 + rnd * 1.8 * (bassPower + 0.35);
+                    // Çizgilerin uzama katsayısı optimize edildi (maksimum 1.4 katı)
+                    const scaleY = 0.4 + rnd * 1.2 * (bassPower + 0.2);
                     
                     const currentRadius = (baseRadius * bassScale) + 0.02;
                     const angle = (idx / ringBarsCount) * Math.PI * 2;
@@ -1207,8 +1209,8 @@
                     const angle = (idx / ringBarsCount) * Math.PI * 2;
                     bar.position.set(Math.cos(angle) * currentRadius, Math.sin(angle) * currentRadius, 0);
 
-                    bar.scale.set(1, 0.25, 1);
-                    bar.material.opacity = 0.3;
+                    bar.scale.set(1, 0.3, 1);
+                    bar.material.opacity = 0.35;
                 });
             }
 

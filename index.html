@@ -982,15 +982,14 @@
 
             camera.aspect = width / height;
 
-            // Kamera mesafeleri büyük dünya ve optimize edilmiş çizgiler için ayarlandı
             if (window.innerWidth > 768) {
-                camera.position.z = 5.6;
+                camera.position.z = 5.2;
             } else if (window.innerHeight <= 650) {
-                camera.position.z = 6.2;
+                camera.position.z = 5.8;
             } else if (window.innerWidth <= 600) {
-                camera.position.z = 5.9;
-            } else {
                 camera.position.z = 5.5;
+            } else {
+                camera.position.z = 5.0;
             }
 
             camera.updateProjectionMatrix();
@@ -1000,8 +999,8 @@
         const textureLoader = new THREE.TextureLoader();
         const earthTexture = textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_atmos_2048.jpg');
 
-        // Dünya büyütüldü: 1.5 -> 1.8
-        const baseRadius = 1.8;
+        // Dünya ideal boyuta çekildi: 1.35
+        const baseRadius = 1.35;
         const segments = isMobileDevice ? 32 : 64;
         const geometry = new THREE.SphereGeometry(baseRadius, segments, segments);
         const material = new THREE.MeshStandardMaterial({
@@ -1012,21 +1011,22 @@
         const globeMesh = new THREE.Mesh(geometry, material);
         scene.add(globeMesh);
 
-        const ringBarsCount = isMobileDevice ? 44 : 80;
+        const ringBarsCount = isMobileDevice ? 50 : 80;
         const ringBarsGroup = new THREE.Group();
         const ringBarMeshes = [];
 
+        // Çizgilerin varsayılan yüksekliği ve küreyle uyumu optimize edildi
+        const barHeight = 0.45;
         for (let i = 0; i < ringBarsCount; i++) {
-            // Çubuğun boyu kısalıp dengelendi: Yüksekliği 0.45 -> 0.28 yapıldı.
-            // Taban hizasını merkezde tutmak için Y ekseni kaydırması tam yarısı (0.14) olarak ayarlandı.
-            const barGeo = new THREE.BoxGeometry(0.04, 0.28, 0.04);
-            barGeo.translate(0, 0.14, 0); 
+            const barGeo = new THREE.BoxGeometry(0.035, barHeight, 0.035);
+            // Taban çizgisini tam kürenin yüzeyine sıfırlamak için Y ekseni kaydırması yarısı yapıldı
+            barGeo.translate(0, barHeight / 2, 0); 
             
             const barMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.85 });
             const bar = new THREE.Mesh(barGeo, barMat);
             
             const angle = (i / ringBarsCount) * Math.PI * 2;
-            const radius = baseRadius + 0.02;
+            const radius = baseRadius + 0.01;
             bar.position.set(Math.cos(angle) * radius, Math.sin(angle) * radius, 0);
             bar.rotation.z = angle - Math.PI / 2;
             
@@ -1067,7 +1067,7 @@
             ringTex.minFilter = THREE.LinearFilter;
             ringTex.magFilter = THREE.LinearFilter;
 
-            const ringGeo = new THREE.CylinderGeometry(baseRadius + 0.35, baseRadius + 0.35, 0.75, isMobileDevice ? 32 : 64, 1, true);
+            const ringGeo = new THREE.CylinderGeometry(baseRadius + 0.3, baseRadius + 0.3, 0.65, isMobileDevice ? 32 : 64, 1, true);
             const ringMat = new THREE.MeshBasicMaterial({
                 map: ringTex,
                 transparent: true,
@@ -1119,7 +1119,7 @@
                 bassAngle += 7.0 * deltaTime;
                 
                 const bassPower = Math.pow(Math.sin(bassAngle), 5);
-                const bassScale = 1 + bassPower * 0.04; // Küre mikro bas genişlemesi
+                const bassScale = 1 + bassPower * 0.04; 
                 globeMesh.scale.set(bassScale, bassScale, bassScale);
 
                 dirLight.intensity = 2.5 + bassPower * 3.0;
@@ -1168,10 +1168,9 @@
 
                 ringBarMeshes.forEach((bar, idx) => {
                     const rnd = Math.sin(bassAngle * 3 + idx) * 0.5 + 0.5;
-                    // Çizgilerin uzama katsayısı optimize edildi (maksimum 1.4 katı)
-                    const scaleY = 0.4 + rnd * 1.2 * (bassPower + 0.2);
+                    const scaleY = 0.25 + rnd * 1.1 * (bassPower + 0.2);
                     
-                    const currentRadius = (baseRadius * bassScale) + 0.02;
+                    const currentRadius = (baseRadius * bassScale) + 0.01;
                     const angle = (idx / ringBarsCount) * Math.PI * 2;
                     bar.position.set(Math.cos(angle) * currentRadius, Math.sin(angle) * currentRadius, 0);
 
@@ -1205,11 +1204,11 @@
                 }
 
                 ringBarMeshes.forEach((bar, idx) => {
-                    const currentRadius = baseRadius + 0.02;
+                    const currentRadius = baseRadius + 0.01;
                     const angle = (idx / ringBarsCount) * Math.PI * 2;
                     bar.position.set(Math.cos(angle) * currentRadius, Math.sin(angle) * currentRadius, 0);
 
-                    bar.scale.set(1, 0.3, 1);
+                    bar.scale.set(1, 0.25, 1);
                     bar.material.opacity = 0.35;
                 });
             }

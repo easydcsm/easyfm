@@ -1015,13 +1015,17 @@
         const ringBarMeshes = [];
 
         for (let i = 0; i < ringBarsCount; i++) {
+            // Çubuğun başlangıç noktası kaybolmasın diye pivotunu tabana kaydırıyoruz
             const barGeo = new THREE.BoxGeometry(0.04, 0.45, 0.04);
+            barGeo.translate(0, 0.225, 0); 
+            
             const barMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.85 });
             const bar = new THREE.Mesh(barGeo, barMat);
             
             const angle = (i / ringBarsCount) * Math.PI * 2;
-            const radius = baseRadius + 0.28;
-            bar.position.set(Math.cos(angle) * radius, Math.sin(angle) * radius, -0.2);
+            // Çubuğu tam kürenin yüzey sınırına yerleştiriyoruz
+            const radius = baseRadius + 0.05;
+            bar.position.set(Math.cos(angle) * radius, Math.sin(angle) * radius, 0);
             bar.rotation.z = angle - Math.PI / 2;
             
             ringBarsGroup.add(bar);
@@ -1162,9 +1166,15 @@
 
                 ringBarMeshes.forEach((bar, idx) => {
                     const rnd = Math.sin(bassAngle * 3 + idx) * 0.5 + 0.5;
-                    const scaleY = 0.5 + rnd * 2.5 * (bassPower + 0.35);
+                    const scaleY = 0.3 + rnd * 1.8 * (bassPower + 0.35);
+                    
+                    // Kürenin bas etkisiyle büyümesiyle çubuğun hizasını dinamik koruyoruz
+                    const currentRadius = (baseRadius * bassScale) + 0.02;
+                    const angle = (idx / ringBarsCount) * Math.PI * 2;
+                    bar.position.set(Math.cos(angle) * currentRadius, Math.sin(angle) * currentRadius, 0);
+
                     bar.scale.set(1, scaleY, 1);
-                    bar.material.opacity = 0.5 + rnd * 0.5;
+                    bar.material.opacity = 0.6 + rnd * 0.4;
                 });
 
             } else {
@@ -1192,9 +1202,13 @@
                     bgText2El.style.transform = `rotate(8deg) scale(1)`;
                 }
 
-                ringBarMeshes.forEach((bar) => {
-                    bar.scale.set(1, 0.4, 1);
-                    bar.material.opacity = 0.2;
+                ringBarMeshes.forEach((bar, idx) => {
+                    const currentRadius = baseRadius + 0.02;
+                    const angle = (idx / ringBarsCount) * Math.PI * 2;
+                    bar.position.set(Math.cos(angle) * currentRadius, Math.sin(angle) * currentRadius, 0);
+
+                    bar.scale.set(1, 0.25, 1);
+                    bar.material.opacity = 0.3;
                 });
             }
 

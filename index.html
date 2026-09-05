@@ -160,6 +160,18 @@
             filter: blur(70px);
         }
 
+        /* Glitch Katmanı için Ekranı Kaplayan FX Div */
+        #mobile-glitch-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 40;
+            pointer-events: none;
+            opacity: 0;
+            mix-blend-mode: exclusion;
+            background: transparent;
+            will-change: opacity, transform;
+        }
+
         .main-wrapper {
             position: relative;
             z-index: 10;
@@ -183,10 +195,11 @@
             animation: trapBassShake 0.07s ease-in-out infinite alternate;
         }
 
-        /* Glitch efekti mobilde de birebir keskin ve belirgin hale getirildi */
+        /* Mobil ve PC uyumlu ultra belirgin Glitch Efekti */
         .wrapper-glitch {
-            filter: drop-shadow(-5px 0 2px rgba(255, 0, 0, 0.95)) drop-shadow(5px 0 2px rgba(0, 255, 255, 0.95)) !important;
-            -webkit-filter: drop-shadow(-5px 0 2px rgba(255, 0, 0, 0.95)) drop-shadow(5px 0 2px rgba(0, 255, 255, 0.95)) !important;
+            filter: drop-shadow(-6px 0 0px rgba(255, 0, 50, 0.9)) drop-shadow(6px 0 0px rgba(0, 240, 255, 0.9)) !important;
+            -webkit-filter: drop-shadow(-6px 0 0px rgba(255, 0, 50, 0.9)) drop-shadow(6px 0 0px rgba(0, 240, 255, 0.9)) !important;
+            transform: translate(calc(var(--glitch-x, 0) * 1px), calc(var(--glitch-y, 0) * 1px)) scale(1.02) !important;
         }
 
         @keyframes trapBassShake {
@@ -330,13 +343,13 @@
             -webkit-backdrop-filter: blur(25px);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.9);
             transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
-            pointer-events: none;
+            pointer-events: auto;
         }
 
         .badge-bass-pulse {
-            transform: scale(1.02);
+            transform: scale(1.04);
             border-color: var(--accent-color) !important;
-            box-shadow: 0 0 20px var(--glow-color) !important;
+            box-shadow: 0 0 22px var(--glow-color) !important;
         }
 
         .volume-btn {
@@ -563,6 +576,7 @@
 <body>
 
     <div class="scanline-overlay"></div>
+    <div id="mobile-glitch-overlay"></div>
 
     <div class="trap-bg-text top-left" id="bg-text-1">EA$Y WORLDWIDE</div>
     <div class="trap-bg-text bottom-right" id="bg-text-2">OPIUM 808</div>
@@ -633,12 +647,6 @@
     </div>
 
     <script>
-        document.addEventListener('touchmove', function(e) { 
-            if (!e.target.closest('.volume-control-box, .theme-selector')) {
-                e.preventDefault(); 
-            }
-        }, { passive: false });
-
         let currentAccentColor = '#ffffff';
         const THEMES = {
             ICE: { accent: '#ffffff', glow: 'rgba(255, 255, 255, 0.55)', bgGlow: 'rgba(180, 220, 255, 0.1)', borderGlow: 'rgba(255, 255, 255, 0.35)' },
@@ -862,11 +870,9 @@
         }
 
         function handleUserClick(e) {
-            if (e) e.preventDefault();
+            if (e && e.cancelable) e.preventDefault();
             if (userHasClicked) return;
             userHasClicked = true;
-
-            document.getElementById('volume-box').style.pointerEvents = 'auto';
 
             const overlay = document.getElementById('start-overlay');
             overlay.style.opacity = '0';
@@ -914,10 +920,10 @@
         const startOverlay = document.getElementById('start-overlay');
         const startBtnEl = document.getElementById('start-btn-el');
 
-        startOverlay.addEventListener('click', handleUserClick, { passive: false });
-        startOverlay.addEventListener('touchstart', handleUserClick, { passive: false });
-        startBtnEl.addEventListener('click', handleUserClick, { passive: false });
-        startBtnEl.addEventListener('touchstart', handleUserClick, { passive: false });
+        startOverlay.addEventListener('click', handleUserClick);
+        startOverlay.addEventListener('touchstart', handleUserClick);
+        startBtnEl.addEventListener('click', handleUserClick);
+        startBtnEl.addEventListener('touchstart', handleUserClick);
 
         const volumeRange = document.getElementById('volume-range');
         const muteBtn = document.getElementById('mute-btn');
@@ -974,7 +980,7 @@
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 1000);
         
-        /* PC ve Mobil birebir aynı yüksek kaliteli performans standartlarına getirildi */
+        /* PC ve Mobil birebir aynı yüksek kaliteli performans standartı */
         const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: "high-performance" });
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2.0));
         globeContainer.appendChild(renderer.domElement);
@@ -1004,7 +1010,7 @@
         const earthTexture = textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_atmos_2048.jpg');
 
         const baseRadius = 1.35;
-        const segments = 64; // PC/Mobil farkı sıfırlandı
+        const segments = 64; 
         const geometry = new THREE.SphereGeometry(baseRadius, segments, segments);
         const material = new THREE.MeshStandardMaterial({
             map: earthTexture,
@@ -1014,7 +1020,7 @@
         const globeMesh = new THREE.Mesh(geometry, material);
         scene.add(globeMesh);
 
-        const ringBarsCount = 80; // PC/Mobil farkı sıfırlandı
+        const ringBarsCount = 80; 
         const ringBarsGroup = new THREE.Group();
         const ringBarMeshes = [];
 
@@ -1086,6 +1092,7 @@
         let bassAngle = 0;
         const ambientGlowEl = document.getElementById('ambient-glow');
         const lightningEl = document.getElementById('lightning-flash');
+        const mobileGlitchEl = document.getElementById('mobile-glitch-overlay');
         const badgeLiveEl = document.getElementById('badge-live');
         const badgeListenerEl = document.getElementById('badge-listener');
         const themeSelectorEl = document.getElementById('theme-selector-box');
@@ -1155,11 +1162,21 @@
                     volumeBoxEl.classList.remove('badge-bass-pulse');
                 }
 
-                /* Glitch efekti eşiği hassaslaştırıldı ve mobilde %100 belirginleştirildi */
-                if (bassPower > 0.72) {
+                /* Mobil ve PC'de Kesintisiz Glitch Tetikleyici */
+                if (bassPower > 0.65) {
+                    const shiftX = (Math.random() - 0.5) * 16;
+                    const shiftY = (Math.random() - 0.5) * 8;
+                    mainWrapper.style.setProperty('--glitch-x', shiftX);
+                    mainWrapper.style.setProperty('--glitch-y', shiftY);
                     mainWrapper.classList.add('wrapper-glitch');
+
+                    mobileGlitchEl.style.opacity = (0.2 + (bassPower - 0.65) * 1.5).toString();
+                    mobileGlitchEl.style.background = Math.random() > 0.5 
+                        ? 'linear-gradient(90deg, rgba(255,0,80,0.3) 0%, transparent 50%, rgba(0,255,255,0.3) 100%)' 
+                        : 'linear-gradient(0deg, rgba(0,255,100,0.2) 0%, transparent 60%, rgba(255,0,0,0.3) 100%)';
                 } else {
                     mainWrapper.classList.remove('wrapper-glitch');
+                    mobileGlitchEl.style.opacity = '0';
                 }
 
                 if (bassPower > 0.85) {
@@ -1186,6 +1203,7 @@
                 ambientGlowEl.style.transform = `translate(-50%, -50%) scale(1)`;
                 ambientGlowEl.style.opacity = '0.4';
                 lightningEl.style.opacity = '0';
+                mobileGlitchEl.style.opacity = '0';
                 videoBoxEl.style.transform = `scale(1)`;
                 mainWrapper.classList.remove('wrapper-glitch');
                 badgeLiveEl.classList.remove('badge-bass-pulse');
@@ -1263,7 +1281,7 @@
             }
         }
 
-        const particleCount = 65; // Partikül sayısı PC ile eşitlendi
+        const particleCount = 65; 
         for (let i = 0; i < particleCount; i++) particlesArray.push(new CyberParticle());
 
         function animateParticles() {

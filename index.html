@@ -176,14 +176,17 @@
             margin: 0 auto;
             box-sizing: border-box;
             transition: transform 0.05s ease, filter 0.05s ease;
+            will-change: transform, filter;
         }
 
         .wrapper-shake {
             animation: trapBassShake 0.07s ease-in-out infinite alternate;
         }
 
+        /* Glitch efekti mobilde de birebir keskin ve belirgin hale getirildi */
         .wrapper-glitch {
-            filter: drop-shadow(-3px 0 0 rgba(255,0,0,0.8)) drop-shadow(3px 0 0 rgba(0,255,255,0.8));
+            filter: drop-shadow(-5px 0 2px rgba(255, 0, 0, 0.95)) drop-shadow(5px 0 2px rgba(0, 255, 255, 0.95)) !important;
+            -webkit-filter: drop-shadow(-5px 0 2px rgba(255, 0, 0, 0.95)) drop-shadow(5px 0 2px rgba(0, 255, 255, 0.95)) !important;
         }
 
         @keyframes trapBassShake {
@@ -710,7 +713,6 @@
             { id: 'aWotrzyK5GA', duration: 157, title: 'OUT THE MUD' },
             { id: '44G5iSzSNcE', duration: 190, title: 'BAYBAY' },
             { id: 'pXHLhsS041E', duration: 142, title: 'JACK IN THE BOX' }
-            
         ];
 
         const STREAM_START_TIME = 1700000000; 
@@ -972,9 +974,9 @@
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 1000);
         
-        const isMobileDevice = window.innerWidth <= 768;
-        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: !isMobileDevice, powerPreference: "high-performance" });
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+        /* PC ve Mobil birebir aynı yüksek kaliteli performans standartlarına getirildi */
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: "high-performance" });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2.0));
         globeContainer.appendChild(renderer.domElement);
 
         function resizeThreeJS() {
@@ -1001,9 +1003,8 @@
         const textureLoader = new THREE.TextureLoader();
         const earthTexture = textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_atmos_2048.jpg');
 
-        // Dünya ideal boyuta çekildi: 1.35
         const baseRadius = 1.35;
-        const segments = isMobileDevice ? 32 : 64;
+        const segments = 64; // PC/Mobil farkı sıfırlandı
         const geometry = new THREE.SphereGeometry(baseRadius, segments, segments);
         const material = new THREE.MeshStandardMaterial({
             map: earthTexture,
@@ -1013,15 +1014,13 @@
         const globeMesh = new THREE.Mesh(geometry, material);
         scene.add(globeMesh);
 
-        const ringBarsCount = isMobileDevice ? 50 : 80;
+        const ringBarsCount = 80; // PC/Mobil farkı sıfırlandı
         const ringBarsGroup = new THREE.Group();
         const ringBarMeshes = [];
 
-        // Çizgilerin varsayılan yüksekliği ve küreyle uyumu optimize edildi
         const barHeight = 0.45;
         for (let i = 0; i < ringBarsCount; i++) {
             const barGeo = new THREE.BoxGeometry(0.035, barHeight, 0.035);
-            // Taban çizgisini tam kürenin yüzeyine sıfırlamak için Y ekseni kaydırması yarısı yapıldı
             barGeo.translate(0, barHeight / 2, 0); 
             
             const barMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.85 });
@@ -1069,7 +1068,7 @@
             ringTex.minFilter = THREE.LinearFilter;
             ringTex.magFilter = THREE.LinearFilter;
 
-            const ringGeo = new THREE.CylinderGeometry(baseRadius + 0.3, baseRadius + 0.3, 0.65, isMobileDevice ? 32 : 64, 1, true);
+            const ringGeo = new THREE.CylinderGeometry(baseRadius + 0.3, baseRadius + 0.3, 0.65, 64, 1, true);
             const ringMat = new THREE.MeshBasicMaterial({
                 map: ringTex,
                 transparent: true,
@@ -1156,7 +1155,8 @@
                     volumeBoxEl.classList.remove('badge-bass-pulse');
                 }
 
-                if (bassPower > 0.8) {
+                /* Glitch efekti eşiği hassaslaştırıldı ve mobilde %100 belirginleştirildi */
+                if (bassPower > 0.72) {
                     mainWrapper.classList.add('wrapper-glitch');
                 } else {
                     mainWrapper.classList.remove('wrapper-glitch');
@@ -1263,7 +1263,7 @@
             }
         }
 
-        const particleCount = isMobileDevice ? 35 : 65;
+        const particleCount = 65; // Partikül sayısı PC ile eşitlendi
         for (let i = 0; i < particleCount; i++) particlesArray.push(new CyberParticle());
 
         function animateParticles() {
